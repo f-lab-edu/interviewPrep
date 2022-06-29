@@ -1,7 +1,10 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.1'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+	// Apply the application plugin to add support for building a CLI application in Java.
+	id 'application'
+
+	// Spring
+	id 'org.springframework.boot' version '2.3.5.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 }
 
 group = 'com.example'
@@ -13,8 +16,27 @@ repositories {
 }
 
 dependencies {
+
+	// JUnit Jupiter API for testing.
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+
+	// AssertJ
+	testImplementation 'org.assertj:assertj-core:3.18.1'
+
+	// JUnit Jupiter Engine for testing.
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+	// Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// Spring Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Lombok
+	implementation 'org.projectlombok:lombok:1.18.20'
+	annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+	// Spring Boot Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
