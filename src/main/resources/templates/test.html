@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<body>
+<div class="container" style="text-align: center;">
+    <h2> 스프링 테스트</h2>
+    <table width="1000px", height="1000px">
+        <tbody>
+            <tr th:each="question : ${questions}" style="vertical-align: middle">
+                <td th:text="${question.title}" />
+                <td>
+                    <textarea type="text" id="q1" name="q1" style="width: 500px; height: 150px; resize:none;"></textarea>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
