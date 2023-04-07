@@ -34,9 +34,6 @@ public class Answer extends BaseTimeEntity {
     @Lob
     private String content;
 
-    @Lob
-    private String question_title;
-
     @ManyToOne(fetch = LAZY)
     @JsonBackReference
     @JoinColumn(name = "QUESTION_ID")

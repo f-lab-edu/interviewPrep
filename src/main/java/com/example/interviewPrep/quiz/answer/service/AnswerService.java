@@ -44,7 +44,6 @@ public class AnswerService {
         Answer answer =  Answer.builder()
                 .member(member)
                 .question(question)
-                .question_title(question.getTitle())
                 .content(answerDTO.getContent())
                 .build();
 
