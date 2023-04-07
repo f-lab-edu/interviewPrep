@@ -38,6 +38,11 @@ public class QuestionController {
         return ResultResponse.success(questionService.createQuestion(questionDTO));
     }
 
+    @GetMapping("/all")
+    public ResultResponse<?> getAllQuestionsSize(){
+        return ResultResponse.success(questionService.getAllQuestionsSize());
+    }
+
     @PutMapping("{id}")
     public ResultResponse<?> update(@PathVariable Long id, @RequestBody @Valid QuestionDTO questionDTO){
         return ResultResponse.success(questionService.updateQuestion(id, questionDTO));
