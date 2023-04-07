@@ -44,7 +44,6 @@ public class EmailServiceImpl implements EmailService {
         System.out.println("인증 번호 : "+ePw);
 
         boolean duplicatedEmail = memberService.isDuplicatedEmail(to);
-        System.out.println("duplicatedEmail 결과는?" + duplicatedEmail);
 
         if(duplicatedEmail){
             throw new CommonException(DUPLICATE_EMAIL);
@@ -52,10 +51,7 @@ public class EmailServiceImpl implements EmailService {
 
         AES256 aes256 = new AES256();
         String cipherePw = aes256.encrypt(ePw);
-        System.out.println(cipherePw);
-        System.out.println(aes256.decrypt(cipherePw));
-
-        String emailVerifyUrl = "http://localhost:3000/signup/additional-info?code=" + cipherePw;
+        String emailVerifyUrl = "http://interviewprep.kr/signup/additional-info?code=" + cipherePw;
 
         redisDao.setValues(ePw, to, Duration.ofMinutes(10));
 
