@@ -60,6 +60,12 @@ public class QuestionService {
         return question;
     }
 
+
+    public int getAllQuestionsSize() {
+        List<Question> questions = questionRepository.findAll();
+        return questions.size();
+    }
+
     public Question updateQuestion(Long id, QuestionDTO questionDTO){
         Question question = findQuestion(id);
         question.change(questionDTO.getTitle(), questionDTO.getType());
