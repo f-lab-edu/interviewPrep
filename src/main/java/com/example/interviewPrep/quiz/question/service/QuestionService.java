@@ -93,14 +93,13 @@ public class QuestionService {
     }
 
     //@Cacheable(value = "questionDTO", key="#pageable.pageSize.toString().concat('-').concat(#pageable.pageNumber)")
-    @Timer
+    // @Timer
     public Page<QuestionDTO> findByType(String type, Pageable pageable){
         Long memberId = JwtUtil.getMemberId();
         Page<Question> questions;
 
         if(type==null) questions = questionRepository.findAllBy(pageable);
         else questions = questionRepository.findByType(type, pageable); //문제 타입과 페이지 조건 값을 보내어 question 조회, 반환값 page
-
         if(questions.getContent().isEmpty()) throw new CommonException(NOT_FOUND_QUESTION);
 
         if(memberId==0L){
@@ -115,6 +114,7 @@ public class QuestionService {
     }
 
     public Page<QuestionDTO> makeQuestionDto(Page<Question> questions, List<Long> myAnswer){
+
         return questions.map(q -> QuestionDTO.builder()
                         .id(q.getId())
                         .type(q.getType())
