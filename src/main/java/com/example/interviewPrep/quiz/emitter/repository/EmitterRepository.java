@@ -21,7 +21,16 @@ public class EmitterRepository {
         eventCache.put(id, event);
     }
 
-    public Map<String, SseEmitter> findAllStartWithById(String id) {
+    public void showAll(){
+
+        for(String key: emitters.keySet()){
+            System.out.println("key, value는?" + key + " " + emitters.get(key));
+        }
+
+    }
+
+    public Map<String, SseEmitter> findAllById(String id) {
+
         return emitters.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(id))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -33,7 +42,7 @@ public class EmitterRepository {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public void deleteAllStartWithId(String id) {
+    public void deleteAllById(String id) {
         emitters.forEach(
                 (key, emitter) -> {
                     if (key.startsWith(id)) {

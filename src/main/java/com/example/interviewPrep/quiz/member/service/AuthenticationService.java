@@ -1,5 +1,6 @@
 package com.example.interviewPrep.quiz.member.service;
 
+import com.example.interviewPrep.quiz.emitter.repository.EmitterRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.exception.advice.LoginException;
@@ -8,6 +9,9 @@ import com.example.interviewPrep.quiz.member.dto.LoginResponseDTO;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
+import com.example.interviewPrep.quiz.notification.domain.Notification;
+import com.example.interviewPrep.quiz.notification.repository.NotificationRepository;
+import com.example.interviewPrep.quiz.notification.service.NotificationService;
 import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.PasswordCheck;
@@ -24,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_LOGIN;
 
@@ -33,7 +38,11 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUN
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final EmitterRepository emitterRepository;
     private final RedisDao redisDao;
+
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     public LoginResponseDTO login(LoginRequestDTO memberDTO, HttpServletResponse response) {
 
@@ -60,15 +69,20 @@ public class AuthenticationService {
         // SecurityContext 에 Authentication 객체를 저장합니다.
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Long id = JwtUtil.getMemberId();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         redisDao.setValues(String.valueOf(memberId), refreshToken, Duration.ofDays(7));
+
+        List<Notification> notifications = notificationRepository.findAllByReceiverId(memberId);
+
+        notificationService.sendAll(memberId, notifications);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(7*24*60*60);
         cookie.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
         response.addCookie(cookie);
+
 
         return LoginResponseDTO.builder()
                 .accessToken(accessToken)
@@ -96,7 +110,7 @@ public class AuthenticationService {
     }
 
 
-    public void logout(String token, HttpServletResponse response){
+    public void logout(String token){
         String accessToken = token.substring(7);
         Long expiration = jwtUtil.getExpirations(accessToken);
         String memberId = JwtUtil.getMemberId().toString();
@@ -106,11 +120,9 @@ public class AuthenticationService {
         }
 
         redisDao.setValues(accessToken, "logout", Duration.ofMillis(expiration));
-
-        try {
-            response.sendRedirect("/server/logout");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        emitterRepository.showAll();
+        emitterRepository.deleteAllById(memberId);
+        emitterRepository.deleteAllEventCacheStartWithId(memberId);
+        emitterRepository.showAll();
     }
 }

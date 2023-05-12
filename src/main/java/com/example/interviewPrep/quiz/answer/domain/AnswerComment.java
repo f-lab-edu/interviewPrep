@@ -31,6 +31,10 @@ public class AnswerComment extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID")
     Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "ANSWER_WRITER_ID")
+    Member answerWriter;
+
     private String comment;
 
     public void change(String comment){

@@ -8,6 +8,7 @@ import com.example.interviewPrep.quiz.response.ResultResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,8 +62,10 @@ public class MemberController {
     }
 
     @GetMapping(value="logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response){
-        authService.logout(request.getHeader(HttpHeaders.AUTHORIZATION), response);
+    public ResultResponse<?> logout(HttpServletRequest request){
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        authService.logout(accessToken);
+        return ResultResponse.success(ResponseEntity.noContent().build());
     }
 
 

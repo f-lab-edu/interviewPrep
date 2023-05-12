@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .antMatchers("/", "/members/auth"/*, "/css/**", "/images/**", "/js/**", "/h2-console/**"*/).permitAll() //권한 관리 대상 지정
                 .antMatchers( "/answer/**").authenticated()
                 .antMatchers(HttpMethod.POST, "/question/ref/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/subscribe").permitAll()
                 //.antMatchers("/members/userInfo", "/members/change", "/members/password/change").authenticated()
                 //.anyRequest().authenticated() //나머지 요청들은 인증된 사람에게만 공개( 인증된 사람 == 로그인 사용자)
                 .anyRequest().permitAll()

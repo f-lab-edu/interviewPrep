@@ -39,10 +39,9 @@ public class NotificationService {
     public SseEmitter subscribe(String lastEventId) {
 
         Long memberId = JwtUtil.getMemberId();
-        System.out.println("subscribe의 memberId는?" + memberId);
 
-        String id = memberId + "_" + System.currentTimeMillis();
-        System.out.println("subscribe의 id는?" + id);
+        String id = Long.toString(memberId);
+        // String id = memberId + "_" + System.currentTimeMillis();
         SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(id));
@@ -71,7 +70,32 @@ public class NotificationService {
         } catch (IOException exception) {
             emitterRepository.deleteById(id);
             log.error("SSE 연결 오류!", exception);
+            System.out.println(exception);
         }
+    }
+
+
+    private void sendAllToClient(SseEmitter emitter, String id, List<Notification> notifications) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .id(id)
+                    .name("sse")
+                    .data(notifications));
+        } catch (IOException exception) {
+            emitterRepository.deleteById(id);
+            log.error("SSE 연결 오류!", exception);
+            System.out.println(exception);
+        }
+    }
+
+    public void sendAll(Long memberId, List<Notification> notifications){
+
+        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllById(Long.toString(memberId));
+        sseEmitters.forEach(
+                (key, emitter) -> {
+                    sendAllToClient(emitter, key, notifications);
+                }
+        );
     }
 
     @Transactional
@@ -79,7 +103,8 @@ public class NotificationService {
         Notification notification = createNotification(receiver, comment, content);
         String id = String.valueOf(receiver.getId());
         notificationRepository.save(notification);
-        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(id);
+        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllById(id);
+
         sseEmitters.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);

@@ -10,6 +10,7 @@ import com.example.interviewPrep.quiz.dto.CreateDto;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
+import com.example.interviewPrep.quiz.notification.service.NotificationService;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,8 +29,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final AnswerRepository answerRepository;
     private final MemberRepository memberRepository;
-
-
+    private final NotificationService notificationService;
     public Page<CommentRes> findAnswerComment(Long id, Pageable pageable){
 
         Long memberId = JwtUtil.getMemberId();
@@ -57,17 +57,20 @@ public class CommentService {
 
         Member member = findMember(memberId);
         Answer answer = findAnswer(commentReq.getAnswerId());
+        Member answerWriter = answer.getMember();
 
         answer.commentIncrease();
         answerRepository.save(answer);
 
         AnswerComment comment = AnswerComment.builder()
                 .answer(answer)
+                .answerWriter(answerWriter)
                 .member(member)
                 .comment(commentReq.getComment())
                 .build();
 
-        commentRepository.save(comment);
+        AnswerComment savedComment = commentRepository.save(comment);
+        notificationService.send(answerWriter, savedComment, "새로운 댓글이 추가되었습니다!");
 
         return CreateDto.builder()
                 .id(comment.getId())
