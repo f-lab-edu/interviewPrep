@@ -1,6 +1,7 @@
 package com.example.interviewPrep.quiz.question.service;
 
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
+import com.example.interviewPrep.quiz.aop.Timer;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,9 +63,17 @@ public class QuestionService {
     }
 
 
-    public int getAllQuestionsSize() {
+    public HashMap<String, Integer> getAllQuestionsInfo() {
         List<Question> questions = questionRepository.findAll();
-        return questions.size();
+
+        HashMap<String, Integer> questionInfo = new HashMap<>();
+
+        for(Question question: questions){
+            String type = question.getType();
+            questionInfo.put(type, questionInfo.getOrDefault(type, 0) + 1);
+        }
+
+        return questionInfo;
     }
 
     public Question updateQuestion(Long id, QuestionDTO questionDTO){
@@ -83,13 +93,13 @@ public class QuestionService {
     }
 
     //@Cacheable(value = "questionDTO", key="#pageable.pageSize.toString().concat('-').concat(#pageable.pageNumber)")
+    // @Timer
     public Page<QuestionDTO> findByType(String type, Pageable pageable){
         Long memberId = JwtUtil.getMemberId();
         Page<Question> questions;
 
         if(type==null) questions = questionRepository.findAllBy(pageable);
         else questions = questionRepository.findByType(type, pageable); //문제 타입과 페이지 조건 값을 보내어 question 조회, 반환값 page
-
         if(questions.getContent().isEmpty()) throw new CommonException(NOT_FOUND_QUESTION);
 
         if(memberId==0L){
@@ -104,6 +114,7 @@ public class QuestionService {
     }
 
     public Page<QuestionDTO> makeQuestionDto(Page<Question> questions, List<Long> myAnswer){
+
         return questions.map(q -> QuestionDTO.builder()
                         .id(q.getId())
                         .type(q.getType())
