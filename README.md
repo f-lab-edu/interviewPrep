@@ -15,7 +15,7 @@ http://www.interviewprep.kr/
    git clone https://github.com/f-lab-edu/interviewPrep.git
 ```
 
-2) Redis를 설정합니다.
+2) Redis를 설정합니다.    
 (1) Docker를 설치합니다. 
 ```
    https://docs.docker.com/desktop/install/windows-install/
