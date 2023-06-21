@@ -15,11 +15,25 @@ http://www.interviewprep.kr/
    git clone https://github.com/f-lab-edu/interviewPrep.git
 ```
 
-2) node_modules를 설치합니다.
+2) Redis를 설정합니다.
+(1) Docker를 설치합니다. 
 ```
-   npm install
+   https://docs.docker.com/desktop/install/windows-install/
 ```
-4) 프로젝트를 실행합니다.
+(2) Redis Image를 받아옵니다.
 ```
-   npm start
+   docker image pull redis
+```
+(3) Redis Network를 생성하고, 확인합니다.  
+```
+   docker network create redis-network
+   docker network ls  
+```
+(4) Redis 서버를 실행합니다. 
+```
+   docker run --name local-redis -p 6379:6379 --network redis-network -v redis_temp:/data -d redis:latest redis-server --appendonly yes
+```
+(5) 현재 실행중인 Redis에 Redis-cli로 접속합니다.
+```
+    docker run -it --network redis-network --rm redis:latest redis-cli -h local-redis
 ```
