@@ -16,6 +16,7 @@ http://www.interviewprep.kr/
 ```
 
 2) Redis를 설정합니다.    
+
 (1) Docker를 설치합니다. 
 ```
    https://docs.docker.com/desktop/install/windows-install/
