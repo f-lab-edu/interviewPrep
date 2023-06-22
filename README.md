@@ -16,7 +16,17 @@ http://www.interviewprep.kr/
    ```
 
 
-
+2) h2를 설치하고, 접속합니다. 
+   (1) h2 웹 사이트에서 h2를 다운 받습니다. 
+   ```
+      http://h2database.com/html/main.html
+   ```
+   (2) h2의 JDBC URL을 다음과 같이 설정합니다.  
+   ```
+     jdbc:h2:tcp://localhost/~/interviewPrep
+   ```
+   (3) h2에 접속합니다.
+   
 3) Redis를 설정합니다.    
 
    (1) Docker를 설치합니다. 
@@ -25,18 +35,13 @@ http://www.interviewprep.kr/
    ```
    (2) Redis Image를 받아옵니다.
    ```
-      docker image pull redis
+      docker pull redis
    ```
-   (3) Redis Network를 생성하고, 확인합니다.  
+   (3) docker-compose로 컨테이너를 생성하고 실행합니다. 
    ```
-      docker network create redis-network
-      docker network ls  
+      docker-compose up -d  
    ```
-   (4) Redis 서버를 실행합니다. 
+   (4) Redis-cli로 접속해서, 확인합니다. 
    ```
-      docker run --name local-redis -p 6379:6379 --network redis-network -v redis_temp:/data -d redis:latest redis-server --appendonly yes
-   ```
-   (5) 현재 실행중인 Redis에 Redis-cli로 접속합니다.
-   ```
-       docker run -it --network redis-network --rm redis:latest redis-cli -h local-redis
+      docker exec -it redis_test redis-cli
    ```
