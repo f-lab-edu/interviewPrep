@@ -95,13 +95,28 @@ public class JwtUtil {
 
     }
 
+    public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static Long getMemberId() {
 
         try {
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            UserDetails userDetails = (UserDetails) principal;
-            return Long.parseLong(userDetails.getUsername());
+            // Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            // System.out.println("principal은?" + principal);
+            // UserDetails userDetails = (UserDetails) principal;
+            // String userName = userDetails.getUsername();
+            // System.out.println("getUsername의 결과는?" + userDetails.getUsername());
+            return Long.parseLong(memberId);
         } catch (Exception e) {
+            System.out.println("Exception 발생" + e);
             return 0L;
         }
     }

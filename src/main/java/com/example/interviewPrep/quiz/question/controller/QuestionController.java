@@ -5,6 +5,7 @@ import com.example.interviewPrep.quiz.response.ResultResponse;
 import com.example.interviewPrep.quiz.question.dto.QuestionDTO;
 import com.example.interviewPrep.quiz.question.service.QuestionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @Timer // redis 유무에 따른 api 응답시간을 체크를 위해 시간 측정 aop 사용
+    // @Timer // redis 유무에 따른 api 응답시간을 체크를 위해 시간 측정 aop 사용
     @GetMapping({"/{type}", ""})
     public ResultResponse<?> getQuestionType(@PathVariable(required = false) String type,
                                              @PageableDefault(size=10) Pageable pageable){
