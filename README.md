@@ -16,7 +16,8 @@ http://www.interviewprep.kr/
    ```
 
 
-2) h2를 설치하고, 접속합니다. 
+2) h2를 설치하고, 접속합니다.
+
    (1) h2 웹 사이트에서 h2를 다운 받습니다. 
    ```
       http://h2database.com/html/main.html
@@ -27,7 +28,7 @@ http://www.interviewprep.kr/
    ```
    (3) h2에 접속합니다.
    
-3) Redis를 설정합니다.    
+4) Redis를 설정합니다.    
 
    (1) Docker를 설치합니다. 
    ```
