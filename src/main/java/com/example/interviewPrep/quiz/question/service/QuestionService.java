@@ -63,6 +63,11 @@ public class QuestionService {
     }
 
 
+    public int getAllQuestionsSize() {
+        List<Question> questions = questionRepository.findAll();
+        return questions.size();
+    }
+
     public HashMap<String, Integer> getAllQuestionsInfo() {
         List<Question> questions = questionRepository.findAll();
 
