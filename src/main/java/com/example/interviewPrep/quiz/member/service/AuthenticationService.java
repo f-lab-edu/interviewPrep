@@ -75,8 +75,6 @@ public class AuthenticationService {
 
         List<Notification> notifications = notificationRepository.findAllByReceiverId(memberId);
 
-        notificationService.sendAll(memberId, notifications);
-
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(7*24*60*60);
