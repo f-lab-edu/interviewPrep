@@ -75,29 +75,6 @@ public class NotificationService {
     }
 
 
-    private void sendAllToClient(SseEmitter emitter, String id, List<Notification> notifications) {
-        try {
-            emitter.send(SseEmitter.event()
-                    .id(id)
-                    .name("sse")
-                    .data(notifications));
-        } catch (IOException exception) {
-            emitterRepository.deleteById(id);
-            log.error("SSE 연결 오류!", exception);
-            System.out.println(exception);
-        }
-    }
-
-    public void sendAll(Long memberId, List<Notification> notifications){
-
-        Map<String, SseEmitter> sseEmitters = emitterRepository.findAllById(Long.toString(memberId));
-        sseEmitters.forEach(
-                (key, emitter) -> {
-                    sendAllToClient(emitter, key, notifications);
-                }
-        );
-    }
-
     @Transactional
     public void send(Member receiver, AnswerComment comment, String content) {
         Notification notification = createNotification(receiver, comment, content);
