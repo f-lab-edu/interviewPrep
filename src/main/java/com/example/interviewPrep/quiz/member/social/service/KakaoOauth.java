@@ -26,15 +26,15 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @RequiredArgsConstructor
 public class KakaoOauth implements SocialOauth {
 
-    @Value("${sns.kakao.url}")
+    @Value("${spring.security.oauth2.client.provider.kakao.authorization_uri}")
     private String KAKAO_URL;
-    @Value("${sns.kakao.client.id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String KAKAO_CLIENT_ID;
-    @Value("${sns.kakao.client.secret}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String KAKAO_CLIENT_SECRET;
-    @Value("${sns.kakao.callback.url}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String KAKAO_REDIRECT_URL;
-    @Value("${sns.kakao.token.url}")
+    @Value("${spring.security.oauth2.client.provider.kakao.token-uri}")
     private String KAKAO_TOKEN_URL;
 
     private WebClient webClient = WebClient.create();

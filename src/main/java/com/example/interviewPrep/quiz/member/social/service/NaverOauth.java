@@ -28,15 +28,15 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @RequiredArgsConstructor
 public class NaverOauth implements SocialOauth {
 
-    @Value("${sns.naver.url}")
+    @Value("${spring.security.oauth2.client.provider.naver.authorization_uri}")
     private String NAVER_URL;
-    @Value("${sns.naver.client.id}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String NAVER_CLIENT_ID;
-    @Value("${sns.naver.client.secret}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String NAVER_CLIENT_SECRET;
-    @Value("${sns.naver.callback.url}")
+    @Value("${spring.security.oauth2.client.registration.naver.redirect-uri}")
     private String NAVER_REDIRECT_URL;
-    @Value("${sns.naver.token.url}")
+    @Value("${spring.security.oauth2.client.provider.naver.token-uri}")
     private String NAVER_TOKEN_URL;
 
     private WebClient webClient = WebClient.create();

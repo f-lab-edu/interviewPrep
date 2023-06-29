@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.member.social.service;
 
-
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.dto.Role;
@@ -28,15 +27,15 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @RequiredArgsConstructor
 public class GoogleOauth implements SocialOauth {
 
-    @Value("${sns.google.url}")
+    @Value("${spring.security.oauth2.client.registration.google.url}")
     private String GOOGLE_URL;
-    @Value("${sns.google.client.id}")
+    @Value("${spring.security.oauth2.client.registration.google.client.id}")
     private String GOOGLE_CLIENT_ID;
-    @Value("${sns.google.callback.url}")
+    @Value("${spring.security.oauth2.client.registration.google.callback.url}")
     private String GOOGLE_REDIRECT_URL;
-    @Value("${sns.google.client.secret}")
+    @Value("${spring.security.oauth2.client.registration.google.client.secret}")
     private String GOOGLE_CLIENT_SECRET;
-    @Value("${sns.google.token.url}")
+    @Value("${spring.security.oauth2.client.registration.google.token.url}")
     private String GOOGLE_TOKEN_URL;
 
     private WebClient webClient = WebClient.create();
