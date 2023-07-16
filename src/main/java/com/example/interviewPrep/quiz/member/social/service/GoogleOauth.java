@@ -27,15 +27,15 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @RequiredArgsConstructor
 public class GoogleOauth implements SocialOauth {
 
-    @Value("${spring.security.oauth2.client.registration.google.url}")
+    @Value("${security.oauth2.client.registration.google.url}")
     private String GOOGLE_URL;
-    @Value("${spring.security.oauth2.client.registration.google.client.id}")
+    @Value("${security.oauth2.client.registration.google.client.id}")
     private String GOOGLE_CLIENT_ID;
-    @Value("${spring.security.oauth2.client.registration.google.callback.url}")
+    @Value("${security.oauth2.client.registration.google.callback.url}")
     private String GOOGLE_REDIRECT_URL;
-    @Value("${spring.security.oauth2.client.registration.google.client.secret}")
+    @Value("${security.oauth2.client.registration.google.client.secret}")
     private String GOOGLE_CLIENT_SECRET;
-    @Value("${spring.security.oauth2.client.registration.google.token.url}")
+    @Value("${security.oauth2.client.registration.google.token.url}")
     private String GOOGLE_TOKEN_URL;
 
     private WebClient webClient = WebClient.create();
