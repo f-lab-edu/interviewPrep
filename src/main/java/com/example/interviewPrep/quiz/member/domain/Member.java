@@ -3,6 +3,7 @@ package com.example.interviewPrep.quiz.member.domain;
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
@@ -42,6 +43,13 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     @JsonManagedReference
     private List<Answer> answers = new ArrayList<>();
+
+    // Notification 엔티티와
+    // @OneToMany 참조 관계를 설정하였습니다
+    @OneToMany(mappedBy = "receiver")
+    @JsonManagedReference
+    private List<Notification> notifications = new ArrayList<>();
+
     private String name;
     @Column
     private String picture;
