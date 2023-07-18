@@ -67,7 +67,6 @@ public class NotificationService {
             for(Notification notification: notifications){
                 sendToClient(emitter, id, notification);
             }
-            redisDao.setValuesForNotification(SseId);
         }
 
         return emitter;
@@ -92,44 +91,51 @@ public class NotificationService {
         Notification notification = createNotification(receiver, comment, content);
         String id = String.valueOf(receiver.getId());
         notificationRepository.save(notification);
+
+        // Emitter의 존재 여부를 확인하고,
+        // Emitter 존재 시 notification 발송
+        checkEmitterAndSendToClient(id, notification);
+
+    }
+
+    public void checkEmitterAndSendToClient(String id, Notification notification){
+
         Optional<SseEmitter> emitter = emitterRepository.findById(id);
 
         // emitterRepository.showAllKeys();
 
         // emitter가 null이 아닌 경우,
-        // 즉, receiver가 현재 로그인된 경우, receiver에게 바로 알림을 전송한다
+        // 즉, receiver가 현재 로그인된 경우, receiver에게 바로 알림을 전송
         if(emitter.isPresent()){
-            System.out.println("emitterId는?" + id);
-            System.out.println(emitter);
             SseEmitter receiverEmitter = emitter.get();
             sendToClient(receiverEmitter, id, notification);
+            return;
         }
+
         // emitter가 null인 경우,
         // 즉, receiver가 현재 로그인되지 않은 경우,
-        // redisDao에서 SseId에 해당하는 notifications를 찾고 거기에 업데이트 한다
-        else{
-            String SseId = "Sse" + id;
-            List<Notification> notifications = redisDao.getValuesForNotification(SseId);
+        // redisDao에서 SseId에 해당하는 notifications를 찾고 업데이트
 
-            // receiver가 한 번도 로그인하지 않은 경우,
-            // Redis에 SseId에 대응되는 notifications가 없으므로,
-            // 새로운 ArrayList를 추가한다
-            if(notifications == null){
-                notifications = new ArrayList<>();
-            }
-            notifications.add(notification);
-            redisDao.updateValuesForNotification(SseId, notifications);
+        String SseId = "Sse" + id;
+        List<Notification> notifications = redisDao.getValuesForNotification(SseId);
+
+        // receiver가 한 번도 로그인하지 않은 경우,
+        // Redis에 SseId에 대응되는 notifications가 없으므로,
+        // 새로운 ArrayList를 추가한다
+        if(notifications == null){
+            notifications = new ArrayList<>();
         }
+        notifications.add(notification);
+        redisDao.updateValuesForNotification(SseId, notifications);
     }
 
     private Notification createNotification(Member receiver, AnswerComment comment, String content) {
-        Notification notification = Notification.builder()
+        return Notification.builder()
                 .receiver(receiver)
                 .comment(comment)
                 .content(content)
                 .isRead(false)
                 .build();
-        return notification;
     }
 
     @Transactional

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -32,11 +34,11 @@ public class AnswerComment extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID")
     Member member;
 
-    // Notification 엔티티와
-    // @OneToOne 참조 관계를 설정하였습니다
-    @OneToOne
+    // Notification 엔티티와 @OneToMany 참조 관계를 설정하였습니다
+    // 연관관계의 주인을 Notification.comment로 설정하였습니다
+    @OneToMany(mappedBy = "comment")
     @JoinColumn(name = "NOTIFICATION_ID")
-    Notification notification;
+    List<Notification> notifications;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ANSWER_WRITER_ID")

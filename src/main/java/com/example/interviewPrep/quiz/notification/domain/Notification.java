@@ -10,12 +10,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 
-@Setter
 @Entity
 @Getter
 @Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class Notification extends BaseTimeEntity {
 
     // Notification의 ID를 나타낸다
@@ -30,10 +27,9 @@ public class Notification extends BaseTimeEntity {
     private Member receiver;
 
     // AnswerComment 엔티티와
-    // @OneToOne 연관관계를 설정하였습니다
-    // 연관관계의 주인을 AnswerComment.notification으로 설정하였습니다
+    // @ManyToOne 연관관계를 설정하였습니다
     // 순환 참조 방지를 위하여 @JsonBackReference를 추가하였습니다
-    @OneToOne(mappedBy = "notification")
+    @ManyToOne
     @JsonBackReference
     private AnswerComment comment;
 
@@ -43,6 +39,8 @@ public class Notification extends BaseTimeEntity {
 
     private boolean isRead;
 
+    public Notification(){
+    }
     public Notification(Member receiver, AnswerComment comment, String content, boolean isRead) {
         this.receiver = receiver;
         this.comment = comment;
