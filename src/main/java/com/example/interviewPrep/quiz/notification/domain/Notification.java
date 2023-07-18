@@ -12,7 +12,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 public class Notification extends BaseTimeEntity {
 
     // Notification의 ID를 나타낸다
@@ -45,7 +44,6 @@ public class Notification extends BaseTimeEntity {
         this.receiver = receiver;
         this.comment = comment;
         this.content = content;
-        this.url = url;
         this.isRead = isRead;
     }
 

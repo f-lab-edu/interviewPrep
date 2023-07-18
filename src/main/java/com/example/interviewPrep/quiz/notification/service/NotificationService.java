@@ -130,12 +130,7 @@ public class NotificationService {
     }
 
     private Notification createNotification(Member receiver, AnswerComment comment, String content) {
-        return Notification.builder()
-                .receiver(receiver)
-                .comment(comment)
-                .content(content)
-                .isRead(false)
-                .build();
+        return new Notification(receiver, comment, content, false);
     }
 
     @Transactional
