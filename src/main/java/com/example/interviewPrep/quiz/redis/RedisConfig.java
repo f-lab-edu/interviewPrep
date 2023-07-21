@@ -47,7 +47,7 @@ public class RedisConfig {
     public RedisTemplate<String, List<Notification>> redisTemplateForNotification() {
         RedisTemplate<String, List<Notification>> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        GenericJackson2JsonRedisSerializer listSerializer = new GenericJackson2JsonRedisSerializer();;
+        GenericJackson2JsonRedisSerializer listSerializer = new GenericJackson2JsonRedisSerializer();
         redisTemplate.setValueSerializer(listSerializer);
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         return redisTemplate;

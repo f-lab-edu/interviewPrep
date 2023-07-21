@@ -4,6 +4,7 @@ import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 

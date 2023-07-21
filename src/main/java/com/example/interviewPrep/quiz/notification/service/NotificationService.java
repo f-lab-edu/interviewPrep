@@ -45,7 +45,6 @@ public class NotificationService {
     public SseEmitter subscribe() {
 
         Long memberId = JwtUtil.getMemberId();
-
         String id = Long.toString(memberId);
         SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
 
@@ -55,7 +54,6 @@ public class NotificationService {
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         sendToClient(emitter, id, "EventStream Created. [memberId=" + memberId + "]");
 
-        // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
         String SseId = "Sse"+ id;
 
         List<Notification> notifications = redisDao.getValuesForNotification(SseId);
@@ -71,7 +69,6 @@ public class NotificationService {
         }
 
         redisDao.deleteValuesForNotification(SseId);
-
         return emitter;
     }
 
@@ -95,8 +92,12 @@ public class NotificationService {
         notification.setReceiver_member_id(id);
         notificationRepository.save(notification);
 
+        // Emitter의 존재 여부를 확인하고,
+        // Emitter 존재 시 notification 발송
         checkEmitterAndSendToClient(id, notification);
+
     }
+
 
 
     public void checkEmitterAndSendToClient(String id, Notification notification){
@@ -117,7 +118,7 @@ public class NotificationService {
 
 
     private Notification createNotification(Member receiver, AnswerComment comment, String content) {
-         return new Notification(receiver, comment, content, false);
+        return new Notification(receiver, comment, content, false);
     }
 
 }

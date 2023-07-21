@@ -3,7 +3,6 @@ package com.example.interviewPrep.quiz.redis;
 import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -36,6 +35,7 @@ public class RedisDao {
         return values.get(key);
     }
 
+
     public void deleteValues(String key) {
         redisTemplate.delete(key);
     }
@@ -56,10 +56,6 @@ public class RedisDao {
         Object value = values.get(key);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Notification> notifications = objectMapper.convertValue(value, new TypeReference<List<Notification>>() {});
-
-        for(Notification noti: notifications){
-            System.out.println(noti.getId());
-        }
         notifications.add(notification);
         values.set(key, notifications);
     }

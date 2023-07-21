@@ -11,16 +11,16 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class EmitterRepository {
 
     public final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+
     public SseEmitter save(String id, SseEmitter sseEmitter) {
         emitters.put(id, sseEmitter);
         return sseEmitter;
     }
+
     public Optional<SseEmitter> findById(String id) {
         Optional<SseEmitter> emitter = Optional.ofNullable(emitters.get(id));
         return emitter;
     }
-
-
     public void deleteById(String id) {
         emitters.remove(id);
     }
