@@ -1,6 +1,7 @@
 package com.example.interviewPrep.quiz.member.domain;
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
+import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import com.fasterxml.jackson.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @Table(indexes = @Index(name= "i_member", columnList = "email"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Member extends BaseTimeEntity {
+
     public Member(String email, String password, String nickName){
         this.email = email;
         this.password = password;
@@ -39,9 +41,6 @@ public class Member extends BaseTimeEntity {
 
     private String nickName;
 
-    @OneToMany(mappedBy = "member")
-    @JsonManagedReference
-    private List<Answer> answers = new ArrayList<>();
     private String name;
     @Column
     private String picture;
