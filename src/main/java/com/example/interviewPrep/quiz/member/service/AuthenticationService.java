@@ -118,9 +118,6 @@ public class AuthenticationService {
         }
 
         redisDao.setValues(accessToken, "logout", Duration.ofMillis(expiration));
-        emitterRepository.showAll();
-        emitterRepository.deleteAllById(memberId);
-        emitterRepository.deleteAllEventCacheStartWithId(memberId);
-        emitterRepository.showAll();
+        emitterRepository.deleteById(memberId);
     }
 }

@@ -35,12 +35,12 @@ public class Answer extends BaseTimeEntity {
     private String content;
 
     @ManyToOne(fetch = LAZY)
-    @JsonBackReference
+    @JsonBackReference(value="question-answer")
     @JoinColumn(name = "QUESTION_ID")
     Question question;
 
     @ManyToOne(fetch = LAZY)
-    @JsonBackReference
+    @JsonBackReference(value="member-answer")
     @JoinColumn(name = "MEMBER_ID")
     Member member;
 

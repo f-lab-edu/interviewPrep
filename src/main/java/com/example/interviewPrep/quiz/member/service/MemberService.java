@@ -33,8 +33,9 @@ public class MemberService {
     public Member createMember(SignUpRequestDTO memberDTO) throws Exception {
 
             AES256 aes256 = new AES256();
-            String code = memberDTO.getCode();
-            String email = redisDao.getValues(aes256.decrypt(code));
+            // String code = memberDTO.getCode();
+            // String email = redisDao.getValues(aes256.decrypt(code));
+            String email = memberDTO.getEmail();
 
             String password = SHA256Util.encryptSHA256(memberDTO.getPassword());
 

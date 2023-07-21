@@ -2,6 +2,9 @@ package com.example.interviewPrep.quiz.answer.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.notification.domain.Notification;
+
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
