@@ -12,7 +12,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 public class Notification extends BaseTimeEntity {
 
     // Notification의 ID를 나타낸다
@@ -48,6 +47,9 @@ public class Notification extends BaseTimeEntity {
         this.isRead = isRead;
     }
 
+    public void createReceiverMemberId(String receiver_member_id){
+        this.receiver_member_id = receiver_member_id;
+    }
 
     public void read() {
         this.isRead = true;

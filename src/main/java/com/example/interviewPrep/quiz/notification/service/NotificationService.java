@@ -89,7 +89,7 @@ public class NotificationService {
     public void send(Member receiver, AnswerComment comment, String content) {
         Notification notification = createNotification(receiver, comment, content);
         String id = String.valueOf(receiver.getId());
-        notification.setReceiver_member_id(id);
+        notification.createReceiverMemberId(id);
         notificationRepository.save(notification);
 
         // Emitter의 존재 여부를 확인하고,
