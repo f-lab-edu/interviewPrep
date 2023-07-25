@@ -15,12 +15,11 @@ public class EmitterRepository {
         emitters.put(id, sseEmitter);
         return sseEmitter;
     }
+
     public Optional<SseEmitter> findById(String id) {
         Optional<SseEmitter> emitter = Optional.ofNullable(emitters.get(id));
         return emitter;
     }
-
-
     public void deleteById(String id) {
         emitters.remove(id);
     }

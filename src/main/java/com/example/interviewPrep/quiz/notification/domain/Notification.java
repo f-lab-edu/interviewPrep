@@ -12,13 +12,14 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 public class Notification extends BaseTimeEntity {
 
+    // Notification의 ID를 나타낸다
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="NOTIFICATION_ID")
     private Long id;
 
+    // Notification을 받아야 하는 MEMBER_ID를 나타낸다
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     @JsonBackReference(value="receiver-notification")
@@ -42,6 +43,10 @@ public class Notification extends BaseTimeEntity {
         this.comment = comment;
         this.content = content;
         this.isRead = isRead;
+    }
+
+    public void createReceiverMemberId(String receiver_member_id){
+        this.receiver_member_id = receiver_member_id;
     }
 
     public void read() {
