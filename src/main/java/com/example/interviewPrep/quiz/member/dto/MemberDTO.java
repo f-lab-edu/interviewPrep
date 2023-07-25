@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class MemberDTO {
 
     private Long id;

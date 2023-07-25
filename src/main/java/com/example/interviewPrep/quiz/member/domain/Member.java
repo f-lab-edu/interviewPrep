@@ -1,33 +1,20 @@
 package com.example.interviewPrep.quiz.member.domain;
 
-import com.example.interviewPrep.quiz.answer.domain.Answer;
-import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
-import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Setter
 @Entity
 @Getter
 @Builder
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Table(indexes = @Index(name= "i_member", columnList = "email"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Member extends BaseTimeEntity {
-
-    public Member(String email, String password, String nickName){
-        this.email = email;
-        this.password = password;
-        this.nickName = nickName;
-        this.role = Role.USER;
-    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="MEMBER_ID")
@@ -48,6 +35,27 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public Member() {
+    }
+
+
+    public Member(String email, String password, String nickName){
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.role = Role.USER;
+    }
+
+    public Member(String email, String password, String type, String nickName, String name, String picture, Role role){
+        this.email = email;
+        this.password = password;
+        this.type = type;
+        this.nickName = nickName;
+        this.name = name;
+        this.role = role;
+        this.picture = picture;
+    }
 
     public Member update(String name, String picture){
         this.name = name;

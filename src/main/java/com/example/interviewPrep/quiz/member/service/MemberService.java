@@ -10,24 +10,23 @@ import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.AES256;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 
 @Service
-@RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-
+    private final RedisDao redisDao;
 
     @Autowired
-    private final RedisDao redisDao;
+    public MemberService(MemberRepository memberRepository, RedisDao redisDao){
+      this.memberRepository = memberRepository;
+      this.redisDao = redisDao;
+    }
 
 
     public Member createMember(SignUpRequestDTO memberDTO) throws Exception {
@@ -39,8 +38,7 @@ public class MemberService {
 
             String password = SHA256Util.encryptSHA256(memberDTO.getPassword());
 
-            boolean duplicatedEmail = isDuplicatedEmail(email);
-            if(duplicatedEmail){
+            if(isDuplicatedEmail(email)){
                 throw new CommonException(DUPLICATE_EMAIL);
             }
 
@@ -50,96 +48,85 @@ public class MemberService {
     }
 
     public boolean isDuplicatedEmail(String email){
-
-            Optional<Member> member = memberRepository.findByEmail(email);
-
-            if(member.isPresent()){
-                return true;
-            }
-            return false;
+        return memberRepository.findByEmail(email).isPresent();
     }
 
 
     public Member getUserInfo(){
-
             Long id = JwtUtil.getMemberId();
             Member member = memberRepository.findById(id).orElseThrow();
             member.setPassword(null);
             return member;
-
     }
-    public Member changeNickNameAndEmail(MemberDTO memberDTO){
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails)principal;
+      public Member updateNickNameAndEmail(MemberDTO memberDTO){
 
-        Long memberId = Long.parseLong(userDetails.getUsername());
+          Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+          UserDetails userDetails = (UserDetails)principal;
 
-        Member member = memberRepository.findById(memberId).get();
+          Long memberId = Long.parseLong(userDetails.getUsername());
 
-        String newNickName = memberDTO.getNickName();
-        String newEmail = memberDTO.getEmail();
+          Member member = memberRepository.findById(memberId).get();
 
+          String newNickName = memberDTO.getNickName();
+          String newEmail = memberDTO.getEmail();
+
+          updateNickName(member, newNickName);
+          updateEmail(member, newEmail);
+
+          memberRepository.save(member);
+
+          return member;
+      }
+
+    public void updateNickName(Member member, String newNickName){
         if(newNickName != null){
-            boolean duplicateNickName = memberRepository.existsByNickName(newNickName);
-            if(duplicateNickName){
-                throw new CommonException(DUPLICATE_NICKNAME);
-            }
-            member.setNickName(newNickName);
+          if(memberRepository.existsByNickName(newNickName)){
+            throw new CommonException(DUPLICATE_NICKNAME);
+          }
+          member.setNickName(newNickName);
         }
-
-        if(newEmail != null){
-            boolean duplicateEmail = memberRepository.existsByEmail(newEmail);
-            if(duplicateEmail){
-                throw new CommonException(DUPLICATE_EMAIL);
-            }
-            member.setEmail(newEmail);
-        }
-
-        memberRepository.save(member);
-
-        return member;
     }
 
-
-    public Member changeEmail(MemberDTO memberDTO){
-
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails)principal;
-
-        Long memberId = Long.parseLong(userDetails.getUsername());
-
-        Member member = memberRepository.findById(memberId).get();
-
-        String newEmail = memberDTO.getEmail();
+    public void updateEmail(Member member, String newEmail){
+      if(newEmail != null){
+        boolean duplicateEmail = memberRepository.existsByEmail(newEmail);
+        if(duplicateEmail){
+          throw new CommonException(DUPLICATE_EMAIL);
+        }
         member.setEmail(newEmail);
-        memberRepository.save(member);
-
-        return member;
+      }
     }
 
 
-    public Member changePassword(MemberDTO memberDTO){
+    public Member updatePassword(MemberDTO memberDTO){
 
         Long id = JwtUtil.getMemberId();
 
         Member member = memberRepository.findById(id).get();
 
-        String password = memberDTO.getPassword();
-
+        String inputPassword = memberDTO.getPassword();
         String newPassword = memberDTO.getNewPassword();
 
-        String encryptedPassword = SHA256Util.encryptSHA256(password);
-
-        if(member.getPassword().equals(encryptedPassword)){
-            String newEncryptedPassword = SHA256Util.encryptSHA256(newPassword);
-            member.setPassword(newEncryptedPassword);
-            memberRepository.save(member);
-            return member;
-        }else{
-            throw new LoginFailureException(member.getEmail());
+        if(!isValidPassword(member, member.getPassword(), inputPassword, newPassword)){
+           throw new LoginFailureException(member.getEmail());
         }
 
+        return member;
+    }
+
+    public boolean isValidPassword(Member member, String memberPassword, String inputPassword, String newPassword){
+
+      String encryptedInputPassword = SHA256Util.encryptSHA256(inputPassword);
+
+      if(memberPassword.equals(encryptedInputPassword)){
+        String newEncryptedPassword = SHA256Util.encryptSHA256(newPassword);
+        member.setPassword(newEncryptedPassword);
+        memberRepository.save(member);
+        return true;
+      }
+
+      return false;
     }
 
 }
