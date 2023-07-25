@@ -2,6 +2,8 @@ package com.example.interviewPrep.quiz.answer.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.notification.domain.Notification;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,6 +32,11 @@ public class AnswerComment extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     Member member;
+
+    // Notification 엔티티와 @OneToMany 참조 관계를 설정하였습니다
+    // 연관관계의 주인을 Notification.comment로 설정하였습니다
+    @OneToMany(mappedBy = "comment")
+    List<Notification> notifications;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ANSWER_WRITER_ID")

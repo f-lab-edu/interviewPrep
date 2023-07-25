@@ -6,26 +6,30 @@ import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.answer.domain.AnswerComment;
 
 import com.example.interviewPrep.quiz.member.domain.Member;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 @Entity
+@Getter
 public class Notification extends BaseTimeEntity {
 
+    // Notification의 ID를 나타낸다
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="NOTIFICATION_ID")
     private Long id;
 
+    // Notification을 받아야 하는 MEMBER_ID를 나타낸다
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "fk_notification_to_receiver"))
+    @JoinColumn(name = "MEMBER_ID")
+    @JsonBackReference(value="receiver-notification")
     private Member receiver;
 
+    private String receiver_member_id;
+
+    // AnswerComment 엔티티와
+    // @ManyToOne 연관관계를 설정하였습니다
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, foreignKey = @ForeignKey(name = "fk_notification_to_review"))
     private AnswerComment comment;
 
     private String content;
@@ -34,13 +38,17 @@ public class Notification extends BaseTimeEntity {
 
     private boolean isRead;
 
-    @Builder
-    public Notification(Member receiver, AnswerComment comment, String content, String url, boolean isRead) {
+    public Notification(){
+    }
+    public Notification(Member receiver, AnswerComment comment, String content, boolean isRead) {
         this.receiver = receiver;
         this.comment = comment;
         this.content = content;
-        this.url = url;
         this.isRead = isRead;
+    }
+
+    public void createReceiverMemberId(String receiver_member_id){
+        this.receiver_member_id = receiver_member_id;
     }
 
     public void read() {
