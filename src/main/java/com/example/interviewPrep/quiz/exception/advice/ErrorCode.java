@@ -20,7 +20,7 @@ public enum ErrorCode {
 
     MISSING_PARAMETER("missing_parameter", ""),
 
-    NOT_FOUND_LOGIN("not_found_LOGIN", "id, password를 확인해 주세요."),
+    NOT_FOUND_LOGIN("not_found_LOGIN", "email, password를 확인해 주세요."),
     NON_LOGIN("non_login", "로그인 상태가 아닙니다."),
 
     WRONG_ID_TOKEN("wrong_id_token", "로그아웃된 사용자의 토큰입니다."),

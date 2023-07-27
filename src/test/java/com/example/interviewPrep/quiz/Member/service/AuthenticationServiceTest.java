@@ -1,84 +1,99 @@
 package com.example.interviewPrep.quiz.Member.service;
 
+import com.example.interviewPrep.quiz.emitter.repository.EmitterRepository;
+import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.dto.LoginRequestDTO;
-import com.example.interviewPrep.quiz.member.exception.LoginFailureException;
+import com.example.interviewPrep.quiz.member.dto.LoginResponseDTO;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
-import com.example.interviewPrep.quiz.member.repository.TokenRepository;
 import com.example.interviewPrep.quiz.member.service.AuthenticationService;
+import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
+import com.example.interviewPrep.quiz.utils.SHA256Util;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@Transactional
 class AuthenticationServiceTest {
 
-    private static final String email = "hello@gmail.com";
-
-    private static final String wrongEmail = "hello2@gmail.com";
-    private static final String password = "1234";
-
-    private static final String wrongPassword = "4321";
-    private static final String SECRET = "12345678123456781234567812345678";
-    private AuthenticationService authenticationService;
-
-    @Mock
+    private AuthenticationService authService;
+    private JwtUtil jwtUtil;
     private MemberRepository memberRepository;
-
-    @Mock
-    private TokenRepository tokenRepository;
-
-    private LoginRequestDTO memberDTO;
-
+    private EmitterRepository emitterRepository;
+    private RedisDao redisDao;
+    private HttpServletResponse response;
     @BeforeEach
     void setUp(){
-        JwtUtil jwtUtil = new JwtUtil(SECRET);
-        authenticationService = new AuthenticationService(jwtUtil, memberRepository, tokenRepository);
 
+        jwtUtil = mock(JwtUtil.class);
+        memberRepository = mock(MemberRepository.class);
+        emitterRepository = mock(EmitterRepository.class);
+        redisDao = mock(RedisDao.class);
 
-        memberDTO = LoginRequestDTO.builder()
-                .email(email)
-                .password(password)
-                .build();
+        response = mock(HttpServletResponse.class);
 
-        Member member = Member.builder()
-                        .password(password)
-                        .build();
-
-        given(memberRepository.findByEmail(email)).willReturn(Optional.of(member));
+        authService = new AuthenticationService(jwtUtil, memberRepository, emitterRepository, redisDao);
     }
 
 
     @Test
-    void loginWithWrongEmail(){
+    @DisplayName("login success")
+    void loginSuccess(){
 
-        assertThatThrownBy(
-                () -> authenticationService.login(memberDTO)
-        ).isInstanceOf(LoginFailureException.class);
+        String email = "hello@gmail.com";
+        String password = "1234";
 
-        verify(memberRepository).findByEmail(email);
+        Member member = new Member(email, SHA256Util.encryptSHA256(password), "hello");
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, password);
+        LoginResponseDTO loginResponseDTO = authService.login(loginRequestDTO, response);
+
+        assertNotNull(loginResponseDTO, "Expected non-null LoginResponseDTO");
+
+    }
+
+
+    @Test
+    @DisplayName("login failure by wrong email")
+    void loginFailureByWrongEmail(){
+
+        String rightEmail = "hello@gmail.com";
+        String wrongEmail = "hello2@gmail.com";
+        String password = "1234";
+
+        Member member = new Member(rightEmail, SHA256Util.encryptSHA256(password), "hello");
+        when(memberRepository.findByEmail(rightEmail)).thenReturn(Optional.of(member));
+
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(wrongEmail, password);
+
+        assertThrows(CommonException.class, () -> authService.login(loginRequestDTO, response));
+
     }
 
     @Test
-    void loginWithWrongPassword(){
+    @DisplayName("login failure by wrong password")
+    void loginFailureByWrongPassword(){
 
-        assertThatThrownBy(
-                () -> authenticationService.login(memberDTO)
-        ).isInstanceOf(LoginFailureException.class);
+        String email = "hello@gmail.com";
+        String wrongPassword = "5678";
+        String rightPassword = "1234";
 
-        verify(memberRepository).findByEmail(email);
+        Member member = new Member(email, SHA256Util.encryptSHA256(rightPassword), "hello");
+        when(memberRepository.findByEmail(email)).thenReturn(Optional.of(member));
+
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO(email, wrongPassword);
+
+        assertThrows(CommonException.class, () -> authService.login(loginRequestDTO, response));
+
     }
+
+
 }
