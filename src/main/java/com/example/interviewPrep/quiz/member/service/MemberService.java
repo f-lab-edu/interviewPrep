@@ -10,9 +10,7 @@ import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.AES256;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
@@ -22,14 +20,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RedisDao redisDao;
 
-    @Autowired
     public MemberService(MemberRepository memberRepository, RedisDao redisDao){
       this.memberRepository = memberRepository;
       this.redisDao = redisDao;
     }
 
 
-    public Member createMember(SignUpRequestDTO memberDTO) throws Exception {
+    public Member createMember(SignUpRequestDTO memberDTO){
 
             AES256 aes256 = new AES256();
             // String code = memberDTO.getCode();
@@ -42,31 +39,41 @@ public class MemberService {
                 throw new CommonException(DUPLICATE_EMAIL);
             }
 
-            Member member = new Member(email, password, memberDTO.getNickName());
+            Member member = Member.builder()
+                            .email(email)
+                            .password(password)
+                            .nickName(memberDTO.getNickName())
+                            .build();
+
             memberRepository.save(member);
             return member;
     }
 
     public boolean isDuplicatedEmail(String email){
-        return memberRepository.findByEmail(email).isPresent();
+        return memberRepository.existsByEmail(email);
     }
+
+    public boolean isDuplicatedNickName(String nickName){
+        return memberRepository.existsByNickName(nickName);
+    }
+
 
 
     public Member getUserInfo(){
-            Long id = JwtUtil.getMemberId();
-            Member member = memberRepository.findById(id).orElseThrow();
-            member.setPassword(null);
-            return member;
+        Long id = JwtUtil.getMemberId();
+        Member member = memberRepository.findById(id).orElseThrow();
+        member.setPassword(null);
+        return member;
     }
 
-      public Member updateNickNameAndEmail(MemberDTO memberDTO){
+      public Member updateNickNameAndEmail(MemberDTO memberDTO, Authentication authentication){
 
-          Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-          UserDetails userDetails = (UserDetails)principal;
+          // Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+          // UserDetails userDetails = (UserDetails)principal;
+          String memberId = authentication.getName();
+          // Long memberId = Long.parseLong(userDetails.getUsername());
 
-          Long memberId = Long.parseLong(userDetails.getUsername());
-
-          Member member = memberRepository.findById(memberId).get();
+          Member member = memberRepository.findById(Long.parseLong(memberId)).get();
 
           String newNickName = memberDTO.getNickName();
           String newEmail = memberDTO.getEmail();
@@ -80,22 +87,17 @@ public class MemberService {
       }
 
     public void updateNickName(Member member, String newNickName){
-        if(newNickName != null){
-          if(memberRepository.existsByNickName(newNickName)){
-            throw new CommonException(DUPLICATE_NICKNAME);
-          }
-          member.setNickName(newNickName);
+        if(isDuplicatedNickName(newNickName)){
+          throw new CommonException(DUPLICATE_EMAIL);
         }
+        member.setNickName(newNickName);
     }
 
     public void updateEmail(Member member, String newEmail){
-      if(newEmail != null){
-        boolean duplicateEmail = memberRepository.existsByEmail(newEmail);
-        if(duplicateEmail){
-          throw new CommonException(DUPLICATE_EMAIL);
-        }
-        member.setEmail(newEmail);
+      if(isDuplicatedEmail(newEmail)){
+        throw new CommonException(DUPLICATE_EMAIL);
       }
+      member.setEmail(newEmail);
     }
 
 
@@ -104,24 +106,23 @@ public class MemberService {
         Long id = JwtUtil.getMemberId();
 
         Member member = memberRepository.findById(id).get();
+        String password = member.getPassword();
 
         String inputPassword = memberDTO.getPassword();
+        String hashedInputPassword = SHA256Util.encryptSHA256(inputPassword);
         String newPassword = memberDTO.getNewPassword();
+        String hashedNewPassword = SHA256Util.encryptSHA256(newPassword);
 
-        if(!isValidPassword(member, member.getPassword(), inputPassword, newPassword)){
+        if(!isValidPassword(member, password, hashedInputPassword, hashedNewPassword)){
            throw new LoginFailureException(member.getEmail());
         }
 
         return member;
     }
 
-    public boolean isValidPassword(Member member, String memberPassword, String inputPassword, String newPassword){
-
-      String encryptedInputPassword = SHA256Util.encryptSHA256(inputPassword);
-
-      if(memberPassword.equals(encryptedInputPassword)){
-        String newEncryptedPassword = SHA256Util.encryptSHA256(newPassword);
-        member.setPassword(newEncryptedPassword);
+    public boolean isValidPassword(Member member, String password, String hashedInputPassword, String hashedNewPassword){
+      if(password.equals(hashedInputPassword)){
+        member.setPassword(hashedNewPassword);
         memberRepository.save(member);
         return true;
       }

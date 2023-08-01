@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class MemberTest {
 
     @Test
-    @DisplayName("member create")
+    @DisplayName("멤버 생성")
     void createMember(){
 
         String email = "hello@gmail.com";
@@ -22,8 +22,21 @@ class MemberTest {
         String picture = "test.jpg";
         Role role = Role.USER;
 
-        Member member1 = new Member(email, password, nickName);
-        Member member2 = new Member(email, password, type, nickName, name, picture, role);
+        Member member1 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .nickName(nickName)
+                        .build();
+
+        Member member2 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .type(type)
+                        .nickName(nickName)
+                        .name(name)
+                        .picture(picture)
+                        .role(role)
+                        .build();
 
         assertEquals(email, member1.getEmail());
         assertEquals(password, member1.getPassword());
@@ -41,17 +54,22 @@ class MemberTest {
 
 
     @Test
-    @DisplayName("member update")
+    @DisplayName("멤버 업데이트")
     void updateMember(){
 
         String newName = "new name";
-        String newPicture = "nest_test.jpg";
+        String newPicture = "new_test.jpg";
 
         String email = "hello@gmail.com";
         String password = "1234";
         String nickName = "tester";
 
-        Member member1 = new Member(email, password, nickName);
+        Member member1 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .nickName(nickName)
+                        .build();
+
         member1.update(newName, newPicture);
 
         assertEquals(newName, member1.getName());
@@ -60,7 +78,7 @@ class MemberTest {
     }
 
     @Test
-    @DisplayName("get role key")
+    @DisplayName("Role key 가져오기")
     void getRoleKey() {
 
         String email = "hello@gmail.com";
@@ -71,7 +89,16 @@ class MemberTest {
         String picture = "test.jpg";
         Role role = Role.USER;
 
-        Member member2 = new Member(email, password, type, nickName, name, picture, role);
+        Member member2 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .type(type)
+                        .nickName(nickName)
+                        .name(name)
+                        .picture(picture)
+                        .role(role)
+                        .build();
+
         assertEquals(Role.USER.getKey(), member2.getRole().getKey());
     }
 

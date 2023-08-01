@@ -10,21 +10,19 @@ public class MemberDTO {
 
     private Long id;
 
-    @NotNull
     private String email;
 
-    @NotNull
     private String password;
-    @NotNull
+
     private String nickName;
-    @NotNull
+
     private String newPassword;
-    @NotNull
+
     private String type;
 
     public MemberDTO(Long id, String email, String password, String nickName, String newPassword, String type) {
         if (email == null || password == null || nickName == null || newPassword == null || type == null) {
-            throw new NullPointerException("Required fields cannot be null");
+            throw new NullPointerException();
         }
         this.id = id;
         this.email = email;
@@ -33,7 +31,6 @@ public class MemberDTO {
         this.newPassword = newPassword;
         this.type = type;
     }
-
 
 
 }
