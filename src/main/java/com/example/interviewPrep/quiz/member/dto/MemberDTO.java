@@ -5,7 +5,6 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Builder
 public class MemberDTO {
 
     private Long id;
@@ -20,6 +19,7 @@ public class MemberDTO {
 
     private String type;
 
+    @Builder
     public MemberDTO(Long id, String email, String password, String nickName, String newPassword, String type) {
         if (email == null || password == null || nickName == null || newPassword == null || type == null) {
             throw new NullPointerException();
@@ -31,6 +31,8 @@ public class MemberDTO {
         this.newPassword = newPassword;
         this.type = type;
     }
+
+
 
 
 }
