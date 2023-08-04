@@ -1,33 +1,20 @@
 package com.example.interviewPrep.quiz.member.domain;
 
-import com.example.interviewPrep.quiz.answer.domain.Answer;
-import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
-import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@Setter
 @Entity
 @Getter
 @Builder
-@RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(indexes = @Index(name= "i_member", columnList = "email"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Member extends BaseTimeEntity {
-
-    public Member(String email, String password, String nickName){
-        this.email = email;
-        this.password = password;
-        this.nickName = nickName;
-        this.role = Role.USER;
-    }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="MEMBER_ID")
@@ -48,6 +35,29 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
+    public void setEmail(String email){
+        if(email == null){
+            throw new NullPointerException("email이 없습니다");
+        }
+        this.email = email;
+    }
+    public void setPassword(String password){
+        this.password = password;
+    }
+    public void setType(String type){
+        if(type == null){
+            throw new NullPointerException("type이 없습니다");
+        }
+        this.type = type;
+    }
+    public void setNickName(String nickName){
+        if(nickName == null){
+            throw new NullPointerException("nickName이 없습니다");
+        }
+        this.nickName = nickName;
+    }
 
     public Member update(String name, String picture){
         this.name = name;
