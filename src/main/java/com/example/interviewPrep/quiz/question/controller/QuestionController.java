@@ -19,7 +19,7 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @PostMapping
+    @PostMapping("/api/v1/question")
     public ResultResponse<?> create(@RequestBody @Valid QuestionRequest questionRequest){
         return ResultResponse.success(questionService.createQuestion(questionRequest));
     }
