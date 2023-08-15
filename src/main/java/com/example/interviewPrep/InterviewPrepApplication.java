@@ -7,7 +7,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableCaching
-@EnableJpaAuditing
 @EnableAspectJAutoProxy
 @SpringBootApplication
 public class InterviewPrepApplication {
