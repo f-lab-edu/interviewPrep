@@ -16,6 +16,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -23,32 +24,46 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ANSWER_ID")
     private Long id;
+
     @Lob
     private String content;
 
     @ManyToOne(fetch = LAZY)
-    @JsonBackReference(value="question-answer")
     @JoinColumn(name = "QUESTION_ID")
     Question question;
 
     @ManyToOne(fetch = LAZY)
-    @JsonBackReference(value="member-answer")
     @JoinColumn(name = "MEMBER_ID")
     Member member;
 
     private int commentCnt;
 
     private int heartCnt;
+
     @Version
     private Long version;
+
+    public Answer(Long id, String content, Question question, Member member, int commentCnt, int heartCnt, Long version){
+
+        Objects.requireNonNull(id, "id가 null입니다.");
+        Objects.requireNonNull(question, "question이 null입니다.");
+        Objects.requireNonNull(member, "member이 null입니다.");
+
+        this.id = id;
+        this.content = content;
+        this.question = question;
+        this.member = member;
+        this.commentCnt = commentCnt;
+        this.heartCnt = heartCnt;
+        this.version = version;
+    }
+
 
     public void change(String content){
         this.content = content;
@@ -65,10 +80,12 @@ public class Answer extends BaseTimeEntity {
         return --this.heartCnt;
     }
 
-    public int commentIncrease() { return ++this.commentCnt; }
+    public int commentIncrease() {
+        return ++this.commentCnt;
+    }
 
-    public int commentDecrease() {return --this.commentCnt;}
+    public int commentDecrease() {
+        return --this.commentCnt;
+    }
 
-    // @OneToMany(mappedBy = "answer")
-    // List<ExamAnswer> exams = new ArrayList<>();
 }
