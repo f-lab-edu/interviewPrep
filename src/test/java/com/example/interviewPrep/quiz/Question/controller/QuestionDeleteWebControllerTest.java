@@ -74,7 +74,7 @@ public class QuestionDeleteWebControllerTest {
     @Test
     @DisplayName("유효한 Question 삭제")
     void deleteQuestion() throws Exception{
-        Long id = 1L;
+        long id = 1L;
         mockMvc.perform(delete("/question/"+id))
                 .andDo(print())
                 .andExpect(status().isOk());

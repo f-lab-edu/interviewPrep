@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -98,7 +97,7 @@ public class QuestionReadWebControllerTest {
     @DisplayName("Question 검색")
     void getQuestion() throws Exception{
 
-        Long id = 1L;
+        long id = 1L;
         mockMvc.perform(get("/api/v1/question/single/" + id)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))

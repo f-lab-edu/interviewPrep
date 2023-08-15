@@ -22,6 +22,7 @@ public class QuestionRequest {
         this.id = id;
         this.title = title;
         this.type = type;
+        this.status = status;
     }
 
 }
