@@ -27,4 +27,10 @@ public class Interview extends BaseTimeEntity {
     private Member member;
 
 
+    public Interview(Long id, Member member){
+        this.id = id;
+        this.member = member;
+    }
+
+
 }

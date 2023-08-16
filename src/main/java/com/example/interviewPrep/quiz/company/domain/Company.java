@@ -25,9 +25,6 @@ public class Company extends BaseTimeEntity {
     private Long id;
     private String name;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "QUESTION_ID")
-    Question question;
     public Company(Long id, String name){
 
         Objects.requireNonNull(id, "id가 null입니다.");
