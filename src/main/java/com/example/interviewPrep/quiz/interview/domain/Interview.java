@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
@@ -28,6 +30,10 @@ public class Interview extends BaseTimeEntity {
 
 
     public Interview(Long id, Member member){
+
+        Objects.requireNonNull(id, "id가 null입니다.");
+        Objects.requireNonNull(member, "member가 null입니다.");
+
         this.id = id;
         this.member = member;
     }
