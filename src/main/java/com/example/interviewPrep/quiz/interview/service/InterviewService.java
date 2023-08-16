@@ -2,7 +2,6 @@ package com.example.interviewPrep.quiz.interview.service;
 
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
-import com.example.interviewPrep.quiz.dto.CreateDto;
 import com.example.interviewPrep.quiz.interview.domain.Interview;
 import com.example.interviewPrep.quiz.interview.dto.request.InterviewRequest;
 import com.example.interviewPrep.quiz.interview.dto.response.InterviewResponse;
@@ -34,8 +33,7 @@ public class InterviewService {
 
         Long memberId = JwtUtil.getMemberId();
 
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        Member member = findMember.get();
+        Member member = memberRepository.findById(memberId).orElse(null);
 
         List<Answer> answers = interviewRequest.getAnswers();
 

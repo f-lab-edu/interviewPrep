@@ -1,7 +1,5 @@
 package com.example.interviewPrep.quiz.interview.controller;
 
-
-import com.example.interviewPrep.quiz.answer.dto.AnswerDTO;
 import com.example.interviewPrep.quiz.interview.dto.request.InterviewRequest;
 import com.example.interviewPrep.quiz.interview.service.InterviewService;
 import com.example.interviewPrep.quiz.response.ResultResponse;
