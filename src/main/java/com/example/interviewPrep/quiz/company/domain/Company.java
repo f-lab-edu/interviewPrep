@@ -2,15 +2,12 @@ package com.example.interviewPrep.quiz.company.domain;
 
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
-import com.example.interviewPrep.quiz.question.domain.Question;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Objects;
-
-import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
