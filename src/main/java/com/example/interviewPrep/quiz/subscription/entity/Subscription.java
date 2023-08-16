@@ -46,6 +46,7 @@ public class Subscription extends BaseTimeEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalFee = totalFee;
+        this.isValid = isValid;
     }
 
     public void setIsValid(boolean isValid){
