@@ -76,7 +76,7 @@ public class JwtUtil {
             throw new CommonException(INVALID_TOKEN);
         }
         // 현재 시간
-        Long now = new Date().getTime();
+        long now = new Date().getTime();
         return (expiration.getTime() - now);
     }
 
