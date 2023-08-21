@@ -3,7 +3,6 @@ package com.example.interviewPrep.quiz.question.controller;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
-import com.example.interviewPrep.quiz.response.ResultResponse;
 import com.example.interviewPrep.quiz.question.service.QuestionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

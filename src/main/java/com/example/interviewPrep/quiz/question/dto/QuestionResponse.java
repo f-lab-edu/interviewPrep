@@ -9,10 +9,10 @@ import java.util.Objects;
 @Getter
 public class QuestionResponse {
 
-    private  Long id;
-    private  String title;
-    private  String type;
-    private boolean status;
+    private final Long id;
+    private final String title;
+    private final String type;
+    private final boolean status;
 
     @Builder
     public QuestionResponse(Long id, String title, String type, boolean status){
