@@ -14,27 +14,27 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 public class Subscription extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="SUBSCRIPTION_ID")
-    Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SUBSCRIPTION_ID")
+    private Long id;
 
-    @ManyToOne(fetch=LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
-    Member member;
+    private Member member;
 
-    LocalDate startDate;
+    private LocalDate startDate;
 
-    LocalDate endDate;
+    private LocalDate endDate;
 
-    int totalFee;
+    private int totalFee;
 
-    boolean isValid;
+    private boolean isValid;
 
+    @Builder
     public Subscription(Long id, Member member, LocalDate startDate, LocalDate endDate, int totalFee, boolean isValid) {
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(member, "member가 null입니다.");
@@ -49,7 +49,17 @@ public class Subscription extends BaseTimeEntity {
         this.isValid = isValid;
     }
 
-    public void setIsValid(boolean isValid){
+    public static Subscription createSubscriptionEntity(Member member, LocalDate startDate, LocalDate endDate, int totalFee, boolean isValid) {
+        return Subscription.builder()
+                .member(member)
+                .startDate(startDate)
+                .endDate(endDate)
+                .totalFee(totalFee)
+                .isValid(isValid)
+                .build();
+    }
+
+    public void cancel(boolean isValid) {
         this.isValid = isValid;
     }
 }

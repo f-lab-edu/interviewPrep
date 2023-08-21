@@ -4,12 +4,18 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class SubscriptionResponse {
 
     private final int monthDuration;
 
-    public SubscriptionResponse(int monthDuration){
+    @Builder
+    public SubscriptionResponse(int monthDuration) {
         this.monthDuration = monthDuration;
+    }
+
+    public static SubscriptionResponse createSubscriptionResponse(int monthDuration) {
+        return SubscriptionResponse.builder()
+                .monthDuration(monthDuration)
+                .build();
     }
 }

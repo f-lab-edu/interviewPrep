@@ -5,14 +5,18 @@ import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.subscription.dto.request.SubscriptionRequest;
 import com.example.interviewPrep.quiz.subscription.dto.response.SubscriptionResponse;
+import com.example.interviewPrep.quiz.subscription.entity.Subscription;
 import com.example.interviewPrep.quiz.subscription.repository.SubscriptionRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
+import com.example.interviewPrep.quiz.utils.MonthDuration;
 import org.springframework.stereotype.Service;
-import com.example.interviewPrep.quiz.subscription.entity.Subscription;
 
 import java.time.LocalDate;
 
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_SUBSCRIPTION;
+import static com.example.interviewPrep.quiz.subscription.dto.response.SubscriptionResponse.createSubscriptionResponse;
+import static com.example.interviewPrep.quiz.subscription.entity.Subscription.createSubscriptionEntity;
 
 @Service
 public class SubscriptionService {
@@ -20,26 +24,16 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final MemberRepository memberRepository;
 
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, MemberRepository memberRepository){
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, MemberRepository memberRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.memberRepository = memberRepository;
     }
 
 
-    public SubscriptionResponse createSubscription(SubscriptionRequest subscriptionRequest){
-
-        String type = subscriptionRequest.getType();
-
-        if(!type.equals("create")){
-            throw new CommonException(WRONG_SUBSCRIPTION_TYPE);
-        }
+    public SubscriptionResponse createSubscription(SubscriptionRequest subscriptionRequest) {
 
         Long memberId = JwtUtil.getMemberId();
-        Member member = memberRepository.findById(memberId).orElse(null);
-
-        if(member == null){
-            throw new CommonException(NOT_FOUND_MEMBER);
-        }
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
         int monthDuration = subscriptionRequest.getMonthDuration();
 
@@ -47,61 +41,42 @@ public class SubscriptionService {
 
         subscriptionRepository.save(subscription);
 
-        return SubscriptionResponse.builder()
-                                    .monthDuration(monthDuration)
-                                    .build();
+        return createSubscriptionResponse(monthDuration);
     }
 
 
-    public Subscription makeSubscription(Member member, int monthDuration){
+    public Subscription makeSubscription(Member member, int monthDuration) {
 
         LocalDate startDate = LocalDate.now();
-        int durationDays = monthDuration*30;
+        int durationDays = monthDuration * 30;
         LocalDate endDate = startDate.plusDays(durationDays);
+
+        MonthDuration months = MonthDuration.valueOf(Integer.toString(monthDuration));
         int totalFee = 0;
 
-        if(monthDuration == 1){
-            totalFee = monthDuration*9900;
-        }else if(monthDuration == 3){
-            totalFee = monthDuration*8900;
-        }else if(monthDuration == 6){
-            totalFee = monthDuration*7900;
-        }else if(monthDuration == 12){
-            totalFee = monthDuration*6900;
+        if (months.equals(MonthDuration.ONE)) {
+            totalFee = monthDuration * 9900;
+        } else if (months.equals(MonthDuration.THREE)) {
+            totalFee = monthDuration * 8900;
+        } else if (months.equals(MonthDuration.SIX)) {
+            totalFee = monthDuration * 7900;
+        } else if (months.equals(MonthDuration.TWELVE)) {
+            totalFee = monthDuration * 6900;
         }
 
-        return Subscription.builder()
-                            .member(member)
-                            .startDate(startDate)
-                            .endDate(endDate)
-                            .totalFee(totalFee)
-                            .isValid(true)
-                            .build();
+        return createSubscriptionEntity(member, startDate, endDate, totalFee, true);
     }
 
-    public SubscriptionResponse stopSubscription(SubscriptionRequest subscriptionRequest){
-
-        String type = subscriptionRequest.getType();
-        int monthDuration = subscriptionRequest.getMonthDuration();
-
-        if(!type.equals("stop")){
-            throw new CommonException(WRONG_SUBSCRIPTION_TYPE);
-        }
+    public SubscriptionResponse stopSubscription() {
 
         Long memberId = JwtUtil.getMemberId();
-        Subscription subscription = subscriptionRepository.findByMemberId(memberId, true).orElse(null);
+        Subscription subscription = subscriptionRepository.findByMemberId(memberId, true).orElseThrow(() -> new CommonException(NOT_FOUND_SUBSCRIPTION));
 
-        if(subscription == null){
-            throw new CommonException(NOT_FOUND_SUBSCRIPTION);
-        }
-
-        subscription.setIsValid(false);
+        subscription.cancel(false);
 
         subscriptionRepository.save(subscription);
 
-        return SubscriptionResponse.builder()
-                .monthDuration(monthDuration)
-                .build();
+        return createSubscriptionResponse(0);
     }
 
 
