@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.answer.service;
 
-
 import com.example.interviewPrep.quiz.answer.dto.request.AnswerRequest;
 import com.example.interviewPrep.quiz.answer.dto.response.AnswerResponse;
 import com.example.interviewPrep.quiz.answer.dto.response.SolutionResponse;
@@ -13,6 +12,7 @@ import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
+import com.example.interviewPrep.quiz.utils.Type;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.interviewPrep.quiz.answer.domain.Answer.createAnswerEntity;
+import static com.example.interviewPrep.quiz.answer.dto.response.AnswerResponse.createAnswerResponse;
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTime;
+
 
 @Service
 public class AnswerService {
@@ -50,19 +53,11 @@ public class AnswerService {
         Member answerMember = member.get();
         Question answerQuestion = question.get();
 
-        Answer answer =  Answer.builder()
-                        .member(answerMember)
-                        .question(answerQuestion)
-                        .content(answerRequest.getContent())
-                        .build();
+        Answer answer =  createAnswerEntity(answerMember, answerQuestion, answerRequest.getContent());
 
         answerRepository.save(answer);
 
-        return AnswerResponse.builder()
-                             .id(answer.getId())
-                             .createdDate(customLocalDateTime(answer.getCreatedDate()))
-                             .name(answer.getMember().getName())
-                             .build();
+        return createAnswerResponse(answer);
     }
 
     public AnswerResponse readAnswer(Long id){
@@ -75,11 +70,7 @@ public class AnswerService {
 
         Answer answerResponse = answer.get();
 
-        return AnswerResponse.builder()
-                             .id(answerResponse.getId())
-                             .content(answerResponse.getContent())
-                             .questionId(answerResponse.getQuestion().getId())
-                             .build();
+        return createAnswerResponse(answerResponse);
     }
 
 
@@ -103,11 +94,13 @@ public class AnswerService {
         Long memberId = JwtUtil.getMemberId();
         Page<Answer> answers;
 
-        if(!(type.equals("my") || type.equals("others"))){
+        Type inputType = Type.valueOf(type.toUpperCase());
+
+        if(!(inputType.equals(Type.MY) || inputType.equals(Type.OTHERS))){
             throw new CommonException(NOT_FOUND_TYPE);
         }
 
-        if(type.equals("my")) {
+        if(inputType.equals(Type.MY)) {
             answers = answerRepository.findMySolution(id, memberId, pageable);
             if(answers.getContent().isEmpty()){
                 throw new CommonException(NOT_FOUND_ANSWER);
@@ -147,10 +140,6 @@ public class AnswerService {
 
     public void checkMySolution(Long id){
         Long memberId = JwtUtil.getMemberId();
-
-        if(memberId==0L) {
-            throw new CommonException(NOT_FOUND_ID);
-        }
 
         List<Answer> answers = answerRepository.findAllByQuestionIdAndMemberId(id, memberId);
 

@@ -17,8 +17,8 @@ import java.util.List;
 @Table(indexes = @Index(name= "i_question", columnList = "title"))
 public class Question extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "QUESTION_ID", insertable=false, updatable=false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String type;

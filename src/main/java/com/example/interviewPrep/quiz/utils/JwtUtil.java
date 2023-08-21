@@ -116,8 +116,7 @@ public class JwtUtil {
             // System.out.println("getUsername의 결과는?" + userDetails.getUsername());
             return Long.parseLong(memberId);
         } catch (Exception e) {
-            System.out.println("Exception 발생" + e);
-            return 0L;
+            throw new CommonException(NOT_FOUND_ID);
         }
     }
 }

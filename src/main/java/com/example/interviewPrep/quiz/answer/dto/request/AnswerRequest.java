@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.util.Objects;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class AnswerRequest {
 
@@ -17,6 +16,7 @@ public class AnswerRequest {
 
     private String content;
 
+    @Builder
     public AnswerRequest(Long id, Long questionId, String content){
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(questionId, "questionId가 null입니다.");
