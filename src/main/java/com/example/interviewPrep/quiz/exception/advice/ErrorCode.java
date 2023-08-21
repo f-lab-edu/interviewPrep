@@ -7,7 +7,7 @@ public enum ErrorCode {
 
 
     NOT_FOUND_ANSWER("not_found_answer", "answer를 찾을 수 없습니다."),
-    NOT_FOUND_QUESTION("not_found_question", "question을 찾을 수 없습니다."),
+    NOT_FOUND_QUESTION("not_found_question", "Question with ID %s not found."),
     NOT_FOUND_MEMBER("not_found_member", "member를 찾을 수 없습니다."),
     NOT_FOUND_COMMENT("not_found_comment", "comment를 찾을 수 없습니다."),
     NOT_FOUND_EXAM("not_found_exam", "해당 모의고사를 찾을 수 없습니다."),
@@ -50,5 +50,9 @@ public enum ErrorCode {
 
     private void setMessage(String msg) {
         this.message = msg;
+    }
+
+    public String getMessage(Object... args) {
+        return String.format(message, args);
     }
 }

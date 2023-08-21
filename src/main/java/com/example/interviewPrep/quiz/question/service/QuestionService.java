@@ -2,6 +2,7 @@ package com.example.interviewPrep.quiz.question.service;
 
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
@@ -13,10 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_QUESTION;
+import static com.example.interviewPrep.quiz.question.dto.QuestionRequest.createQuestionByQuestionRequest;
+import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.createQuestionResponse;
 
 @Slf4j
 @Service
@@ -32,27 +37,16 @@ public class QuestionService {
 
 
     public Question createQuestion(QuestionRequest questionRequest){
-        Question question = Question.builder()
-                .id(questionRequest.getId())
-                .title(questionRequest.getTitle())
-                .type(questionRequest.getType())
 
-                .build();
-
+        Question question = createQuestionByQuestionRequest(questionRequest);
         questionRepository.save(question);
-
         return question;
     }
 
     //@Cacheable(value = "question", key="#id")
     public QuestionResponse getQuestion(Long id) {
         Question question = findQuestion(id);
-
-        return QuestionResponse.builder()
-                .id(question.getId())
-                .title(question.getTitle())
-                .type(question.getType())
-                .build();
+        return createQuestionResponse(question);
     }
 
 
@@ -69,7 +63,7 @@ public class QuestionService {
     }
 
     public Question findQuestion(Long id){
-        return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION));
+        return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION, ErrorCode.NOT_FOUND_QUESTION.getMessage(id)));
     }
 
 
@@ -102,10 +96,10 @@ public class QuestionService {
 
     public Page<QuestionResponse> makeQuestionResponses(Long memberId, Page<Question> questions){
 
-        List<Long> answers;
+        Set<Long> answers;
 
         if(memberId == 0L){
-            answers = new ArrayList<>();
+            answers = new HashSet<>();
         }else{
             List<Long> questionIds = questions.getContent().stream().map(Question::getId).collect(Collectors.toList());
             answers = answerRepository.findMyAnswer(questionIds, memberId);
