@@ -2,6 +2,7 @@ package com.example.interviewPrep.quiz.interview.service;
 
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
+import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.interview.domain.Interview;
 import com.example.interviewPrep.quiz.interview.dto.request.InterviewRequest;
 import com.example.interviewPrep.quiz.interview.dto.response.InterviewResponse;
@@ -12,9 +13,10 @@ import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTime;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
+import static com.example.interviewPrep.quiz.interview.domain.Interview.createInterviewEntity;
+import static com.example.interviewPrep.quiz.interview.dto.response.InterviewResponse.createInterviewResponse;
 
 @Service
 public class InterviewService {
@@ -23,7 +25,7 @@ public class InterviewService {
     private final InterviewRepository interviewRepository;
     private final MemberRepository memberRepository;
 
-    public InterviewService(InterviewRepository interviewRepository, MemberRepository memberRepository){
+    public InterviewService(InterviewRepository interviewRepository, MemberRepository memberRepository) {
         this.interviewRepository = interviewRepository;
         this.memberRepository = memberRepository;
     }
@@ -35,25 +37,17 @@ public class InterviewService {
 
         Member member = memberRepository.findById(memberId).orElse(null);
 
+        if (member == null) {
+            throw new CommonException(NOT_FOUND_MEMBER);
+        }
+
         List<Answer> answers = interviewRequest.getAnswers();
 
-        Interview interview = Interview.builder()
-                                       .member(member)
-                                       .answers(answers)
-                                       .build();
-
+        Interview interview = createInterviewEntity(member, answers);
         interviewRepository.save(interview);
 
-        return InterviewResponse.builder()
-                .id(interview.getId())
-                .createdDate(customLocalDateTime(interview.getCreatedDate()))
-                .build();
-
+        return createInterviewResponse(interview);
     }
-
-
-
-
 
 
 }

@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +16,6 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 public class Interview extends BaseTimeEntity {
 
@@ -30,10 +28,11 @@ public class Interview extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToMany(mappedBy="interview")
+    @OneToMany(mappedBy = "interview")
     private List<Answer> answers;
 
-    public Interview(Long id, Member member, List<Answer> answers){
+    @Builder
+    public Interview(Long id, Member member, List<Answer> answers) {
 
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(member, "member가 null입니다.");
@@ -44,5 +43,10 @@ public class Interview extends BaseTimeEntity {
         this.answers = answers;
     }
 
-
+    public static Interview createInterviewEntity(Member member, List<Answer> answers) {
+        return Interview.builder()
+                .member(member)
+                .answers(answers)
+                .build();
+    }
 }

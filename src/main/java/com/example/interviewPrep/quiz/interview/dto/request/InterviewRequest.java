@@ -7,5 +7,5 @@ import java.util.List;
 
 @Getter
 public class InterviewRequest {
-    List<Answer> answers;
+    private List<Answer> answers;
 }
