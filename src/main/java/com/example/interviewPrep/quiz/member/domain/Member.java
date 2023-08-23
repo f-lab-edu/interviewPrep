@@ -2,25 +2,23 @@ package com.example.interviewPrep.quiz.member.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
-import com.fasterxml.jackson.annotation.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(indexes = @Index(name= "i_member", columnList = "email"))
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@Table(indexes = @Index(name = "i_member", columnList = "email"))
 public class Member extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="MEMBER_ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String email;
 
     private String password;
@@ -30,48 +28,70 @@ public class Member extends BaseTimeEntity {
     private String nickName;
 
     private String name;
-    @Column
+
     private String picture;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean isPaid;
 
-    public void setEmail(String email){
-        if(email == null){
-            throw new NullPointerException("email이 없습니다");
-        }
+    @Builder
+    public Member(Long id, String email, String password, String type, String nickName, String name, String picture, Role role, boolean isPaid) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.type = type;
+        this.nickName = nickName;
+        this.name = name;
+        this.picture = picture;
+        this.role = role;
+        this.isPaid = isPaid;
+    }
+
+    public static Member createMemberEntity(String email, String password, String nickName) {
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .nickName(nickName)
+                .isPaid(false)
+                .build();
+    }
+
+    public void setEmail(String email) {
+        Objects.requireNonNull(email, "email이 없습니다.");
         this.email = email;
     }
-    public void setPassword(String password){
+
+    public void setPassword(String password) {
         this.password = password;
     }
-    public void setType(String type){
-        if(type == null){
-            throw new NullPointerException("type이 없습니다");
-        }
+
+    public void setType(String type) {
+        Objects.requireNonNull(type, "type이 없습니다.");
         this.type = type;
     }
-    public void setNickName(String nickName){
-        if(nickName == null){
-            throw new NullPointerException("nickName이 없습니다");
-        }
+
+    public void setNickName(String nickName) {
+        Objects.requireNonNull(nickName, "nickName이 없습니다.");
         this.nickName = nickName;
     }
 
-    public Member update(String name, String picture){
+    public void setIsPaid(boolean isPaid) {
+        this.isPaid = isPaid;
+    }
+
+    public Member update(String name, String picture) {
         this.name = name;
         this.picture = picture;
-
         return this;
     }
 
-    public void createPwd(String password){
+    public void createPwd(String password) {
         this.password = password;
     }
 
-    public String getRoleKey(){
+    public String getRoleKey() {
         return this.role.getKey();
     }
-
 }

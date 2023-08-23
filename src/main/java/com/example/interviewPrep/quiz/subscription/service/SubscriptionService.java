@@ -41,6 +41,9 @@ public class SubscriptionService {
 
         subscriptionRepository.save(subscription);
 
+        member.setIsPaid(true);
+        memberRepository.save(member);
+
         return createSubscriptionResponse(monthDuration);
     }
 
@@ -67,16 +70,19 @@ public class SubscriptionService {
         return createSubscriptionEntity(member, startDate, endDate, totalFee, true);
     }
 
-    public SubscriptionResponse stopSubscription() {
+    public void stopSubscription() {
 
         Long memberId = JwtUtil.getMemberId();
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+
         Subscription subscription = subscriptionRepository.findByMemberId(memberId, true).orElseThrow(() -> new CommonException(NOT_FOUND_SUBSCRIPTION));
 
         subscription.cancel(false);
 
         subscriptionRepository.save(subscription);
 
-        return createSubscriptionResponse(0);
+        member.setIsPaid(false);
+        memberRepository.save(member);
     }
 
 
