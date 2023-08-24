@@ -15,40 +15,34 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 class QuestionRepositoryTest {
 
     @MockBean
-    private QuestionRepository questionRepository;
-
-    @MockBean
     MemberController memberController;
-
     @MockBean
     GoogleOauth googleOauth;
-
     @MockBean
     KakaoOauth kakaoOauth;
-
     @MockBean
     NaverOauth naverOauth;
-
-
     @MockBean
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @MockBean
     CustomOAuth2UserService customOAuth2UserService;
-
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
-
     Question question;
+    @MockBean
+    private QuestionRepository questionRepository;
+
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
 
         question = Question.builder()
                 .id(1L)
@@ -57,13 +51,12 @@ class QuestionRepositoryTest {
                 .build();
 
         given(questionRepository.save(question)).willReturn(question);
-        given(questionRepository.findById(1L)).willReturn(Optional.of(question));
     }
 
 
     @Test
     @DisplayName("Question을 DB에 저장")
-    public void save(){
+    public void save() {
 
         Question savedQuestion = questionRepository.save(question);
         Long savedId = savedQuestion.getId();
@@ -72,7 +65,7 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("Question을 DB에서 삭제")
-    public void delete(){
+    public void delete() {
 
         // Given
         Question savedQuestion = questionRepository.save(question);
@@ -87,11 +80,12 @@ class QuestionRepositoryTest {
 
     @Test
     @DisplayName("Question을 id로 검색")
-    public void findById(){
+    public void findById() {
 
         // Given
         Question savedQuestion = questionRepository.save(question);
         Long savedId = savedQuestion.getId();
+        given(questionRepository.findById(savedId)).willReturn(Optional.of(savedQuestion));
 
         // When
         Optional<Question> findQuestion = questionRepository.findById(savedId);
