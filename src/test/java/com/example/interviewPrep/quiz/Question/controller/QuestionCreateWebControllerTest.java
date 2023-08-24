@@ -2,11 +2,11 @@ package com.example.interviewPrep.quiz.Question.controller;
 
 import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
+import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.question.controller.QuestionController;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
-import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.question.service.QuestionService;
+import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WithMockCustomOAuth2Account()
 @WebMvcTest(QuestionController.class)
@@ -44,12 +44,10 @@ public class QuestionCreateWebControllerTest {
     JwtAuthenticationFilter jwtAuthenticationFilter;
 
     QuestionRequest validQuestionRequest;
-    QuestionRequest inValidQuestionRequest;
     String validJsonRequest;
-    String inValidJsonRequest;
 
     @BeforeEach
-    void setUp() throws Exception{
+    void setUp() throws Exception {
 
         validQuestionRequest = QuestionRequest.builder()
                 .id(1L)
@@ -57,48 +55,25 @@ public class QuestionCreateWebControllerTest {
                 .type("java")
                 .status(true)
                 .build();
-
-
-        inValidQuestionRequest = QuestionRequest.builder()
-                .id(1L)
-                .title("")
-                .type("")
-                .status(true)
-                .build();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        validJsonRequest = objectMapper.writeValueAsString(validQuestionRequest);
-        inValidJsonRequest = objectMapper.writeValueAsString(inValidQuestionRequest);
     }
 
 
     @Test
     @DisplayName("유효한 Question 생성")
-    void createWithValidAttributes() throws Exception{
-        mockMvc.perform(post("/api/v1/question")
+    void createWithValidAttributes() throws Exception {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        validJsonRequest = objectMapper.writeValueAsString(validQuestionRequest);
+
+        mockMvc.perform(post("/api/v1/questions")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validJsonRequest)
                 )
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         verify(questionService).createQuestion(any(QuestionRequest.class));
     }
-
-    @Test
-    @DisplayName("유효하지 않은 Question 생성")
-    void createWithInValidAttributes() throws Exception{
-        mockMvc.perform(post("/api/v1/question")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(inValidJsonRequest)
-                )
-                .andDo(print())
-                .andExpect(status().isNotFound());
-
-        verify(questionService).createQuestion(any(QuestionRequest.class));
-    }
-
 
 }

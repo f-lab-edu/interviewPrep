@@ -10,7 +10,7 @@ class QuestionRequestTest {
 
     @Test
     @DisplayName("QuestionRequest 생성")
-    void create(){
+    void create() {
         QuestionRequest questionRequest = QuestionRequest.builder()
                 .id(1L)
                 .title("problem1")
@@ -21,6 +21,5 @@ class QuestionRequestTest {
         assertThat(questionRequest.getTitle()).isEqualTo("problem1");
         assertThat(questionRequest.getType()).isEqualTo("java");
     }
-
 
 }
