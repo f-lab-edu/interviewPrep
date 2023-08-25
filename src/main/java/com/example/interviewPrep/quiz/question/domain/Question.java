@@ -23,9 +23,10 @@ public class Question extends BaseTimeEntity {
     private String title;
     private String type;
     private String difficulty;
+    private boolean freeOfCharge;
 
-    public Question(Long id, String title, String type, String difficulty){
-
+    @Builder
+    public Question(Long id, String title, String type, String difficulty, boolean freeOfCharge) {
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(title, "title이 null입니다.");
         Objects.requireNonNull(type, "type이 null입니다.");
@@ -35,17 +36,10 @@ public class Question extends BaseTimeEntity {
         this.title = title;
         this.type = type;
         this.difficulty = difficulty;
+        this.freeOfCharge = freeOfCharge;
     }
 
-    public static Question createQuestionByQuestionRequest(QuestionRequest questionRequest) {
-        return Question.builder()
-                .id(questionRequest.getId())
-                .title(questionRequest.getTitle())
-                .type(questionRequest.getType())
-                .build();
-    }
-
-    public void change(String title, String type) {
+    public void changeTitleOrType(String title, String type) {
         this.title = title;
         this.type = type;
     }

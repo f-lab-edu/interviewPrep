@@ -24,6 +24,7 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUN
 import static com.example.interviewPrep.quiz.question.domain.Question.createQuestionByQuestionRequest;
 import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.createQuestionResponse;
 
+
 @Slf4j
 @Service
 public class QuestionService {
@@ -49,7 +50,6 @@ public class QuestionService {
         return createQuestionResponse(question);
     }
 
-
     public Question updateQuestion(Long id, QuestionRequest questionRequest) {
         Question question = findQuestion(id);
         question.change(questionRequest.getTitle(), questionRequest.getType());
@@ -65,7 +65,6 @@ public class QuestionService {
     public Question findQuestion(Long id) {
         return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION, ErrorCode.NOT_FOUND_QUESTION.getMessage(id)));
     }
-
 
     public int getTotalQuestionsCount() {
         List<Question> questions = questionRepository.findAll();
@@ -85,7 +84,6 @@ public class QuestionService {
 
         return makeQuestionResponses(memberId, questions);
     }
-
 
     public Page<Question> findQuestionsByTypeAndPageable(String type, Pageable pageable) {
         if (type == null) {

@@ -1,4 +1,4 @@
-package com.example.interviewPrep.quiz.member.dto;
+package com.example.interviewPrep.quiz.member.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 @NoArgsConstructor
-public class LoginRequestDTO {
+public class LoginRequest {
 
     String email;
     String password;
 
-    public LoginRequestDTO(String email, String password){
+    public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }

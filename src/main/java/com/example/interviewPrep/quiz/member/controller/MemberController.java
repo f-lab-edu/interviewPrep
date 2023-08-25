@@ -1,14 +1,15 @@
 package com.example.interviewPrep.quiz.member.controller;
 
-import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.*;
+import com.example.interviewPrep.quiz.member.dto.request.LoginRequest;
+import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
+import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
+import com.example.interviewPrep.quiz.member.dto.response.MemberResponse;
 import com.example.interviewPrep.quiz.member.service.AuthenticationService;
 import com.example.interviewPrep.quiz.member.service.MemberService;
 import com.example.interviewPrep.quiz.member.social.service.OauthService;
-import com.example.interviewPrep.quiz.response.ResultResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 @RestController
+@RequestMapping("/api/v1/members")
 @CrossOrigin(origins = "*")
 @Slf4j
 public class MemberController {
@@ -26,58 +28,59 @@ public class MemberController {
     private final MemberService memberService;
     private final OauthService oauthService;
 
-    public MemberController(AuthenticationService authService, MemberService memberService, OauthService oauthService){
+    public MemberController(AuthenticationService authService, MemberService memberService, OauthService oauthService) {
         this.authService = authService;
         this.memberService = memberService;
         this.oauthService = oauthService;
     }
 
-    @PostMapping("/api/v1/members/signup")
-    public ResultResponse<Member> signUp(@RequestBody SignUpRequestDTO memberDTO) throws Exception {
-        return ResultResponse.success(memberService.createMember(memberDTO));
+    @PostMapping("/signup")
+    public ResponseEntity<Void> signUp(@RequestBody MemberRequest memberRequest) {
+        memberService.createMember(memberRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/api/v1/members/userInfo")
-    public ResultResponse<Member> getUserInfo(){
-        return ResultResponse.success(memberService.getUserInfo());
+    @GetMapping("/userInfo")
+    public ResponseEntity<MemberResponse> getUserInfo() {
+        return ResponseEntity.ok(memberService.getUserInfo());
     }
 
-    @PostMapping("/api/v1/members/login")
-    public ResultResponse<LoginResponseDTO> login(@RequestBody @NotNull LoginRequestDTO memberDTO, HttpServletResponse response){
-        return ResultResponse.success(authService.login(memberDTO, response));
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(loginRequest, response));
     }
 
-    @PutMapping("/api/v1/members/change")
-    public ResultResponse<Member> updateNickNameAndEmail(@RequestBody @NotNull MemberDTO memberDTO, @AuthenticationPrincipal Authentication authentication){
-        return ResultResponse.success(memberService.updateNickNameAndEmail(memberDTO, authentication));
+    @PutMapping("/change")
+    public ResponseEntity<MemberResponse> updateNickNameAndEmail(@RequestBody @NotNull MemberRequest memberRequest, @AuthenticationPrincipal Authentication authentication) {
+        return ResponseEntity.ok(memberService.updateNickNameAndEmail(memberRequest, authentication));
     }
 
-    @PutMapping("/api/v1/members/password/change")
-    public ResultResponse<Member> updatePassword(@RequestBody @NotNull MemberDTO memberDTO){
-        return ResultResponse.success(memberService.updatePassword(memberDTO));
+    @PutMapping("/password/change")
+    public ResponseEntity<MemberResponse> updatePassword(@RequestBody MemberRequest memberRequest) {
+        return ResponseEntity.ok(memberService.updatePassword(memberRequest));
     }
 
-    @GetMapping("/api/v1/members/auth/{socialType}")
-    public void socialLoginType(@PathVariable String socialType){
+    @GetMapping("/auth/{socialType}")
+    public void socialLoginType(@PathVariable String socialType) {
         oauthService.request(socialType);
     }
 
-    @GetMapping("/api/v1/members/auth/{socialType}/callback")
-    public ResultResponse<LoginResponseDTO> callback(@PathVariable String socialType, @RequestParam(name="code") String code){
-        return ResultResponse.success(oauthService.socialLogin(socialType, code));
+    @GetMapping("/auth/{socialType}/callback")
+    public ResponseEntity<LoginResponse> callback(@PathVariable String socialType, @RequestParam(name = "code") String code) {
+        return ResponseEntity.ok(oauthService.socialLogin(socialType, code));
     }
 
-    @GetMapping("/api/v1/members/logout")
-    public ResultResponse<?> logout(HttpServletRequest request){
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
         String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         authService.logout(accessToken);
-        return ResultResponse.success(ResponseEntity.noContent().build());
+        return ResponseEntity.noContent().build();
     }
 
 
-    @GetMapping("/api/v1/members/reissue")
-    public ResultResponse<LoginResponseDTO> reissueToken(@CookieValue(value="refreshToken", defaultValue = "0" ) String cookie){
-        return ResultResponse.success(authService.reissue(cookie));
+    @GetMapping("/reissue")
+    public ResponseEntity<LoginResponse> reissueToken(@CookieValue(value = "refreshToken", defaultValue = "0") String cookie) {
+        return ResponseEntity.ok(authService.reissue(cookie));
     }
 
 }
