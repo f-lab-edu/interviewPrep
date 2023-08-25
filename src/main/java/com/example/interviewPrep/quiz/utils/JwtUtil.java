@@ -76,7 +76,7 @@ public class JwtUtil {
             throw new CommonException(INVALID_TOKEN);
         }
         // 현재 시간
-        Long now = new Date().getTime();
+        long now = new Date().getTime();
         return (expiration.getTime() - now);
     }
 
@@ -116,8 +116,7 @@ public class JwtUtil {
             // System.out.println("getUsername의 결과는?" + userDetails.getUsername());
             return Long.parseLong(memberId);
         } catch (Exception e) {
-            System.out.println("Exception 발생" + e);
-            return 0L;
+            throw new CommonException(NOT_FOUND_ID);
         }
     }
 }

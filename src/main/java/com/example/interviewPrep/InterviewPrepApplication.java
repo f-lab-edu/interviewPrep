@@ -12,8 +12,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class InterviewPrepApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(InterviewPrepApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(InterviewPrepApplication.class, args);
+    }
 
 }

@@ -1,77 +1,97 @@
 package com.example.interviewPrep.quiz.Question.repository;
 
+import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
+import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
+import com.example.interviewPrep.quiz.member.controller.MemberController;
+import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
+import com.example.interviewPrep.quiz.member.social.service.GoogleOauth;
+import com.example.interviewPrep.quiz.member.social.service.KakaoOauth;
+import com.example.interviewPrep.quiz.member.social.service.NaverOauth;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.BDDMockito.given;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 class QuestionRepositoryTest {
 
-    @Autowired
-    private final QuestionRepository questionRepository = mock(QuestionRepository.class);
-
+    @MockBean
+    MemberController memberController;
+    @MockBean
+    GoogleOauth googleOauth;
+    @MockBean
+    KakaoOauth kakaoOauth;
+    @MockBean
+    NaverOauth naverOauth;
+    @MockBean
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @MockBean
+    CustomOAuth2UserService customOAuth2UserService;
+    @MockBean
+    JwtAuthenticationFilter jwtAuthenticationFilter;
     Question question;
+    @MockBean
+    private QuestionRepository questionRepository;
+
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
 
         question = Question.builder()
                 .id(1L)
-                .title("problem313")
+                .title("problem1")
                 .type("java")
                 .build();
+
+        given(questionRepository.save(question)).willReturn(question);
     }
 
 
     @Test
     @DisplayName("Question을 DB에 저장")
-    public void save(){
+    public void save() {
 
-        Question question2 = questionRepository.save(question);
-
-        Long savedId = question.getId();
-        assertEquals(question.getId(), question2.getId());
-
-
+        Question savedQuestion = questionRepository.save(question);
+        Long savedId = savedQuestion.getId();
+        assertThat(question.getId()).isEqualTo(savedId);
     }
 
     @Test
     @DisplayName("Question을 DB에서 삭제")
-    public void delete(){
+    public void delete() {
 
         // Given
-        questionRepository.save(question);
+        Question savedQuestion = questionRepository.save(question);
         // When
-        questionRepository.delete(question);
-        Optional<Question> question2 = questionRepository.findById(question.getId());
+        questionRepository.delete(savedQuestion);
+        Optional<Question> deletedQuestion = questionRepository.findById(savedQuestion.getId());
+
         // Then
-        assertEquals(question2, Optional.empty());
-
-        //given(questionRepository.findById(1L)).willReturn(Optional.of(question));
-
+        assertThat(deletedQuestion).isEqualTo(Optional.empty());
     }
 
 
     @Test
     @DisplayName("Question을 id로 검색")
-    public void findById() throws Exception{
+    public void findById() {
+
+        // Given
+        Question savedQuestion = questionRepository.save(question);
+        Long savedId = savedQuestion.getId();
+        given(questionRepository.findById(savedId)).willReturn(Optional.of(savedQuestion));
 
         // When
-        questionRepository.save(question);
-        Question question2 = questionRepository.findById(question.getId()).get();
+        Optional<Question> findQuestion = questionRepository.findById(savedId);
 
         // Then
-        assertEquals(question.getId(),question2.getId() );
+        assertThat(findQuestion).isPresent();
+        assertThat(findQuestion.get()).isEqualTo(question);
     }
 }

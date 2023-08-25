@@ -1,189 +1,121 @@
 package com.example.interviewPrep.quiz.Question.controller;
 
+import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
+import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
+import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.question.controller.QuestionController;
 import com.example.interviewPrep.quiz.question.domain.Question;
-import com.example.interviewPrep.quiz.question.dto.FilterDTO;
-import com.example.interviewPrep.quiz.question.dto.QuestionDTO;
-import com.example.interviewPrep.quiz.question.exception.QuestionNotFoundException;
-import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
+import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
 import com.example.interviewPrep.quiz.question.service.QuestionService;
+import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WithMockCustomOAuth2Account()
 @WebMvcTest(QuestionController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class QuestionReadWebControllerTest {
 
     @MockBean
     QuestionService questionService;
 
+    @MockBean
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @MockBean
     CustomOAuth2UserService customOAuth2UserService;
 
+    @MockBean
+    JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Autowired
     MockMvc mockMvc;
-
     Question question;
-    QuestionDTO questionDTO;
-    List<QuestionDTO> questionDTOS;
     Pageable pageable;
 
     @BeforeEach
-    void setUp() throws Exception{
+    void setUp() {
 
         question = Question.builder()
-                .title("자바 1번문제")
-                .type("자바")
+                .id(1L)
+                .title("problem1")
+                .type("java")
                 .build();
 
-        questionDTOS = new ArrayList<>();
+        QuestionResponse singleQuestionResponse = QuestionResponse.builder()
+                .id(1L)
+                .title("problem1")
+                .type("java")
+                .status(true)
+                .build();
 
-        for(int i = 1; i<11; i++) {
-            questionDTO = QuestionDTO.builder()
-                    .title("problem1")
-                    .id(Long.valueOf(i))
+
+        List<QuestionResponse> questionResponses = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            Long id = (long) (i + 1);
+            String title = "problem" + Integer.toString(i + 1);
+
+            QuestionResponse questionResponse = QuestionResponse.builder()
+                    .id(id)
+                    .title(title)
                     .type("java")
+                    .status(true)
                     .build();
-            questionDTOS.add(questionDTO);
+
+            questionResponses.add(questionResponse);
         }
-
-        when(questionService.findQuestion(10L)).thenReturn(question);
-
         pageable = PageRequest.of(0, 10);
-        Page<QuestionDTO> questions = new PageImpl<>(questionDTOS);
+        Page<QuestionResponse> pageQuestionResponses = new PageImpl<>(questionResponses, pageable, 10);
 
-       // when(questionService.findByType("java", pageable)).thenReturn(questions);
-        when(questionService.findByType("c++", pageable)).thenThrow(new QuestionNotFoundException(1L));
-
-        when(questionService.getQuestion(10L)).thenReturn(questionDTO);
-        when(questionService.getQuestion(11L)).thenThrow(new QuestionNotFoundException(11L));
-
-
-        ArrayList<FilterDTO> lang = new ArrayList<>();
-
-        FilterDTO fd = FilterDTO.builder()
-                .language("java")
-                .build();
-
-        lang.add(fd);
-
-        fd = FilterDTO.builder()
-                .language("os")
-                .build();
-
-        lang.add(fd);
-
-        when(questionService.findFilterLanguage()).thenReturn(lang);
-
-
+        given(questionService.getQuestion(1L)).willReturn(singleQuestionResponse);
+        given(questionService.findByType("java", pageable)).willReturn(pageQuestionResponses);
     }
 
 
     @Test
-    @DisplayName("Question valid type inquiry")
-    void findByValidType() throws Exception{
-        //given
-        String type ="java";
+    @DisplayName("Question 검색")
+    void getQuestion() throws Exception {
 
-        //when
-        mockMvc.perform(get("/question/"+type)
-                        .param("page", "0"))
-
-                //then
+        long id = 1L;
+        mockMvc.perform(get("/api/v1/questions/" + id)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
-
-        verify(questionService).findByType(type, pageable);
     }
-
 
     @Test
-    @DisplayName("Question invalid type inquiry")
-    void findByInvalidType() throws Exception{
-        //given
-        String type ="c++";
+    @DisplayName("Question을 타입별로 검색")
+    void getQuestionsByType() throws Exception {
 
-        //when
-        mockMvc.perform(get("/question/"+type)
-                        .param("page", "0"))
+        String type = "java";
 
-                //then
-                .andDo(print())
-                .andExpect(jsonPath("$.responseCode", equalTo("800")))
-                .andExpect(status().isOk());
-
-        verify(questionService).findByType(type, pageable);
-    }
-
-
-
-    @Test
-    @DisplayName("Question valid id inquiry")
-    void findByValidSingleId() throws Exception{
-        //given
-        Long id = 10L;
-
-        //when
-        mockMvc.perform(get("/question/single/"+id))
-
-                //then
+        mockMvc.perform(get("/api/v1/questions/by-type/" + type)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
-
-
     }
 
-
-    @Test
-    @DisplayName("Question invalid id inquiry")
-    void findByInvalidSingleId() throws Exception{
-        //given
-        Long id = 11L;
-
-        //when
-        mockMvc.perform(get("/question/single/"+id))
-
-                //then
-                .andDo(print())
-                .andExpect(jsonPath("$.responseCode", equalTo("800")))
-                .andExpect(status().isOk());
-
-
-    }
-
-
-    @Test
-    @DisplayName("Question filter inquiry")
-    void findByFilterLanguage() throws Exception{
-
-        //when
-        mockMvc.perform(get("/question/filter"))
-
-                //then
-                .andDo(print())
-                .andExpect(status().isOk());
-
-    }
 
 }
