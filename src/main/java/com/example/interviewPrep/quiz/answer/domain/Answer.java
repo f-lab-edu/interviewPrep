@@ -18,14 +18,13 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 public class Answer extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ANSWER_ID")
     private Long id;
+
     @Lob
     private String content;
 
@@ -44,11 +43,11 @@ public class Answer extends BaseTimeEntity {
     private int commentCnt;
 
     private int heartCnt;
+
     @Version
     private Long version;
 
     public Answer(Long id, String content, Question question, Member member, Interview interview, int commentCnt, int heartCnt, Long version){
-
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(question, "question이 null입니다.");
         Objects.requireNonNull(member, "member이 null입니다.");
@@ -68,22 +67,22 @@ public class Answer extends BaseTimeEntity {
         this.content = content;
     }
 
-    public int increase() {
+    public synchronized int increase() {
         return ++this.heartCnt;
     }
 
-    public int decrease() {
+    public synchronized int decrease() {
         if (this.heartCnt <= 0) {
             throw new HeartExistException("좋아요 수가 0보다 작아 좋아요 수를 감소시킬수 없습니다.");
         }
         return --this.heartCnt;
     }
 
-    public int commentIncrease() {
+    public synchronized int commentIncrease() {
         return ++this.commentCnt;
     }
 
-    public int commentDecrease() {
+    public synchronized int commentDecrease() {
         return --this.commentCnt;
     }
 
