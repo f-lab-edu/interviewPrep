@@ -1,6 +1,7 @@
 package com.example.interviewPrep.quiz.question.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
+import lombok.*;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,17 +22,19 @@ public class Question extends BaseTimeEntity {
     private Long id;
     private String title;
     private String type;
+    private String difficulty;
 
-    @Builder
-    public Question(Long id, String title, String type) {
+    public Question(Long id, String title, String type, String difficulty){
 
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(title, "title이 null입니다.");
         Objects.requireNonNull(type, "type이 null입니다.");
+        Objects.requireNonNull(difficulty, "difficulty가 null입니다.");
 
         this.id = id;
         this.title = title;
         this.type = type;
+        this.difficulty = difficulty;
     }
 
     public static Question createQuestionByQuestionRequest(QuestionRequest questionRequest) {

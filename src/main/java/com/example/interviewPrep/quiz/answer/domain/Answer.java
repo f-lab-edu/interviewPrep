@@ -2,6 +2,7 @@ package com.example.interviewPrep.quiz.answer.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 
+import com.example.interviewPrep.quiz.interview.domain.Interview;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.heart.exception.HeartExistException;
@@ -35,6 +36,10 @@ public class Answer extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID")
     Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "INTERVIEW_ID")
+    private Interview interview;
+
     private int commentCnt;
 
     private int heartCnt;
@@ -42,9 +47,7 @@ public class Answer extends BaseTimeEntity {
     @Version
     private Long version;
 
-    @Builder
-    public Answer(Long id, String content, Question question, Member member, int commentCnt, int heartCnt, Long version){
-
+    public Answer(Long id, String content, Question question, Member member, Interview interview, int commentCnt, int heartCnt, Long version){
         Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(question, "question이 null입니다.");
         Objects.requireNonNull(member, "member이 null입니다.");
@@ -53,17 +56,10 @@ public class Answer extends BaseTimeEntity {
         this.content = content;
         this.question = question;
         this.member = member;
+        this.interview = interview;
         this.commentCnt = commentCnt;
         this.heartCnt = heartCnt;
         this.version = version;
-    }
-
-    public static Answer createAnswerEntity(Member member, Question question, String content){
-        return Answer.builder()
-                .member(member)
-                .question(question)
-                .content(content)
-                .build();
     }
 
 
