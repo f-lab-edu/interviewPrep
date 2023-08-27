@@ -32,8 +32,6 @@ public class MemberService {
     public void createMember(MemberRequest memberRequest) {
 
         AES256 aes256 = new AES256();
-        // String code = memberDTO.getCode();
-        // String email = redisDao.getValues(aes256.decrypt(code));
         String email = memberRequest.getEmail();
         String password = SHA256Util.encryptSHA256(memberRequest.getPassword());
         String nickName = memberRequest.getNickName();
