@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_QUESTION;
-import static com.example.interviewPrep.quiz.question.domain.Question.createQuestionByQuestionRequest;
 import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.createQuestionResponse;
 
 
@@ -39,7 +38,12 @@ public class QuestionService {
 
 
     public Question createQuestion(QuestionRequest questionRequest) {
-        Question question = createQuestionByQuestionRequest(questionRequest);
+        String title = questionRequest.getTitle();
+        String type = questionRequest.getType();
+        String difficulty = questionRequest.getDifficulty();
+        boolean freeOfCharge = false;
+
+        Question question = new Question(title, type, difficulty, freeOfCharge);
         questionRepository.save(question);
         return question;
     }
@@ -52,7 +56,7 @@ public class QuestionService {
 
     public Question updateQuestion(Long id, QuestionRequest questionRequest) {
         Question question = findQuestion(id);
-        question.change(questionRequest.getTitle(), questionRequest.getType());
+        question.changeTitleOrType(questionRequest.getTitle(), questionRequest.getType());
         return question;
     }
 

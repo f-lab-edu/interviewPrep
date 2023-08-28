@@ -1,8 +1,6 @@
 package com.example.interviewPrep.quiz.question.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
-import lombok.*;
-import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +16,6 @@ public class Question extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "QUESTION_ID")
     private Long id;
     private String title;
     private String type;
@@ -26,18 +23,17 @@ public class Question extends BaseTimeEntity {
     private boolean freeOfCharge;
 
     @Builder
-    public Question(Long id, String title, String type, String difficulty, boolean freeOfCharge) {
-        Objects.requireNonNull(id, "id가 null입니다.");
+    public Question(String title, String type, String difficulty, boolean freeOfCharge) {
         Objects.requireNonNull(title, "title이 null입니다.");
         Objects.requireNonNull(type, "type이 null입니다.");
         Objects.requireNonNull(difficulty, "difficulty가 null입니다.");
 
-        this.id = id;
         this.title = title;
         this.type = type;
         this.difficulty = difficulty;
         this.freeOfCharge = freeOfCharge;
     }
+
 
     public void changeTitleOrType(String title, String type) {
         this.title = title;
