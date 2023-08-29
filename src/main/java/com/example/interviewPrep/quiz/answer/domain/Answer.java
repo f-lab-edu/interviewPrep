@@ -1,7 +1,8 @@
 package com.example.interviewPrep.quiz.answer.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
-import com.example.interviewPrep.quiz.heart.exception.HeartExistException;
+import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.interview.domain.Interview;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.question.domain.Question;
@@ -76,7 +77,7 @@ public class Answer extends BaseTimeEntity {
 
     public synchronized int decrease() {
         if (this.heartCnt <= 0) {
-            throw new HeartExistException("좋아요 수가 0보다 작아 좋아요 수를 감소시킬수 없습니다.");
+            throw new CommonException(ErrorCode.NOT_EXIST_HEART_HISTORY);
         }
         return --this.heartCnt;
     }
