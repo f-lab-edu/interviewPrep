@@ -1,6 +1,8 @@
 package com.example.interviewPrep.quiz.question.service;
 
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
+import com.example.interviewPrep.quiz.company.domain.Company;
+import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.question.domain.Question;
@@ -8,6 +10,8 @@ import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
+import com.example.interviewPrep.quiz.questionCompany.domain.QuestionCompany;
+import com.example.interviewPrep.quiz.questionCompany.repository.QuestionCompanyRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_COMPANY;
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_QUESTION;
 import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.createQuestionResponse;
 
@@ -29,10 +34,14 @@ import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.creat
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final CompanyRepository companyRepository;
+    private final QuestionCompanyRepository questionCompanyRepository;
     private final AnswerRepository answerRepository;
 
-    public QuestionService(QuestionRepository questionRepository, AnswerRepository answerRepository) {
+    public QuestionService(QuestionRepository questionRepository, CompanyRepository companyRepository, QuestionCompanyRepository questionCompanyRepository, AnswerRepository answerRepository) {
         this.questionRepository = questionRepository;
+        this.companyRepository = companyRepository;
+        this.questionCompanyRepository = questionCompanyRepository;
         this.answerRepository = answerRepository;
     }
 
@@ -89,11 +98,49 @@ public class QuestionService {
         return makeQuestionResponses(memberId, questions);
     }
 
+    public List<QuestionResponse> findByCompany(String companyName) {
+
+        Company company = companyRepository.findByName(companyName).orElseThrow(() -> new CommonException(NOT_FOUND_COMPANY));
+        Long companyId = company.getId();
+
+        List<Question> questions = findQuestionsByCompany(companyId);
+        if (questions.isEmpty()) {
+            throw new CommonException(NOT_FOUND_QUESTION);
+        }
+
+        return makeQuestionResponses(questions);
+
+    }
+
     public Page<Question> findQuestionsByTypeAndPageable(String type, Pageable pageable) {
         if (type == null) {
             return questionRepository.findAllBy(pageable);
         }
         return questionRepository.findByType(type, pageable);
+    }
+
+    public List<Question> findQuestionsByCompany(Long companyId) {
+        List<QuestionCompany> questionCompanies = questionCompanyRepository.findByCompanyId(companyId);
+
+        List<Question> questions = new ArrayList<>();
+        for (QuestionCompany questionCompany : questionCompanies) {
+            Long questionId = questionCompany.getQuestion().getId();
+            Question question = questionRepository.findById(questionId).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION));
+            questions.add(question);
+        }
+
+        return questions;
+    }
+
+    public List<QuestionResponse> makeQuestionResponses(List<Question> questions) {
+        return questions.stream().map(
+                        q -> QuestionResponse.builder()
+                                .title(q.getTitle())
+                                .type(q.getType())
+                                .difficulty((q.getDifficulty()))
+                                .freeOfCharge(q.isFreeOfCharge())
+                                .build())
+                .collect(Collectors.toList());
     }
 
     public Page<QuestionResponse> makeQuestionResponses(Long memberId, Page<Question> questions) {
@@ -108,10 +155,10 @@ public class QuestionService {
         }
 
         return questions.map(q -> QuestionResponse.builder()
-                .id(q.getId())
                 .type(q.getType())
                 .title(q.getTitle())
-                .status(answers.contains(q.getId()))
+                .difficulty(q.getDifficulty())
+                .freeOfCharge(q.isFreeOfCharge())
                 .build());
     }
 

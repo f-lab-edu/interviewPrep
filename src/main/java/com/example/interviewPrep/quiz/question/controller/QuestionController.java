@@ -41,6 +41,12 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.findByType(type, pageable));
     }
 
+
+    @GetMapping("/by-company/{companyName}")
+    public ResponseEntity<List<QuestionResponse>> getQuestionsByCompany(@PathVariable String companyName) {
+        return ResponseEntity.ok(questionService.findByCompany(companyName));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid QuestionRequest questionRequest) {
         questionService.updateQuestion(id, questionRequest);
