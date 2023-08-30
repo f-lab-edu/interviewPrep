@@ -135,6 +135,7 @@ public class QuestionService {
     public List<QuestionResponse> makeQuestionResponses(List<Question> questions) {
         return questions.stream().map(
                         q -> QuestionResponse.builder()
+                                .id(q.getId())
                                 .title(q.getTitle())
                                 .type(q.getType())
                                 .difficulty((q.getDifficulty()))
