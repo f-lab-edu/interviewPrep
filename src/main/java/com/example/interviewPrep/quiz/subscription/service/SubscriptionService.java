@@ -9,6 +9,7 @@ import com.example.interviewPrep.quiz.subscription.entity.Subscription;
 import com.example.interviewPrep.quiz.subscription.repository.SubscriptionRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.MonthDuration;
+import com.example.interviewPrep.quiz.utils.MonthlyFee;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -58,13 +59,13 @@ public class SubscriptionService {
         int totalFee = 0;
 
         if (months.equals(MonthDuration.ONE)) {
-            totalFee = monthDuration * 9900;
+            totalFee = monthDuration * MonthlyFee.ONE.getCosts();
         } else if (months.equals(MonthDuration.THREE)) {
-            totalFee = monthDuration * 8900;
+            totalFee = monthDuration * MonthlyFee.THREE.getCosts();
         } else if (months.equals(MonthDuration.SIX)) {
-            totalFee = monthDuration * 7900;
+            totalFee = monthDuration * MonthlyFee.SIX.getCosts();
         } else if (months.equals(MonthDuration.TWELVE)) {
-            totalFee = monthDuration * 6900;
+            totalFee = monthDuration * MonthlyFee.TWELVE.getCosts();
         }
 
         return createSubscriptionEntity(member, startDate, endDate, totalFee, true);
