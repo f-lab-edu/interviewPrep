@@ -2,6 +2,7 @@ package com.example.interviewPrep.quiz.member.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
 import com.example.interviewPrep.quiz.member.dto.response.MemberResponse;
 import com.example.interviewPrep.quiz.member.exception.LoginFailureException;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.DUPLICATE_EMAIL;
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
-import static com.example.interviewPrep.quiz.member.domain.Member.createMemberEntity;
 import static com.example.interviewPrep.quiz.member.dto.response.MemberResponse.createMemberResponse;
 
 @Service
@@ -34,21 +34,39 @@ public class MemberService {
         AES256 aes256 = new AES256();
         // String code = memberDTO.getCode();
         // String email = redisDao.getValues(aes256.decrypt(code));
+        String name = memberRequest.getName();
+        String nickName = memberRequest.getNickName();
         String email = memberRequest.getEmail();
         String password = SHA256Util.encryptSHA256(memberRequest.getPassword());
-        String nickName = memberRequest.getNickName();
+        String type = memberRequest.getType();
+        String role = memberRequest.getRole();
+
+        Role memberRole = Role.USER;
+        if (role.equals("MENTOR")) {
+            memberRole = Role.MENTOR;
+        }
 
         if (isDuplicatedEmail(email)) {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Member member = createMemberEntity(email, password, nickName);
+        Member member = Member.builder()
+                .name(name)
+                .nickName(nickName)
+                .email(email)
+                .password(password)
+                .type(type)
+                .role(memberRole)
+                .isPaid(false)
+                .build();
+
         memberRepository.save(member);
 
     }
 
     public boolean isDuplicatedEmail(String email) {
-        return memberRepository.existsByEmail(email);
+        Member member = memberRepository.findByEmail(email).orElse(null);
+        return member != null;
     }
 
     public boolean isDuplicatedNickName(String nickName) {
