@@ -1,3 +1,9 @@
+buildscript {
+	ext {
+		queryDslVersion = "4.4.0"
+	}
+}
+
 plugins {
 	// Apply the application plugin to add support for building a CLI application in Java.
 	id 'application'
@@ -84,12 +90,29 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//swagger
-	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
     // flyway
 	implementation 'org.flywaydb:flyway-core:6.4.2'
+
+	// QueryDSL
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor(
+			"javax.persistence:javax.persistence-api",
+			"javax.annotation:javax.annotation-api",
+			"com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
 }
+
+// QueryDSL
+sourceSets {
+	main {
+		java {
+			srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+		}
+	}
+}
+
 
 tasks.named('test') {
 	useJUnitPlatform()
