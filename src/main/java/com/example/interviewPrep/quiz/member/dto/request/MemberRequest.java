@@ -1,5 +1,8 @@
 package com.example.interviewPrep.quiz.member.dto.request;
 
+import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -34,5 +37,24 @@ public class MemberRequest {
         this.passwordConfirm = passwordConfirm;
         this.type = type;
         this.role = role;
+    }
+
+    public static Member createMember(MemberRequest memberRequest) {
+        String password = SHA256Util.encryptSHA256(memberRequest.password);
+
+        Role memberRole = Role.USER;
+        if (memberRequest.role.equals("MENTOR")) {
+            memberRole = Role.MENTOR;
+        }
+
+        return Member.builder()
+                .name(memberRequest.name)
+                .nickName(memberRequest.nickName)
+                .email(memberRequest.email)
+                .password(password)
+                .type(memberRequest.type)
+                .role(memberRole)
+                .isPaid(false)
+                .build();
     }
 }

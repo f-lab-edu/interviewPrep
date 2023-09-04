@@ -10,7 +10,6 @@ import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
-import com.example.interviewPrep.quiz.questionCompany.domain.QuestionCompany;
 import com.example.interviewPrep.quiz.questionCompany.repository.QuestionCompanyRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -120,27 +119,11 @@ public class QuestionService {
     }
 
     public List<Question> findQuestionsByCompany(Long companyId) {
-        List<QuestionCompany> questionCompanies = questionCompanyRepository.findByCompanyId(companyId);
-
-        List<Question> questions = new ArrayList<>();
-        for (QuestionCompany questionCompany : questionCompanies) {
-            Long questionId = questionCompany.getQuestion().getId();
-            Question question = questionRepository.findById(questionId).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION));
-            questions.add(question);
-        }
-
-        return questions;
+        return questionCompanyRepository.findQuestionsByCompanyId(companyId);
     }
 
     public List<QuestionResponse> makeQuestionResponses(List<Question> questions) {
-        return questions.stream().map(
-                        q -> QuestionResponse.builder()
-                                .id(q.getId())
-                                .title(q.getTitle())
-                                .type(q.getType())
-                                .difficulty((q.getDifficulty()))
-                                .freeOfCharge(q.isFreeOfCharge())
-                                .build())
+        return questions.stream().map(QuestionResponse::createQuestionResponse)
                 .collect(Collectors.toList());
     }
 

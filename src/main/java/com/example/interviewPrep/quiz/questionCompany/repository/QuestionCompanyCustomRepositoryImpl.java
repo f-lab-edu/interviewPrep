@@ -1,11 +1,12 @@
 package com.example.interviewPrep.quiz.questionCompany.repository;
 
-import com.example.interviewPrep.quiz.questionCompany.domain.QuestionCompany;
+import com.example.interviewPrep.quiz.question.domain.Question;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.example.interviewPrep.quiz.question.domain.QQuestion.question;
 import static com.example.interviewPrep.quiz.questionCompany.domain.QQuestionCompany.questionCompany;
 
 @Repository
@@ -18,8 +19,9 @@ public class QuestionCompanyCustomRepositoryImpl implements QuestionCompanyCusto
     }
 
     @Override
-    public List<QuestionCompany> findByCompanyId(Long companyId) {
-        return jpaQueryFactory.selectFrom(questionCompany)
+    public List<Question> findQuestionsByCompanyId(Long companyId) {
+        return jpaQueryFactory.selectFrom(question)
+                .innerJoin(questionCompany).on(questionCompany.question.id.eq(question.id))
                 .where(questionCompany.company.id.eq(companyId))
                 .fetch();
     }
