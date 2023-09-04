@@ -28,11 +28,10 @@ public class Heart extends BaseTimeEntity {
     private Long id;
 
     @Builder
-    public Heart(Long id, Answer answer, Member member) {
+    public Heart(Answer answer, Member member) {
         Objects.requireNonNull(answer, "answer가 null입니다.");
         Objects.requireNonNull(member, "member가 null입니다.");
 
-        this.id = id;
         this.answer = answer;
         this.member = member;
     }

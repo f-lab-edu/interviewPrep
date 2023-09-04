@@ -13,6 +13,7 @@ import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 
@@ -39,9 +40,7 @@ public class HeartService {
         Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
-        Heart savedHeart = checkHeartExists(answerId, memberId);
-
-        if (savedHeart != null) {
+        if (checkHeartExists(answerId, memberId)) {
             throw new CommonException(EXIST_HEART_HISTORY);
         }
 
@@ -55,8 +54,9 @@ public class HeartService {
         heartRepository.save(heart);
     }
 
-    public Heart checkHeartExists(Long answerId, Long memberId) {
-        return heartRepository.findByAnswerIdAndMemberId(answerId, memberId).orElse(null);
+    public boolean checkHeartExists(Long answerId, Long memberId) {
+        Optional<Heart> heart = heartRepository.findByAnswerIdAndMemberId(answerId, memberId);
+        return heart.isPresent();
     }
 
     @Transactional
@@ -64,13 +64,13 @@ public class HeartService {
         Long memberId = JwtUtil.getMemberId();
         Long answerId = heartRequest.getAnswerId();
 
-        Heart heart = checkHeartExists(answerId, memberId);
-
-        if (heart == null) {
+        if (!checkHeartExists(answerId, memberId)) {
             throw new CommonException(NOT_EXIST_HEART_HISTORY);
         }
 
         decreaseAnswerHeartCntWithNamedLock(answerId);
+
+        Heart heart = heartRepository.findByAnswerIdAndMemberId(answerId, memberId).get();
         heartRepository.delete(heart);
     }
 
@@ -85,7 +85,7 @@ public class HeartService {
     }
 
     public void increaseAnswerHeartCnt(Long answerId) {
-        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
+        Answer answer = findAnswer(answerId);
         answer.increase();
     }
 
@@ -99,8 +99,12 @@ public class HeartService {
     }
 
     public void decreaseAnswerHeartCnt(Long answerId) {
-        Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
+        Answer answer = findAnswer(answerId);
         answer.decrease();
+    }
+
+    public Answer findAnswer(Long answerId) {
+        return answerRepository.findById(answerId).orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
     }
 
 }
