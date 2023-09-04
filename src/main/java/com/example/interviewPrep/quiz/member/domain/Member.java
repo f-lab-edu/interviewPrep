@@ -2,7 +2,9 @@ package com.example.interviewPrep.quiz.member.domain;
 
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,6 +17,7 @@ public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MEMBER_ID")
     private Long id;
 
     private String email;
@@ -47,14 +50,6 @@ public class Member extends BaseTimeEntity {
         this.isPaid = isPaid;
     }
 
-    public static Member createMemberEntity(String email, String password, String nickName) {
-        return Member.builder()
-                .email(email)
-                .password(password)
-                .nickName(nickName)
-                .isPaid(false)
-                .build();
-    }
 
     public void setEmail(String email) {
         Objects.requireNonNull(email, "email이 없습니다.");

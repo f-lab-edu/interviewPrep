@@ -13,9 +13,10 @@ import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.DUPLICATE_EMAIL;
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
-import static com.example.interviewPrep.quiz.member.domain.Member.createMemberEntity;
 import static com.example.interviewPrep.quiz.member.dto.response.MemberResponse.createMemberResponse;
 
 @Service
@@ -33,20 +34,20 @@ public class MemberService {
 
         AES256 aes256 = new AES256();
         String email = memberRequest.getEmail();
-        String password = SHA256Util.encryptSHA256(memberRequest.getPassword());
-        String nickName = memberRequest.getNickName();
 
         if (isDuplicatedEmail(email)) {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Member member = createMemberEntity(email, password, nickName);
+        Member member = MemberRequest.createMember(memberRequest);
+
         memberRepository.save(member);
 
     }
 
     public boolean isDuplicatedEmail(String email) {
-        return memberRepository.existsByEmail(email);
+        Optional<Member> member = memberRepository.findByEmail(email);
+        return member.isPresent();
     }
 
     public boolean isDuplicatedNickName(String nickName) {

@@ -104,6 +104,7 @@ dependencies {
 			"com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
 }
 
+
 // QueryDSL
 sourceSets {
 	main {
@@ -117,3 +118,4 @@ sourceSets {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
