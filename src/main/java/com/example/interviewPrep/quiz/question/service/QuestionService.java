@@ -1,152 +1,165 @@
 package com.example.interviewPrep.quiz.question.service;
 
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
-import com.example.interviewPrep.quiz.aop.Timer;
+import com.example.interviewPrep.quiz.company.domain.Company;
+import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
-import com.example.interviewPrep.quiz.question.dto.QuestionDTO;
+import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
+import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
+import com.example.interviewPrep.quiz.questionCompany.repository.QuestionCompanyRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
-import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_COMPANY;
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_QUESTION;
+import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.createQuestionResponse;
 
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_QUESTION;
 
 @Slf4j
 @Service
-@Transactional
-@RequiredArgsConstructor
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final CompanyRepository companyRepository;
+    private final QuestionCompanyRepository questionCompanyRepository;
     private final AnswerRepository answerRepository;
 
-    public List<Question> getQuestions() {return questionRepository.findAll();}
-
-
-    //@Cacheable(value = "question", key="#id")
-    public QuestionDTO getQuestion(Long id) {
-        Question question = findQuestion(id);
-
-        return QuestionDTO.builder()
-                .id(question.getId())
-                .title(question.getTitle())
-                .type(question.getType())
-                .build();
+    public QuestionService(QuestionRepository questionRepository, CompanyRepository companyRepository, QuestionCompanyRepository questionCompanyRepository, AnswerRepository answerRepository) {
+        this.questionRepository = questionRepository;
+        this.companyRepository = companyRepository;
+        this.questionCompanyRepository = questionCompanyRepository;
+        this.answerRepository = answerRepository;
     }
 
 
-    public Question createQuestion(QuestionDTO questionDTO){
-        Question question = Question.builder()
-                .id(questionDTO.getId())
-                .title(questionDTO.getTitle())
-                .type(questionDTO.getType())
-                .build();
+    public Question createQuestion(QuestionRequest questionRequest) {
+        String title = questionRequest.getTitle();
+        String type = questionRequest.getType();
+        String difficulty = questionRequest.getDifficulty();
+        boolean freeOfCharge = false;
+
+        Question question = new Question(title, type, difficulty, freeOfCharge);
         questionRepository.save(question);
         return question;
     }
 
-
-    public int getAllQuestionsSize() {
-        List<Question> questions = questionRepository.findAll();
-        return questions.size();
-    }
-
-    public HashMap<String, Integer> getAllQuestionsInfo() {
-        List<Question> questions = questionRepository.findAll();
-
-        HashMap<String, Integer> questionInfo = new HashMap<>();
-
-        for(Question question: questions){
-            String type = question.getType();
-            questionInfo.put(type, questionInfo.getOrDefault(type, 0) + 1);
-        }
-
-        return questionInfo;
-    }
-
-    public Question updateQuestion(Long id, QuestionDTO questionDTO){
+    //@Cacheable(value = "question", key="#id")
+    public QuestionResponse getQuestion(Long id) {
         Question question = findQuestion(id);
-        question.change(questionDTO.getTitle(), questionDTO.getType());
+        return createQuestionResponse(question);
+    }
+
+    public Question updateQuestion(Long id, QuestionRequest questionRequest) {
+        Question question = findQuestion(id);
+        question.changeTitleOrType(questionRequest.getTitle(), questionRequest.getType());
         return question;
     }
 
-    public Question deleteQuestion(Long id){
+    public Question deleteQuestion(Long id) {
         Question question = findQuestion(id);
         questionRepository.delete(question);
         return question;
     }
 
-    public List<Question> findQuestionsByType(String type){
-        return questionRepository.findByType(type);
+    public Question findQuestion(Long id) {
+        return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION, ErrorCode.NOT_FOUND_QUESTION.getMessage(id)));
     }
+
+    public int getTotalQuestionsCount() {
+        List<Question> questions = questionRepository.findAll();
+        return questions.size();
+    }
+
 
     //@Cacheable(value = "questionDTO", key="#pageable.pageSize.toString().concat('-').concat(#pageable.pageNumber)")
     // @Timer
-    public Page<QuestionDTO> findByType(String type, Pageable pageable){
+    public Page<QuestionResponse> findByType(String type, Pageable pageable) {
         Long memberId = JwtUtil.getMemberId();
-        Page<Question> questions;
+        Page<Question> questions = findQuestionsByTypeAndPageable(type, pageable);
 
-        if(type==null) questions = questionRepository.findAllBy(pageable);
-        else questions = questionRepository.findByType(type, pageable); //문제 타입과 페이지 조건 값을 보내어 question 조회, 반환값 page
-        if(questions.getContent().isEmpty()) throw new CommonException(NOT_FOUND_QUESTION);
-
-        if(memberId==0L){
-            return makeQuestionDto(questions, new ArrayList<>());
-        }
-        else{
-            List<Long> qList = questions.getContent().stream().map(Question::getId).collect(Collectors.toList());
-            List<Long> myAnswer = answerRepository.findMyAnswer(qList, memberId);
-            return makeQuestionDto(questions, myAnswer);
+        if (questions.getContent().isEmpty()) {
+            throw new CommonException(NOT_FOUND_QUESTION);
         }
 
+        return makeQuestionResponses(memberId, questions);
     }
 
-    public Page<QuestionDTO> makeQuestionDto(Page<Question> questions, List<Long> myAnswer){
+    public List<QuestionResponse> findByCompany(String companyName) {
 
-        return questions.map(q -> QuestionDTO.builder()
-                        .id(q.getId())
-                        .type(q.getType())
-                        .title(q.getTitle())
-                        .status(myAnswer.contains(q.getId()))
-                        .build());
+        Company company = companyRepository.findByName(companyName).orElseThrow(() -> new CommonException(NOT_FOUND_COMPANY));
+        Long companyId = company.getId();
+
+        List<Question> questions = findQuestionsByCompany(companyId);
+        if (questions.isEmpty()) {
+            throw new CommonException(NOT_FOUND_QUESTION);
+        }
+
+        return makeQuestionResponses(questions);
+
+    }
+
+    public Page<Question> findQuestionsByTypeAndPageable(String type, Pageable pageable) {
+        if (type == null) {
+            return questionRepository.findAllBy(pageable);
+        }
+        return questionRepository.findByType(type, pageable);
+    }
+
+    public List<Question> findQuestionsByCompany(Long companyId) {
+        return questionCompanyRepository.findQuestionsByCompanyId(companyId);
+    }
+
+    public List<QuestionResponse> makeQuestionResponses(List<Question> questions) {
+        return questions.stream().map(QuestionResponse::createQuestionResponse)
+                .collect(Collectors.toList());
+    }
+
+    public Page<QuestionResponse> makeQuestionResponses(Long memberId, Page<Question> questions) {
+
+        Set<Long> answers;
+
+        if (memberId == 0L) {
+            answers = new HashSet<>();
+        } else {
+            List<Long> questionIds = questions.getContent().stream().map(Question::getId).collect(Collectors.toList());
+            answers = answerRepository.findMyAnswer(questionIds, memberId);
+        }
+
+        return questions.map(q -> QuestionResponse.builder()
+                .type(q.getType())
+                .title(q.getTitle())
+                .difficulty(q.getDifficulty())
+                .freeOfCharge(q.isFreeOfCharge())
+                .build());
     }
 
 
-    public Question findQuestion(Long id){
-        return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION));
-    }
-
-
-    public List<FilterDTO> findFilterLanguage(){
-        List<FilterDTO> filterDTOS = new ArrayList<>();
+    public List<FilterDTO> findFilterLanguage() {
+        List<FilterDTO> filterDTOs = new ArrayList<>();
 
         List<String> languages = questionRepository.findAllByLanguage();
 
-        for(String language: languages){
+        for (String language : languages) {
             FilterDTO filterDTO = FilterDTO.builder()
                     .language(language)
                     .build();
-            filterDTOS.add(filterDTO);
+            filterDTOs.add(filterDTO);
         }
 
-        return filterDTOS;
+        return filterDTOs;
     }
 
 
