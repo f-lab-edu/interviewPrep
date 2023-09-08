@@ -1,7 +1,7 @@
 # 🧑🏻‍💻 InterviewPrep
 
 
-### 기술적 Issue 해결 과정
+### 기술적 Issue 해결 과정(정리중)
 
 - [#19] Mysql Replication - Spring에서 @Transactional을 이용해 Master/Slave 이중화<br>
 
