@@ -2,7 +2,7 @@ package com.example.interviewPrep.quiz.question.service;
 
 import com.example.interviewPrep.quiz.dto.CreateDto;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.heart.repository.RefHeartRepository;
+import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
@@ -16,9 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_QUESTION;
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_REF;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTime;
 
 
@@ -29,15 +27,15 @@ public class ReferenceService {
     private final ReferenceRepository referenceRepository;
     private final QuestionRepository questionRepository;
     private final MemberRepository memberRepository;
-    private final RefHeartRepository refHeartRepository;
+    private final HeartRepository heartRepository;
 
 
-    public Page<ReferenceDTO> findAnswerReference(Long id, Pageable pageable){
+    public Page<ReferenceDTO> findAnswerReference(Long id, Pageable pageable) {
 
         Long memberId = JwtUtil.getMemberId();
 
         Page<QuestionReference> references = referenceRepository.findByRef(id, pageable);
-        if(references.getContent().isEmpty()) throw new CommonException(NOT_FOUND_REF);
+        if (references.getContent().isEmpty()) throw new CommonException(NOT_FOUND_REF);
 
         return references.map(ref -> ReferenceDTO.builder()
                 .id(ref.getId())
@@ -48,12 +46,12 @@ public class ReferenceService {
                 .modifiedDate(customLocalDateTime(ref.getModifiedDate()))
                 .modify(!ref.getCreatedDate().equals(ref.getModifiedDate()))
                 .myRef(ref.getMember().getId().equals(memberId))
-                .heartCnt(refHeartRepository.countRefHeartByReferenceId(ref.getId()))
+                // .heartCnt(heartRepository.countRefHeartByReferenceId(ref.getId()))
                 .build());
     }
 
 
-    public CreateDto createReference(ReferenceDTO referenceDTO){
+    public CreateDto createReference(ReferenceDTO referenceDTO) {
 
         Member member = findMember(JwtUtil.getMemberId());
         Question question = findQuestion(referenceDTO.getQuestionId());
@@ -74,27 +72,27 @@ public class ReferenceService {
     }
 
 
-    public void updateReference(ReferenceDTO referenceDTO){
+    public void updateReference(ReferenceDTO referenceDTO) {
         QuestionReference reference = findReference(referenceDTO.getId());
         reference.change(referenceDTO.getLink());
         referenceRepository.save(reference);
     }
 
-    public void deleteReference(Long id){
+    public void deleteReference(Long id) {
         QuestionReference reference = findReference(id);
         referenceRepository.delete(reference);
     }
 
-    public QuestionReference findReference(Long id){
+    public QuestionReference findReference(Long id) {
         return referenceRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_REF));
     }
 
-    public Question findQuestion(Long id){
+    public Question findQuestion(Long id) {
         return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION));
     }
 
-    public Member findMember(Long id){
-        return memberRepository.findById(id).orElseThrow(()-> new CommonException(NOT_FOUND_MEMBER));
+    public Member findMember(Long id) {
+        return memberRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 
 }

@@ -3,31 +3,36 @@ package com.example.interviewPrep.quiz.heart.domain;
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.domain.Member;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 public class Heart extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "HEART_ID")
-    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "ANSWER_ID")
     Answer answer;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     Member member;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Builder
+    public Heart(Answer answer, Member member) {
+        Objects.requireNonNull(answer, "answer가 null입니다.");
+        Objects.requireNonNull(member, "member가 null입니다.");
+
+        this.answer = answer;
+        this.member = member;
+    }
 }

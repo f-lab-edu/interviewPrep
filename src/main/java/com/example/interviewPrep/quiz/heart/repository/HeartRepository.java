@@ -16,8 +16,6 @@ public interface HeartRepository extends JpaRepository<Heart, Long> {
 
     Optional<Heart> findByAnswerIdAndMemberId(Long answerId, Long memberId);
 
-    List<Heart> findByAnswerId(Long id);
-
     int countHeartByAnswerId(long id);
 
     @Query("select h.answer.id from Heart h where h.answer.id in ?1 and h.member.id = ?2")
