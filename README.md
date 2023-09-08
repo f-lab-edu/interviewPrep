@@ -1,8 +1,5 @@
 # 🧑🏻‍💻 InterviewPrep
 
-### 웹사이트 URL
-http://www.interviewprep.kr/
-
 
 ### 기술적 Issue 해결 과정
 
