@@ -6,7 +6,7 @@
 - [https://github.com/f-lab-edu/interviewPrep/pull/8] SSE 댓글 알림 기능 개발(with Redis)<br>
    https://bryandev.tistory.com/1396
   
-- [#19] Mysql Replication - Spring에서 @Transactional을 이용해 Master/Slave 이중화<br>
+- [https://github.com/f-lab-edu/interviewPrep/pull/25] Mysql Replication - Spring에서 @Transactional을 이용해 Master/Slave 이중화<br>
    https://bryandev.tistory.com/1393 
 
 - [#16] Mysql Named Lock으로 좋아요 기능에 대한 동시성 처리하기<br>
