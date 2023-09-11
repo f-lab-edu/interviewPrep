@@ -1,4 +1,11 @@
 # 🧑🏻‍💻 InterviewPrep 서버 구조도
+![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/773f1ae2-d93a-4a96-aca4-0063432bb30c)
+
+
+
+
+
+
 
 
 ### 기술적 Issue 해결 과정
