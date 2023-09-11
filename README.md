@@ -13,12 +13,10 @@
    https://bryandev.tistory.com/1397
 
 - [https://github.com/LeeJongbokz/interviewPrep/pull/48] 로그인 시 JWT Access Token, Refresh Token 적용하기(with Redis)<br>
-   
-
--  [#2] Redis에 한번에 많은 데이터 추가 시 네트워크 병목 개선하기 - Redis Pipeline 이용하기<br>
-
 
 
 -  [https://github.com/f-lab-edu/interviewPrep/pull/21] QueryDsl 적용하기<br>
+
+-  [#2] Redis에 한번에 많은 데이터 추가 시 네트워크 병목 개선하기 - Redis Pipeline 이용하기<br>
 
 -  [#15] TDD 적용하기<br>
