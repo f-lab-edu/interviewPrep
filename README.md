@@ -19,6 +19,6 @@
 
 
 
--  [#15] QueryDsl 적용하기<br>
+-  [https://github.com/f-lab-edu/interviewPrep/pull/21] QueryDsl 적용하기<br>
 
 -  [#15] TDD 적용하기<br>
