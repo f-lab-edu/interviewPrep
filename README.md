@@ -3,7 +3,7 @@
 
 ### 기술적 Issue 해결 과정(정리중)
 
-- [#7] SSE 알림 기능 개발(with Redis)<br>
+- [#7] SSE 댓글 알림 기능 개발(with Redis)<br>
    https://bryandev.tistory.com/1396
   
 - [#19] Mysql Replication - Spring에서 @Transactional을 이용해 Master/Slave 이중화<br>
