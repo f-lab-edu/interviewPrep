@@ -24,7 +24,3 @@
 
 
 -  [https://github.com/f-lab-edu/interviewPrep/pull/21] QueryDsl 적용하기<br>
-
--  [] Redis에 한번에 많은 데이터 추가 시 네트워크 병목 개선하기 - Redis Pipeline 이용하기<br>
-
--  [] TDD 적용하기<br>
