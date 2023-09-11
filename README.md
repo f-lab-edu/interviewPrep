@@ -9,7 +9,7 @@
 - [https://github.com/f-lab-edu/interviewPrep/pull/25] Mysql Replication - Spring에서 @Transactional을 이용해 Master/Slave 이중화<br>
    https://bryandev.tistory.com/1393 
 
-- [#16] Mysql Named Lock으로 좋아요 기능에 대한 동시성 처리하기<br>
+- [https://github.com/f-lab-edu/interviewPrep/pull/22] Mysql Named Lock으로 좋아요 기능에 대한 동시성 처리하기<br>
    https://bryandev.tistory.com/1397
 
 - [#16] 로그인 시 JWT Access Token, Refresh Token 적용하기(with Redis)<br>
