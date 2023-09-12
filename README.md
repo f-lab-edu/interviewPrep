@@ -1,5 +1,6 @@
 # 🧑🏻‍💻 InterviewPrep 서버 구조도
-![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/211f1f3a-57d7-4cd8-a3e5-b53cf79313dc)
+![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/0bdde62d-cbc2-4f26-8939-fdc091ea86a9)
+
 
 
 
