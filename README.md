@@ -1,4 +1,5 @@
 # 🧑🏻‍💻 InterviewPrep 서버 구조도
+------------------------------------------------------------
 ![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/211f1f3a-57d7-4cd8-a3e5-b53cf79313dc)
 
 
@@ -15,7 +16,7 @@
 
 
 ### 기술적 Issue 해결 과정
-
+------------------------------------------------------------
 - [https://github.com/f-lab-edu/interviewPrep/pull/8] SSE 댓글 알림 기능 개발(with Redis)<br>
    https://bryandev.tistory.com/1396
   
