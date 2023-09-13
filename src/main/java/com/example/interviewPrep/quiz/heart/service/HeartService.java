@@ -11,8 +11,9 @@ import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
@@ -30,8 +31,6 @@ public class HeartService {
         this.answerRepository = answerRepository;
         this.memberRepository = memberRepository;
     }
-
-    @Transactional
     public void createHeart(HeartRequest heartRequest) {
 
         Long memberId = JwtUtil.getMemberId();
@@ -59,7 +58,6 @@ public class HeartService {
         return heart.isPresent();
     }
 
-    @Transactional
     public void deleteHeart(HeartRequest heartRequest) {
         Long memberId = JwtUtil.getMemberId();
         Long answerId = heartRequest.getAnswerId();
@@ -74,6 +72,7 @@ public class HeartService {
         heartRepository.delete(heart);
     }
 
+    @Transactional
     public void increaseAnswerHeartCntWithNamedLock(Long answerId) {
 
         try {
@@ -84,11 +83,13 @@ public class HeartService {
         }
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void increaseAnswerHeartCnt(Long answerId) {
         Answer answer = findAnswer(answerId);
         answer.increase();
     }
 
+    @Transactional
     public void decreaseAnswerHeartCntWithNamedLock(Long answerId) {
         try {
             answerLockRepository.getLock(answerId.toString());
@@ -98,6 +99,8 @@ public class HeartService {
         }
     }
 
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void decreaseAnswerHeartCnt(Long answerId) {
         Answer answer = findAnswer(answerId);
         answer.decrease();
