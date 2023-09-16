@@ -1,38 +1,105 @@
 package com.example.interviewPrep.quiz.Member.domain;
 
 import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.member.dto.Role;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MemberTest {
 
     @Test
-    @DisplayName("회원을 Id 포함해서 생성")
-    void creationWithId(){
-        Member member = Member.builder()
-                .id(11L)
-                .email("hello@gmail.com")
-                .password("1234")
-                .build();
+    @DisplayName("멤버 생성")
+    void createMember(){
 
-        assertThat(member.getId()).isEqualTo(11L);
-        assertThat(member.getEmail()).isEqualTo("hello@gmail.com");
-        assertThat(member.getPassword()).isEqualTo("1234");
+        String email = "hello@gmail.com";
+        String password = "1234";
+        String type = "user";
+        String nickName = "tester";
+        String name = "hello";
+        String picture = "test.jpg";
+        Role role = Role.USER;
+
+        Member member1 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .nickName(nickName)
+                        .build();
+
+        Member member2 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .type(type)
+                        .nickName(nickName)
+                        .name(name)
+                        .picture(picture)
+                        .role(role)
+                        .build();
+
+        assertEquals(email, member1.getEmail());
+        assertEquals(password, member1.getPassword());
+        assertEquals(nickName, member1.getNickName());
+
+        assertEquals(email, member2.getEmail());
+        assertEquals(password, member2.getPassword());
+        assertEquals(type, member2.getType());
+        assertEquals(nickName, member2.getNickName());
+        assertEquals(name, member2.getName());
+        assertEquals(picture, member2.getPicture());
+        assertEquals(role, member2.getRole());
+
     }
 
 
     @Test
-    @DisplayName("회원을 Id 없이 생성")
-    void creationWithoutId(){
-        Member member = Member.builder()
-                .email("hello@gmail.com")
-                .password("1234")
-                .build();
+    @DisplayName("멤버 업데이트")
+    void updateMember(){
 
-        assertThat(member.getEmail()).isEqualTo("hello@gmail.com");
-        assertThat(member.getPassword()).isEqualTo("1234");
+        String newName = "new name";
+        String newPicture = "new_test.jpg";
+
+        String email = "hello@gmail.com";
+        String password = "1234";
+        String nickName = "tester";
+
+        Member member1 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .nickName(nickName)
+                        .build();
+
+        member1.update(newName, newPicture);
+
+        assertEquals(newName, member1.getName());
+        assertEquals(newPicture, member1.getPicture());
+
+    }
+
+    @Test
+    @DisplayName("Role key 가져오기")
+    void getRoleKey() {
+
+        String email = "hello@gmail.com";
+        String password = "1234";
+        String type = "user";
+        String nickName = "tester";
+        String name = "hello";
+        String picture = "test.jpg";
+        Role role = Role.USER;
+
+        Member member2 = Member.builder()
+                        .email(email)
+                        .password(password)
+                        .type(type)
+                        .nickName(nickName)
+                        .name(name)
+                        .picture(picture)
+                        .role(role)
+                        .build();
+
+        assertEquals(Role.USER.getKey(), member2.getRole().getKey());
     }
 
 }

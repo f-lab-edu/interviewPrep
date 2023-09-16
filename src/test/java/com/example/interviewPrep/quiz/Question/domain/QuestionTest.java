@@ -9,44 +9,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 class QuestionTest {
 
     @Test
-    @DisplayName("Question을 Id 포함해서 생성")
+    @DisplayName("Question 생성")
     void creationWithId(){
         Question question = Question.builder()
-                           .id(11L)
-                           .title("String 클래스는 왜 불변입니까?")
+                           .id(1L)
+                           .title("problem1")
                            .type("java")
                            .build();
 
-        assertThat(question.getId()).isEqualTo(11L);
-        assertThat(question.getTitle()).isEqualTo("String 클래스는 왜 불변입니까?");
+        assertThat(question.getId()).isEqualTo(1L);
+        assertThat(question.getTitle()).isEqualTo("problem1");
         assertThat(question.getType()).isEqualTo("java");
     }
 
 
     @Test
-    @DisplayName("Question을 Id 없이 생성")
-    void creationWithoutId(){
-        Question question = Question.builder()
-                .title("String 클래스는 왜 불변입니까?")
-                .type("java")
-                .build();
-
-        assertThat(question.getTitle()).isEqualTo("String 클래스는 왜 불변입니까?");
-        assertThat(question.getType()).isEqualTo("java");
-    }
-
-
-    @Test
+    @DisplayName("Question 필드값 변경")
     void change(){
         Question question = Question.builder()
-                .title("String 클래스는 왜 불변입니까?")
+                .id(1L)
+                .title("problem1")
                 .type("java")
                 .build();
 
-        question.change("자바 ArrayList에 대해 설명해보세요", "java");
+        question.change("problem2", "c++");
 
-        assertThat(question.getTitle()).isEqualTo("자바 ArrayList에 대해 설명해보세요");
-        assertThat(question.getType()).isEqualTo("java");
+        assertThat(question.getTitle()).isEqualTo("problem2");
+        assertThat(question.getType()).isEqualTo("c++");
     }
 
 }

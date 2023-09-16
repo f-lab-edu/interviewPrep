@@ -5,8 +5,6 @@ import lombok.*;
 
 @Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) //null 제외
 public class ResultResponse<T> {
 
@@ -14,11 +12,11 @@ public class ResultResponse<T> {
     private T data;
     private ErrorResponse error;
 
-
-    private ResultResponse(T data) {
+    private ResultResponse(boolean success, T data, ErrorResponse error) {
+        this.success = success;
         this.data = data;
+        this.error = error;
     }
-
 
     public static <T> ResultResponse<T> success() {
         return new ResultResponse<>(true, null, null);

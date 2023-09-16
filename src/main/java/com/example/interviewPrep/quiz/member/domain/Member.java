@@ -1,39 +1,25 @@
 package com.example.interviewPrep.quiz.member.domain;
 
-import com.example.interviewPrep.quiz.answer.domain.Answer;
-import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
-import com.example.interviewPrep.quiz.notification.domain.Notification;
-import com.fasterxml.jackson.annotation.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-@Setter
 @Entity
 @Getter
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Table(indexes = @Index(name= "i_member", columnList = "email"))
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@NoArgsConstructor
+@Table(indexes = @Index(name = "i_member", columnList = "email"))
 public class Member extends BaseTimeEntity {
 
-    public Member(String email, String password, String nickName){
-        this.email = email;
-        this.password = password;
-        this.nickName = nickName;
-        this.role = Role.USER;
-    }
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="MEMBER_ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MEMBER_ID")
     private Long id;
 
-    @Column(nullable = false)
     private String email;
 
     private String password;
@@ -43,25 +29,62 @@ public class Member extends BaseTimeEntity {
     private String nickName;
 
     private String name;
-    @Column
+
     private String picture;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public Member update(String name, String picture){
+    private boolean isPaid;
+
+    @Builder
+    public Member(Long id, String email, String password, String type, String nickName, String name, String picture, Role role, boolean isPaid) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.type = type;
+        this.nickName = nickName;
         this.name = name;
         this.picture = picture;
-
-        return this;
+        this.role = role;
+        this.isPaid = isPaid;
     }
 
-    public void createPwd(String password){
+
+    public void setEmail(String email) {
+        Objects.requireNonNull(email, "email이 없습니다.");
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getRoleKey(){
-        return this.role.getKey();
+    public void setType(String type) {
+        Objects.requireNonNull(type, "type이 없습니다.");
+        this.type = type;
     }
 
+    public void setNickName(String nickName) {
+        Objects.requireNonNull(nickName, "nickName이 없습니다.");
+        this.nickName = nickName;
+    }
+
+    public void setIsPaid(boolean isPaid) {
+        this.isPaid = isPaid;
+    }
+
+    public Member update(String name, String picture) {
+        this.name = name;
+        this.picture = picture;
+        return this;
+    }
+
+    public void createPwd(String password) {
+        this.password = password;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
 }

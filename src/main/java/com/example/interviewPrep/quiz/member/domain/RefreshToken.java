@@ -1,14 +1,11 @@
 package com.example.interviewPrep.quiz.member.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import lombok.NoArgsConstructor;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public class RefreshToken {
 
@@ -17,4 +14,5 @@ public class RefreshToken {
     private Long memberId;
 
     private String refreshToken;
+
 }

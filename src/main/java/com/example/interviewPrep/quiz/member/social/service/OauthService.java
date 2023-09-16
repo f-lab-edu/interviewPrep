@@ -3,8 +3,8 @@ package com.example.interviewPrep.quiz.member.social.service;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.LoginResponseDTO;
 import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
@@ -38,13 +38,16 @@ public class OauthService {
         switch (socialLoginType) {
             case "google": {
                 redirectURL = googleOauth.getOauthRedirectURL();
-            } break;
+            }
+            break;
             case "kakao": {
                 redirectURL = kakaoOauth.getOauthRedirectURL();
-            } break;
+            }
+            break;
             case "naver": {
                 redirectURL = naverOauth.getOauthRedirectURL();
-            } break;
+            }
+            break;
             default: {
                 throw new CommonException(ErrorCode.NOT_FOUND_SOCIAL_TYPE);
             }
@@ -57,7 +60,7 @@ public class OauthService {
     }
 
 
-    public LoginResponseDTO socialLogin(String socialLoginType, String code) {
+    public LoginResponse socialLogin(String socialLoginType, String code) {
         switch (socialLoginType) {
             case "google": {
                 return socialLogin(googleOauth.getSocialMember(code));
@@ -75,8 +78,7 @@ public class OauthService {
     }
 
 
-
-    public LoginResponseDTO socialLogin(Member s_member){
+    public LoginResponse socialLogin(Member s_member) {
         Member member = memberRepository.findByEmailAndType(s_member.getEmail(), s_member.getType())
                 .map(entity -> entity.update(s_member.getName(), s_member.getPicture()))
                 .orElse(createPwd(s_member));
@@ -97,18 +99,18 @@ public class OauthService {
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(7*24*60*60);
+        cookie.setMaxAge(7 * 24 * 60 * 60);
         cookie.setPath("/"); // 모든 경로에서 접근 가능 하도록 설정
         response.addCookie(cookie);
 
-        return LoginResponseDTO.builder()
+        return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken("httpOnly")
                 .build();
     }
 
 
-    public Member createPwd(Member member){
+    public Member createPwd(Member member) {
         String password = new BigInteger(10, new SecureRandom()).toString();
         member.createPwd(SHA256Util.encryptSHA256(password));
         return member;

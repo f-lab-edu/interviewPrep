@@ -1,16 +1,21 @@
 package com.example.interviewPrep.quiz.Question.service;
 
-import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
+import com.example.interviewPrep.quiz.member.controller.MemberController;
+import com.example.interviewPrep.quiz.member.social.service.GoogleOauth;
+import com.example.interviewPrep.quiz.member.social.service.KakaoOauth;
+import com.example.interviewPrep.quiz.member.social.service.NaverOauth;
 import com.example.interviewPrep.quiz.question.domain.Question;
-import com.example.interviewPrep.quiz.question.dto.QuestionDTO;
+import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.question.service.QuestionService;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,80 +23,94 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-
+@SpringBootTest
 public class QuestionServiceTest {
 
+    @Autowired
     private QuestionService questionService;
 
-    private final QuestionRepository questionRepository = mock(QuestionRepository.class);
-    private final AnswerRepository answerRepository = mock(AnswerRepository.class);
+    @MockBean
+    private QuestionRepository questionRepository;
+
+    @MockBean
+    MemberController memberController;
+
+    @MockBean
+    GoogleOauth googleOauth;
+
+    @MockBean
+    KakaoOauth kakaoOauth;
+
+    @MockBean
+    NaverOauth naverOauth;
 
     Question question;
 
     @BeforeEach
     void setUp(){
 
-        questionService = new QuestionService(questionRepository, answerRepository);
-
         question = Question.builder()
                             .id(1L)
-                            .title("1번 문제")
-                            .type("자바")
+                            .title("problem1")
+                            .type("java")
                             .build();
 
-        given(questionRepository.findAll()).willReturn(List.of(question));
+        List<Question> questionList = List.of(question);
+
+        given(questionRepository.save(question)).willReturn(question);
+        given(questionRepository.findAll()).willReturn(questionList);
         given(questionRepository.findById(1L)).willReturn(Optional.of(question));
+        given(questionRepository.findById(1000L)).willThrow(CommonException.class);
     }
 
     @Test
-    @DisplayName("새 Question 생성")
+    @DisplayName("Question 생성")
     void createQuestion() {
 
-        QuestionDTO questionDTO = QuestionDTO.builder()
-                                    .id(10L)
-                                    .title("자바 10번 문제")
-                                    .type("자바")
-                                    .build();
+        QuestionRequest questionRequest = QuestionRequest.builder()
+                                          .id(1L)
+                                          .title("problem1")
+                                          .type("java")
+                                          .status(true)
+                                          .build();
 
-        Question createdQuestion = questionService.createQuestion(questionDTO);
+        Question createdQuestion = questionService.createQuestion(questionRequest);
 
-        verify(questionRepository).save(any(Question.class));
-
-        assertThat(createdQuestion.getId()).isEqualTo(10L);
-        assertThat(createdQuestion.getTitle()).isEqualTo("자바 10번 문제");
-        assertThat(createdQuestion.getType()).isEqualTo("자바");
+        assertThat(createdQuestion.getId()).isEqualTo(1L);
+        assertThat(createdQuestion.getTitle()).isEqualTo("problem1");
+        assertThat(createdQuestion.getType()).isEqualTo("java");
     }
 
     @Test
     @DisplayName("유효한 ID로 Question 업데이트")
     void updateQuestionWithExistedId(){
 
-       QuestionDTO questionDTO = QuestionDTO.builder()
-                                .id(1L)
-                                .title("문제 1번")
-                                .type("자바")
-                                .build();
+       QuestionRequest questionRequest = QuestionRequest.builder()
+                                        .id(1L)
+                                        .title("problem2")
+                                        .type("c++")
+                                        .build();
 
-       Question updatedQuestion = questionService.updateQuestion(questionDTO.getId(), questionDTO);
+       Question updatedQuestion = questionService.updateQuestion(questionRequest.getId(), questionRequest);
 
        assertThat(updatedQuestion.getId()).isEqualTo(1L);
-       assertThat(updatedQuestion.getTitle()).isEqualTo("문제 1번");
+       assertThat(updatedQuestion.getTitle()).isEqualTo("problem2");
+       assertThat(updatedQuestion.getType()).isEqualTo("c++");
     }
 
     @Test
-    @DisplayName("Question 업데이트")
+    @DisplayName("유효하지 않은 ID로 Question 업데이트")
     void updateQuestionWithNotExistedId(){
 
-        QuestionDTO questionDTO = QuestionDTO.builder()
+        QuestionRequest questionRequest = QuestionRequest.builder()
                                 .id(1000L)
-                                .title("문제 1번")
-                                .type("자바")
+                                .title("problem1000")
+                                .type("java")
                                 .build();
 
-        assertThatThrownBy(() -> questionService.updateQuestion(questionDTO.getId(), questionDTO))
+        assertThatThrownBy(() -> questionService.updateQuestion(questionRequest.getId(), questionRequest))
                 .isInstanceOf(CommonException.class);
 
     }
@@ -112,25 +131,7 @@ public class QuestionServiceTest {
 
         assertThatThrownBy(() -> questionService.deleteQuestion(1000L))
                             .isInstanceOf(CommonException.class);
-
     }
 
-
-    @Test
-    void createPageQuestion(){
-        List<QuestionDTO> questionDTOS = new ArrayList<>();
-
-        QuestionDTO mydto;
-        String[] type = {"java", "c++"};
-
-        for(int i = 1; i<=40; i++) {
-            mydto = QuestionDTO.builder()
-                    .title("problem1")
-                    .type(type[i%2])
-                    .build();
-            questionService.createQuestion(mydto);
-            if (i%2==0)questionDTOS.add(mydto);
-        }
-    }
 
 }
