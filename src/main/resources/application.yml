@@ -9,15 +9,15 @@ spring:
         username: root
         password: masterpw
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://mysql-master:3306/interviewPrep?useSSL=false
+        jdbcUrl: jdbc:mysql://mysql-master:3306/interviewprep?useSSL=false&allowPublicKeyRetrieval=true
 
 
-      slave:
-        hikari:
-          username: root
-          password: slavepw
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          jdbc-url: jdbc:mysql://mysql-slave:3306/interviewPrep?useSSL=false
+    slave:
+      hikari:
+        username: root
+        password: slavepw
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://mysql-slave:3306/interviewprep?useSSL=false&allowPublicKeyRetrieval=true
 
   jpa:
     hibernate:
