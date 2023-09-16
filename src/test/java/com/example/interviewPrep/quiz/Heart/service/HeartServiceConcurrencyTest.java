@@ -1,52 +1,67 @@
 package com.example.interviewPrep.quiz.Heart.service;
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
+import com.example.interviewPrep.quiz.heart.repository.AnswerLockRepository;
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.heart.dto.HeartRequestDTO;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.heart.service.HeartService;
+import com.example.interviewPrep.quiz.question.domain.Question;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class HeartServiceConcurrencyTest {
-    @Autowired
+    @MockBean
     AnswerRepository answerRepository;
-    @Autowired
+    @MockBean
     HeartRepository heartRepository;
-    @Autowired
+
+    @MockBean
+    AnswerLockRepository answerLockRepository;
+
+    @MockBean
     MemberRepository memberRepository;
 
     HeartService heartService;
 
-    Answer answer;
+    @MockBean
+    Question question;
+    @MockBean
     Member member;
+    Answer answer;
 
     @BeforeEach
     void setUp() {
-        answer = Answer.builder()
-            .build();
-        member = Member.builder()
-            .email("test@gmail.com")
-            .build();
-        answerRepository.save(answer);
-        memberRepository.save(member);
 
-        heartService = new HeartService(heartRepository, answerRepository, memberRepository);
+        heartService = new HeartService(heartRepository, answerLockRepository, answerRepository, memberRepository);
+
+        answer = Answer.builder()
+                .id(1L)
+                .question(question)
+                .member(member)
+                .heartCnt(0)
+                .build();
+
+        answerRepository.save(answer);
+        given(answerRepository.findById(1L)).willReturn(Optional.ofNullable(answer));
     }
 
     @Test
-    void increaseOptimisticLockTest() throws InterruptedException {
+    @DisplayName("동시에 100개의 요청")
+    public void increaseNamedLockTest() throws InterruptedException {
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -54,8 +69,7 @@ public class HeartServiceConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    heartService.createHeart(HeartRequestDTO.builder()
-                            .answerId(answer.getId()).memberId(member.getId()).build());
+                    heartService.increaseAnswerHeartCntWithNamedLock(answer.getId());
                 } finally {
                     latch.countDown();
                 }
