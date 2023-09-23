@@ -43,12 +43,10 @@ public class Answer extends BaseTimeEntity {
     private Long version;
 
     @Builder
-    public Answer(Long id, String content, Question question, Member member, Interview interview, int commentCnt, int heartCnt, Long version) {
-        Objects.requireNonNull(id, "id가 null입니다.");
+    public Answer(String content, Question question, Member member, Interview interview, int commentCnt, int heartCnt, Long version) {
         Objects.requireNonNull(question, "question이 null입니다.");
         Objects.requireNonNull(member, "member이 null입니다.");
 
-        this.id = id;
         this.content = content;
         this.question = question;
         this.member = member;
@@ -63,6 +61,7 @@ public class Answer extends BaseTimeEntity {
         return Answer.builder()
                 .member(member)
                 .question(question)
+                .content(content)
                 .build();
     }
 

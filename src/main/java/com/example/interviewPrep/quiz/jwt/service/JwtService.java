@@ -1,16 +1,21 @@
 package com.example.interviewPrep.quiz.jwt.service;
 
+import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
+
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_ID;
 
 @Service
 public class JwtService {
@@ -61,6 +66,16 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Long getMemberId() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String memberId = authentication.getName();
+            return Long.parseLong(memberId);
+        } catch (Exception e) {
+            throw new CommonException(NOT_FOUND_ID);
+        }
     }
 
 

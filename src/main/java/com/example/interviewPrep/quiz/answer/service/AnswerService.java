@@ -7,6 +7,7 @@ import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
@@ -31,12 +32,14 @@ import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTim
 @Service
 public class AnswerService {
 
+    private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final HeartRepository heartRepository;
 
-    public AnswerService(MemberRepository memberRepository, AnswerRepository answerRepository, QuestionRepository questionRepository, HeartRepository heartRepository){
+    public AnswerService(JwtService jwtService, MemberRepository memberRepository, AnswerRepository answerRepository, QuestionRepository questionRepository, HeartRepository heartRepository){
+        this.jwtService = jwtService;
         this.memberRepository = memberRepository;
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
@@ -45,15 +48,12 @@ public class AnswerService {
 
     public AnswerResponse createAnswer(AnswerRequest answerRequest){
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = jwtService.getMemberId();
 
-        Optional<Member> member = memberRepository.findById(memberId);
-        Optional<Question> question = questionRepository.findById(answerRequest.getQuestionId());
+        Member answerMember = memberRepository.findById(memberId).orElse(null);
+        Question answerQuestion = questionRepository.findById(answerRequest.getQuestionId()).orElse(null);
 
-        Member answerMember = member.get();
-        Question answerQuestion = question.get();
-
-        Answer answer =  createAnswerEntity(answerMember, answerQuestion, answerRequest.getContent());
+        Answer answer = createAnswerEntity(answerMember, answerQuestion, answerRequest.getContent());
 
         answerRepository.save(answer);
 

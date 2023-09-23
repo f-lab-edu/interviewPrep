@@ -81,10 +81,10 @@ public class JwtServiceTest {
         assertThatThrownBy(() -> jwtService.decode(null)).isInstanceOf(java.lang.IllegalArgumentException.class);
         assertThatThrownBy(() -> jwtService.decode("")).isInstanceOf(java.lang.IllegalArgumentException.class);
     }
+
     @Test
     @DisplayName("RefreshToken 복호화")
     public void decodeRefreshToken(){
-
         Long memberId = 1L;
         Role role = Role.USER;
 
@@ -93,5 +93,6 @@ public class JwtServiceTest {
         Claims claims = jwtService.decode(refreshToken);
         assertThat(claims.get("id")).isEqualTo(Long.toString(memberId));
     }
+
 
 }

@@ -1,16 +1,22 @@
 package com.example.interviewPrep.quiz.Answer.service;
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
+import com.example.interviewPrep.quiz.answer.dto.response.AnswerResponse;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
+import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
-import com.example.interviewPrep.quiz.answer.dto.AnswerDTO;
+import com.example.interviewPrep.quiz.answer.dto.request.AnswerRequest;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.answer.service.AnswerService;
+import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 import java.util.ArrayList;
@@ -18,95 +24,73 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 
 public class AnswerServiceTest {
 
+    @Autowired
     private AnswerService answerService;
 
-    private final AnswerRepository answerRepository = mock(AnswerRepository .class);
+    private final JwtService jwtService = mock(JwtService.class);
+
+    private final AnswerRepository answerRepository = mock(AnswerRepository.class);
     private final QuestionRepository questionRepository =  mock(QuestionRepository.class);
     private final MemberRepository memberRepository =  mock(MemberRepository.class);
     private final HeartRepository heartRepository = mock(HeartRepository.class);
 
-
-    Answer answer1;
-    Answer answer2;
-    List<Answer> answers;
-    AnswerDTO answerDTO1;
-    AnswerDTO answerDTO2;
-    List<AnswerDTO> answerDTOs;
-
-    Question question;
-
+    Answer answer;
 
     @BeforeEach
     public void setUp(){
-
-        answerService = new AnswerService(memberRepository, answerRepository,
-                questionRepository, heartRepository);
-
-        answerDTOs = new ArrayList<>();
-
-        answerDTO1 = AnswerDTO.builder()
-                .content("새 답안입니다.")
-                .questionId(1L)
-                .build();
-
-        answerDTO2 = AnswerDTO.builder()
-                .content("새 답안입니다2.")
-                .build();
-
-        answerDTOs.add(answerDTO1);
-        answerDTOs.add(answerDTO2);
-
-        question = Question.builder()
-                .id(1L)
-                .build();
-
-        when(questionRepository.findById(1L)).thenReturn(Optional.ofNullable(question));
+        answerService = new AnswerService(jwtService, memberRepository, answerRepository, questionRepository, heartRepository);
     }
 
 
     @Test
-    public void createAnswers(){
-
-        answers = new ArrayList<>();
-
-        answer1 = Answer.builder()
-                .content(answerDTO1.getContent())
-                .build();
-
-        answer2 = Answer.builder()
-                .content(answerDTO2.getContent())
-                .build();
-
-        answers.add(answer1);
-        answers.add(answer2);
-
-        int order = 0;
-        for(Answer answer: answers){
-            assertThat(answer.getContent()).isEqualTo(answerDTOs.get(order++).getContent());
-        }
-    }
-
-
-    @Test
-    @DisplayName("single answer create")
+    @DisplayName("답안 생성")
     public void createAnswer(){
 
         //given
-        answer1 = Answer.builder()
-                .content(answerDTO1.getContent())
+        AnswerRequest answerRequest = AnswerRequest.builder()
+                        .id(1L)
+                        .content("hello")
+                        .questionId(1L)
+                        .build();
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("abc@gmail.com")
+                .name("abc")
+                .password("1234")
                 .build();
 
+        Question question = Question.builder()
+                   .id(1L)
+                   .title("Question 1")
+                   .type("java")
+                   .difficulty("easy")
+                   .build();
+
+        given(jwtService.getMemberId()).willReturn(1L);
+        given(memberRepository.findById(1L)).willReturn(Optional.ofNullable(member));
+        given(questionRepository.findById(answerRequest.getId())).willReturn(Optional.ofNullable(question));
+
+
+        answer = Answer.builder()
+                .content(answerRequest.getContent())
+                .member(member)
+                .question(question)
+                .build();
+
+        verify(answerRepository, times(0)).save(answer);
+
         //when
-        Answer myAns = answerService.createAnswer(answerDTO1);
+        AnswerResponse answerResponse = answerService.createAnswer(answerRequest);
 
         //then
-        assertThat(myAns.getContent()).isEqualTo(answer1.getContent());
+        assertThat(answerResponse.getContent()).isEqualTo("hello");
 
     }
 
