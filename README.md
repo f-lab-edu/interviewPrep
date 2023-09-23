@@ -27,4 +27,4 @@
 - [https://github.com/LeeJongbokz/interviewPrep/pull/48] 로그인 시 JWT Access Token, Refresh Token 적용하기(with Redis)<br>
   1부: https://bryandev.tistory.com/1398
 
-- [https://github.com/f-lab-edu/interviewPrep/pull/10] TDD를 적용해 단위 테스트 작성<br> 
+- [https://github.com/f-lab-edu/interviewPrep/pull/10, https://github.com/f-lab-edu/interviewPrep/pull/28] TDD를 적용해 단위 테스트 작성<br> 
