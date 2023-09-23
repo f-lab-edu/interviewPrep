@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
-import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTime;
-
 @Getter
 @NoArgsConstructor
 public class AnswerResponse {

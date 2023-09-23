@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.jwt;
 
-import com.example.interviewPrep.quiz.errors.InvalidTokenException;
 import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import io.jsonwebtoken.Claims;
@@ -8,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.security.SignatureException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
