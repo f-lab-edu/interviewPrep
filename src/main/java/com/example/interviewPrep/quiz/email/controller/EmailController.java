@@ -2,12 +2,11 @@ package com.example.interviewPrep.quiz.email.controller;
 
 
 import com.example.interviewPrep.quiz.email.service.EmailService;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.controller.MemberController;
 import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -15,16 +14,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/service")
 public class EmailController {
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
-    @Autowired
-    EmailService service;
+
+    private final JwtService jwtService;
+    private final EmailService emailService;
+
+    public EmailController(JwtService jwtService, EmailService emailService){
+        this.jwtService = jwtService;
+        this.emailService = emailService;
+    }
 
     @PostMapping("/mail/change")
     @ResponseBody
     public void emailChangeConfirm(@RequestBody MemberRequest memberRequest) throws Exception {
         logger.info("post emailConfirm");
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = jwtService.getMemberId();
         String email = memberRequest.getEmail();
-        service.sendSimpleMessage(email, "change");
+        emailService.sendSimpleMessage(email, "change");
     }
 
 
@@ -32,9 +37,9 @@ public class EmailController {
     @ResponseBody
     public void emailJoinConfirm(@RequestBody MemberRequest memberRequest) throws Exception {
         logger.info("post emailConfirm");
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = jwtService.getMemberId();
         String email = memberRequest.getEmail();
-        service.sendSimpleMessage(email, "join");
+        emailService.sendSimpleMessage(email, "join");
     }
 
 }

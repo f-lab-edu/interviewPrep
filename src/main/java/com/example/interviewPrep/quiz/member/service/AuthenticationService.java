@@ -4,13 +4,13 @@ import com.example.interviewPrep.quiz.emitter.repository.EmitterService;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.exception.advice.LoginException;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.member.dto.request.LoginRequest;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.redis.RedisService;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +28,14 @@ import static com.example.interviewPrep.quiz.member.dto.response.LoginResponse.c
 @Slf4j
 @Service
 public class AuthenticationService {
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final EmitterService emitterService;
 
     private final RedisService redisService;
 
-    public AuthenticationService(JwtUtil jwtUtil, MemberRepository memberRepository, EmitterService emitterService, RedisService redisService) {
-        this.jwtUtil = jwtUtil;
+    public AuthenticationService(JwtService jwtService, MemberRepository memberRepository, EmitterService emitterService, RedisService redisService) {
+        this.jwtService = jwtService;
         this.memberRepository = memberRepository;
         this.emitterService = emitterService;
         this.redisService = redisService;
@@ -75,13 +75,13 @@ public class AuthenticationService {
     }
 
     public List<String> makeNewTokens(Long memberId, Role role) {
-        String accessToken = jwtUtil.createAccessToken(memberId, role);
-        String refreshToken = jwtUtil.createRefreshToken(memberId, role);
+        String accessToken = jwtService.createAccessToken(memberId, role);
+        String refreshToken = jwtService.createRefreshToken(memberId, role);
         return List.of(accessToken, refreshToken);
     }
 
     public void setNewAuthentication(Long memberId) {
-        Authentication authentication = jwtUtil.getAuthentication(String.valueOf(memberId));
+        Authentication authentication = jwtService.getAuthentication(String.valueOf(memberId));
         // SecurityContext 에 Authentication 객체를 저장합니다.
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
@@ -104,18 +104,18 @@ public class AuthenticationService {
             throw new LoginException(ErrorCode.INVALID_TOKEN);
         }
 
-        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), role);
+        String accessToken = jwtService.createAccessToken(Long.valueOf(memberId), role);
 
         return createLoginResponse(accessToken, "httpOnly");
     }
 
     public String getMemberId(String token) {
-        Claims claims = jwtUtil.decode(token);
+        Claims claims = jwtService.decode(token);
         return claims.get("id", String.class);
     }
 
     public Role getRoleType(String token) {
-        Claims claims = jwtUtil.decode(token);
+        Claims claims = jwtService.decode(token);
         String roleStr = claims.get("role", String.class);
 
         if (roleStr != null && roleStr.equals("USER")) {
@@ -127,8 +127,8 @@ public class AuthenticationService {
 
     public void logout(String token) {
         String accessToken = token.substring(7);
-        Long expiration = jwtUtil.getExpirations(accessToken);
-        String memberId = JwtUtil.getMemberId().toString();
+        Long expiration = jwtService.getExpirations(accessToken);
+        String memberId = jwtService.getMemberId().toString();
 
         redisService.deleteMemberOnRedis(memberId);
 
