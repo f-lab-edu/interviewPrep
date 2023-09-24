@@ -56,6 +56,10 @@ public class Answer extends BaseTimeEntity {
         this.version = version;
     }
 
+    public void setContent(String content){
+        Objects.requireNonNull(content, "content가 null입니다.");
+        this.content = content;
+    }
 
     public static Answer createAnswerEntity(Member member, Question question, String content) {
         return Answer.builder()

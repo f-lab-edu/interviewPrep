@@ -72,8 +72,25 @@ public class AnswerService {
         return createAnswerResponse(answerResponse);
     }
 
+    public AnswerResponse updateAnswer(Long id, AnswerRequest answerRequest){
 
-    public Answer deleteAnswer(Long id){
+        Long memberId = jwtService.getMemberId();
+
+        Optional<Answer> answer = answerRepository.findById(id);
+
+        if(answer.isEmpty()){
+            throw new CommonException(NOT_FOUND_ANSWER);
+        }
+
+        Answer findAnswer = answer.get();
+        findAnswer.setContent(answerRequest.getContent());
+
+        return createAnswerResponse(findAnswer);
+    }
+
+    public AnswerResponse deleteAnswer(Long id){
+
+        Long memberId = jwtService.getMemberId();
 
         Optional<Answer> answer = answerRepository.findById(id);
 
@@ -84,7 +101,7 @@ public class AnswerService {
         Answer deleteAnswer = answer.get();
         answerRepository.delete(deleteAnswer);
 
-        return deleteAnswer;
+        return createAnswerResponse(deleteAnswer);
     }
 
 

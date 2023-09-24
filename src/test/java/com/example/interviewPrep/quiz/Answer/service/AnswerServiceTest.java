@@ -48,7 +48,6 @@ public class AnswerServiceTest {
 
         //given
         AnswerRequest answerRequest = AnswerRequest.builder()
-                        .id(1L)
                         .content("hello")
                         .questionId(1L)
                         .build();
@@ -89,5 +88,108 @@ public class AnswerServiceTest {
     }
 
 
+    @Test
+    @DisplayName("답안 읽기")
+    public void readAnswer(){
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("abc@gmail.com")
+                .name("abc")
+                .password("1234")
+                .build();
+
+        Question question = Question.builder()
+                .id(1L)
+                .title("Question 1")
+                .type("java")
+                .difficulty("easy")
+                .build();
+
+        answer = Answer.builder()
+                .content("hello")
+                .member(member)
+                .question(question)
+                .build();
+
+        given(answerRepository.findById(1L)).willReturn(Optional.ofNullable(answer));
+
+        AnswerResponse answerResponse = answerService.readAnswer(1L);
+
+        assertThat(answerResponse.getContent()).isEqualTo("hello");
+
+    }
+
+
+    @Test
+    @DisplayName("답안 업데이트")
+    public void updateAnswer() {
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("abc@gmail.com")
+                .name("abc")
+                .password("1234")
+                .build();
+
+        Question question = Question.builder()
+                .id(1L)
+                .title("Question 1")
+                .type("java")
+                .difficulty("easy")
+                .build();
+
+        answer = Answer.builder()
+                .content("hello")
+                .member(member)
+                .question(question)
+                .build();
+
+        AnswerRequest answerRequest = AnswerRequest.builder()
+                                    .questionId(1L)
+                                    .content("hello2")
+                                    .build();
+
+        given(jwtService.getMemberId()).willReturn(1L);
+        given(answerRepository.findById(1L)).willReturn(Optional.ofNullable(answer));
+
+        AnswerResponse answerResponse = answerService.updateAnswer(1L, answerRequest);
+
+        assertThat(answerResponse.getContent()).isEqualTo("hello2");
+    }
+
+
+    @Test
+    @DisplayName("답안 삭제")
+    public void deleteAnswer(){
+
+        Member member = Member.builder()
+                .id(1L)
+                .email("abc@gmail.com")
+                .name("abc")
+                .password("1234")
+                .build();
+
+        Question question = Question.builder()
+                .id(1L)
+                .title("Question 1")
+                .type("java")
+                .difficulty("easy")
+                .build();
+
+        answer = Answer.builder()
+                .content("hello")
+                .member(member)
+                .question(question)
+                .build();
+
+        given(jwtService.getMemberId()).willReturn(1L);
+        given(answerRepository.findById(1L)).willReturn(Optional.ofNullable(answer));
+
+        answerService.deleteAnswer(1L);
+
+        verify(answerRepository).delete(any(Answer.class));
+
+    }
 
 }

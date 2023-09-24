@@ -17,8 +17,7 @@ public class AnswerRequest {
     private String content;
 
     @Builder
-    public AnswerRequest(Long id, Long questionId, String content){
-        Objects.requireNonNull(id, "id가 null입니다.");
+    public AnswerRequest(Long questionId, String content){
         Objects.requireNonNull(questionId, "questionId가 null입니다.");
         Objects.requireNonNull(content, "content가 null입니다.");
 
