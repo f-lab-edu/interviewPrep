@@ -23,9 +23,7 @@ public class Company extends BaseTimeEntity {
 
     @Builder
     public Company(String name) {
-
         Objects.requireNonNull(name, "name이 null입니다.");
-
         this.name = name;
     }
 

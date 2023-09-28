@@ -21,11 +21,6 @@ public class InterviewController {
         this.interviewService = interviewService;
     }
 
-    @PostMapping()
-    public ResponseEntity<Void> createInterview(@RequestBody InterviewRequest interviewRequest) {
-        interviewService.createInterview(interviewRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
 
 
 }

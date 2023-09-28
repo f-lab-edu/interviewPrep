@@ -1,52 +1,38 @@
 package com.example.interviewPrep.quiz.interview.service;
 
-
-import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.interview.domain.Interview;
-import com.example.interviewPrep.quiz.interview.dto.request.InterviewRequest;
-import com.example.interviewPrep.quiz.interview.dto.response.InterviewResponse;
-import com.example.interviewPrep.quiz.interview.repository.InterviewRepository;
+import com.example.interviewPrep.quiz.interview.factory.InterviewFactory;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
+import com.example.interviewPrep.quiz.product.domain.Product;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+
+import java.time.LocalDateTime;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
-import static com.example.interviewPrep.quiz.interview.domain.Interview.createInterviewEntity;
-import static com.example.interviewPrep.quiz.interview.dto.response.InterviewResponse.createInterviewResponse;
 
 @Service
 public class InterviewService {
 
-
-    private final InterviewRepository interviewRepository;
+    private final InterviewFactory interviewFactory;
     private final MemberRepository memberRepository;
 
-    public InterviewService(InterviewRepository interviewRepository, MemberRepository memberRepository) {
-        this.interviewRepository = interviewRepository;
+    public InterviewService(InterviewFactory interviewFactory, MemberRepository memberRepository) {
+        this.interviewFactory = interviewFactory;
         this.memberRepository = memberRepository;
     }
 
 
-    public InterviewResponse createInterview(InterviewRequest interviewRequest) {
+    public void createInterviews(Product product, LocalDateTime interviewDateTime) {
 
         Long memberId = JwtUtil.getMemberId();
 
-        Member member = memberRepository.findById(memberId).orElse(null);
+        Member member = memberRepository.findById(memberId)
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));;
 
-        if (member == null) {
-            throw new CommonException(NOT_FOUND_MEMBER);
-        }
-
-        List<Answer> answers = interviewRequest.getAnswers();
-
-        Interview interview = createInterviewEntity(member, answers);
-        interviewRepository.save(interview);
-
-        return createInterviewResponse(interview);
+        interviewFactory.createInterviews(member, product, interviewDateTime);
     }
 
 

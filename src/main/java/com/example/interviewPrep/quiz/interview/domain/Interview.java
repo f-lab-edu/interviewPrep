@@ -4,11 +4,13 @@ package com.example.interviewPrep.quiz.interview.domain;
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.product.domain.Product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,25 +29,26 @@ public class Interview extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToMany(mappedBy = "interview")
-    private List<Answer> answers;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "MEMBER_ID")
+    private Member mentor;
+
+    @ManyToOne(fetch=LAZY)
+    @JoinColumn(name = "PRODUCT_ID")
+    private Product product;
+
+    private LocalDateTime interviewDateTime;
 
     @Builder
-    public Interview(Long id, Member member, List<Answer> answers) {
+    public Interview(Member member, Member mentor, Product product, LocalDateTime interviewDateTime) {
 
-        Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(member, "member가 null입니다.");
-        Objects.requireNonNull(answers, "answers가 null입니다.");
+        Objects.requireNonNull(mentor, "mentor가 null입니다.");
+        Objects.requireNonNull(product, "product가 null입니다.");
 
-        this.id = id;
         this.member = member;
-        this.answers = answers;
-    }
-
-    public static Interview createInterviewEntity(Member member, List<Answer> answers) {
-        return Interview.builder()
-                .member(member)
-                .answers(answers)
-                .build();
+        this.mentor = mentor;
+        this.product = product;
+        this.interviewDateTime = interviewDateTime;
     }
 }
