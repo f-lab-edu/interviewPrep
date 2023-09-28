@@ -1,5 +1,6 @@
 package com.example.interviewPrep.quiz.product.factory;
 
+import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.interview.service.InterviewService;
 import com.example.interviewPrep.quiz.product.domain.Product;
 import com.example.interviewPrep.quiz.product.domain.ProductOne;
@@ -10,6 +11,8 @@ import com.example.interviewPrep.quiz.product.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_CREATED_PRODUCT;
 
 
 @Component
@@ -43,7 +46,7 @@ public class ProductFactory {
         interviewService.createInterviews(product, memberLevel, mentorId, interviewDateTime);
 
         if(product == null){
-            return;
+            throw new CommonException(NOT_CREATED_PRODUCT);
         }
 
         productRepository.save(product);

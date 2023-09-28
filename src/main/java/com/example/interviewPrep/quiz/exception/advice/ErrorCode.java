@@ -16,6 +16,7 @@ public enum ErrorCode {
     NOT_FOUND_TYPE("not_found_type", "해당 type으로 조회할 수 없습니다."),
     NOT_FOUND_SUBSCRIPTION("not_found_subscription", "subscription을 찾을 수 없습니다."),
 
+    NOT_CREATED_PRODUCT("not_created_product", "product가 생성되지 않았습니다."),
 
     EXIST_HEART_HISTORY("exist_heart_history", "이미 좋아요를 눌렀습니다."),
     NOT_EXIST_HEART_HISTORY("not_exist_heart_history", "좋아요 누른 기록이 없어 삭제할 수 없습니다."),
