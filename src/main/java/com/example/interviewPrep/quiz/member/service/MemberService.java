@@ -1,5 +1,7 @@
 package com.example.interviewPrep.quiz.member.service;
 
+import com.example.interviewPrep.quiz.company.domain.Company;
+import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
@@ -15,31 +17,35 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.DUPLICATE_EMAIL;
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 import static com.example.interviewPrep.quiz.member.dto.response.MemberResponse.createMemberResponse;
 
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final CompanyRepository companyRepository;
     private final RedisDao redisDao;
 
-    public MemberService(MemberRepository memberRepository, RedisDao redisDao) {
+    public MemberService(MemberRepository memberRepository, CompanyRepository companyRepository, RedisDao redisDao) {
         this.memberRepository = memberRepository;
+        this.companyRepository = companyRepository;
         this.redisDao = redisDao;
     }
 
 
     public void createMember(MemberRequest memberRequest) {
 
-        AES256 aes256 = new AES256();
         String email = memberRequest.getEmail();
+        String companyName = memberRequest.getCompanyName();
+
+        Company company = companyRepository.findByName(companyName)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_COMPANY));
 
         if (isDuplicatedEmail(email)) {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Member member = MemberRequest.createMember(memberRequest);
+        Member member = MemberRequest.createMember(memberRequest, company);
 
         memberRepository.save(member);
 
