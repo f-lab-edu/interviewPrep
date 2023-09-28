@@ -1,5 +1,6 @@
 package com.example.interviewPrep.quiz.member.domain;
 
+import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import lombok.Builder;
@@ -24,6 +25,10 @@ public class Member extends BaseTimeEntity {
 
     private String password;
 
+    @OneToOne
+    @JoinColumn(name = "COMPANY_ID")
+    private Company company;
+
     private String type;
 
     private String nickName;
@@ -38,10 +43,11 @@ public class Member extends BaseTimeEntity {
     private boolean isPaid;
 
     @Builder
-    public Member(Long id, String email, String password, String type, String nickName, String name, String picture, Role role, boolean isPaid) {
+    public Member(Long id, String email, String password, Company company, String type, String nickName, String name, String picture, Role role, boolean isPaid) {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.company = company;
         this.type = type;
         this.nickName = nickName;
         this.name = name;
