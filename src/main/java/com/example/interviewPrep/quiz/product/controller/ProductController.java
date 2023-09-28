@@ -1,7 +1,5 @@
 package com.example.interviewPrep.quiz.product.controller;
 
-
-import com.example.interviewPrep.quiz.interview.service.InterviewService;
 import com.example.interviewPrep.quiz.product.dto.request.ProductRequest;
 import com.example.interviewPrep.quiz.product.service.ProductService;
 import org.springframework.http.HttpStatus;

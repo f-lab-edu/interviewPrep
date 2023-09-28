@@ -30,7 +30,7 @@ public class InterviewService {
         Long memberId = JwtUtil.getMemberId();
 
         Member member = memberRepository.findById(memberId)
-                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));;
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
         interviewFactory.createInterviews(member, product, interviewDateTime);
     }
