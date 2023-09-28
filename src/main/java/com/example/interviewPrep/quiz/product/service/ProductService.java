@@ -12,22 +12,13 @@ import java.time.LocalDateTime;
 public class ProductService {
 
     private final ProductFactory productFactory;
-    private final ProductRepository productRepository;
-
-    public ProductService(ProductFactory productFactory, ProductRepository productRepository){
+    public ProductService(ProductFactory productFactory){
         this.productFactory = productFactory;
-        this.productRepository = productRepository;
     }
 
 
     public void createProduct(ProductRequest productRequest){
-
-        int type = productRequest.getType();
-        LocalDateTime interviewDateTime = productRequest.getInterviewDateTime();
-
-        Product product = productFactory.createProduct(type, interviewDateTime);
-
-
+        productFactory.createProduct(productRequest);
     }
 
 

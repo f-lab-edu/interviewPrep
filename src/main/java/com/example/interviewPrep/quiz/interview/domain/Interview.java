@@ -34,10 +34,14 @@ public class Interview extends BaseTimeEntity {
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
 
+    private Long memberLevel;
+
+    private Long mentorId;
+
     private LocalDateTime interviewDateTime;
 
     @Builder
-    public Interview(Member member, Member mentor, Product product, LocalDateTime interviewDateTime) {
+    public Interview(Member member, Member mentor, Product product, Long memberLevel, Long mentorId, LocalDateTime interviewDateTime) {
 
         Objects.requireNonNull(member, "member가 null입니다.");
         Objects.requireNonNull(mentor, "mentor가 null입니다.");
@@ -46,6 +50,8 @@ public class Interview extends BaseTimeEntity {
         this.member = member;
         this.mentor = mentor;
         this.product = product;
+        this.memberLevel = memberLevel;
+        this.mentorId = mentorId;
         this.interviewDateTime = interviewDateTime;
     }
 }

@@ -20,7 +20,7 @@ public class InterviewFactory {
     }
 
 
-    public void createInterviews(Member member, Product product, LocalDateTime interviewDateTime){
+    public void createInterviews(Member member, Product product, Long memberLevel, Long mentorId, LocalDateTime dateTime){
 
         int type = product.getType();
         int interviewCnt = 0;
@@ -35,12 +35,15 @@ public class InterviewFactory {
 
         for(int i=0; i<interviewCnt; i++){
 
-            LocalDateTime dateTime = (i == 0) ? interviewDateTime : null;
+            LocalDateTime interviewDateTime = (i == 0) ? dateTime : null;
+            Long interviewMentorId = (i == 0) ? mentorId : 0;
 
             Interview interview = Interview.builder()
                                   .member(member)
                                   .product(product)
-                                  .interviewDateTime(dateTime)
+                                  .memberLevel(memberLevel)
+                                  .mentorId(interviewMentorId)
+                                  .interviewDateTime(interviewDateTime)
                                   .build();
 
             interviewRepository.save(interview);

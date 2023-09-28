@@ -19,6 +19,5 @@ public class Product extends BaseTimeEntity {
     private Long id;
 
     int type;
-
     int price;
 }

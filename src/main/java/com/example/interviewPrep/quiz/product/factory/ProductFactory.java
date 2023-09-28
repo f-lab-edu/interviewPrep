@@ -5,6 +5,7 @@ import com.example.interviewPrep.quiz.product.domain.Product;
 import com.example.interviewPrep.quiz.product.domain.ProductOne;
 import com.example.interviewPrep.quiz.product.domain.ProductSix;
 import com.example.interviewPrep.quiz.product.domain.ProductThree;
+import com.example.interviewPrep.quiz.product.dto.request.ProductRequest;
 import com.example.interviewPrep.quiz.product.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,12 @@ public class ProductFactory {
         this.interviewService = interviewService;
     }
 
-    public Product createProduct(int type, LocalDateTime interviewDateTime){
+    public void createProduct(ProductRequest productRequest){
+
+        int type = productRequest.getType();
+        Long memberLevel = productRequest.getMemberLevel();
+        Long mentorId = productRequest.getMentorId();
+        LocalDateTime interviewDateTime = productRequest.getInterviewDateTime();
 
         Product product = null;
 
@@ -34,12 +40,14 @@ public class ProductFactory {
             product = new ProductSix();
         }
 
-        interviewService.createInterviews(product, interviewDateTime);
+        interviewService.createInterviews(product, memberLevel, mentorId, interviewDateTime);
 
-        assert product != null;
+        if(product == null){
+            return;
+        }
+
         productRepository.save(product);
 
-        return product;
     }
 
 

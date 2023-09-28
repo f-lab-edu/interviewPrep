@@ -25,14 +25,14 @@ public class InterviewService {
     }
 
 
-    public void createInterviews(Product product, LocalDateTime interviewDateTime) {
+    public void createInterviews(Product product, Long memberLevel, Long mentorId, LocalDateTime interviewDateTime) {
 
         Long memberId = JwtUtil.getMemberId();
 
         Member member = memberRepository.findById(memberId)
                                         .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
-        interviewFactory.createInterviews(member, product, interviewDateTime);
+        interviewFactory.createInterviews(member, product, memberLevel, mentorId, interviewDateTime);
     }
 
 

@@ -9,6 +9,10 @@ public class ProductRequest {
 
     private int type;
 
+    private Long memberLevel;
+
+    private Long mentorId;
+
     private LocalDateTime interviewDateTime;
 
 }
