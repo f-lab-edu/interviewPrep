@@ -36,8 +36,6 @@ public class Interview extends BaseTimeEntity {
 
     private Long memberLevel;
 
-    private Long mentorId;
-
     private LocalDateTime interviewDateTime;
 
     @Builder
@@ -51,7 +49,6 @@ public class Interview extends BaseTimeEntity {
         this.mentor = mentor;
         this.product = product;
         this.memberLevel = memberLevel;
-        this.mentorId = mentorId;
         this.interviewDateTime = interviewDateTime;
     }
 }
