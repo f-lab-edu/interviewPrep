@@ -9,7 +9,6 @@ import com.example.interviewPrep.quiz.member.dto.response.MemberResponse;
 import com.example.interviewPrep.quiz.member.exception.LoginFailureException;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
-import com.example.interviewPrep.quiz.utils.AES256;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.security.core.Authentication;
