@@ -27,7 +27,7 @@ public class EmailController {
     @ResponseBody
     public void emailChangeConfirm(@RequestBody MemberRequest memberRequest) throws Exception {
         logger.info("post emailConfirm");
-        Long memberId = jwtService.getMemberId();
+        jwtService.getMemberId();
         String email = memberRequest.getEmail();
         emailService.sendSimpleMessage(email, "change");
     }
@@ -37,7 +37,7 @@ public class EmailController {
     @ResponseBody
     public void emailJoinConfirm(@RequestBody MemberRequest memberRequest) throws Exception {
         logger.info("post emailConfirm");
-        Long memberId = jwtService.getMemberId();
+        jwtService.getMemberId();
         String email = memberRequest.getEmail();
         emailService.sendSimpleMessage(email, "join");
     }

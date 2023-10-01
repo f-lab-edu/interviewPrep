@@ -49,10 +49,13 @@ public class AnswerService {
 
         Long memberId = jwtService.getMemberId();
 
-        Member answerMember = memberRepository.findById(memberId).orElse(null);
-        Question answerQuestion = questionRepository.findById(answerRequest.getQuestionId()).orElse(null);
+        Member member = memberRepository.findById(memberId)
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
-        Answer answer = createAnswerEntity(answerMember, answerQuestion, answerRequest.getContent());
+        Question question = questionRepository.findById(answerRequest.getQuestionId())
+                                              .orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
+
+        Answer answer = createAnswerEntity(member, question, answerRequest.getContent());
 
         answerRepository.save(answer);
 
@@ -61,47 +64,34 @@ public class AnswerService {
 
     public AnswerResponse readAnswer(Long id){
 
-        Optional<Answer> answer = answerRepository.findById(id);
+        Answer answer = answerRepository.findById(id)
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
 
-        if(answer.isEmpty()){
-            throw new CommonException(NOT_FOUND_ANSWER);
-        }
-
-        Answer answerResponse = answer.get();
-
-        return createAnswerResponse(answerResponse);
+        return createAnswerResponse(answer);
     }
 
     public AnswerResponse updateAnswer(Long id, AnswerRequest answerRequest){
 
-        Long memberId = jwtService.getMemberId();
+        jwtService.getMemberId();
 
-        Optional<Answer> answer = answerRepository.findById(id);
+        Answer answer = answerRepository.findById(id)
+                                        .orElseThrow(()->new CommonException(NOT_FOUND_ANSWER));
 
-        if(answer.isEmpty()){
-            throw new CommonException(NOT_FOUND_ANSWER);
-        }
+        answer.updateContent(answerRequest.getContent());
 
-        Answer findAnswer = answer.get();
-        findAnswer.setContent(answerRequest.getContent());
-
-        return createAnswerResponse(findAnswer);
+        return createAnswerResponse(answer);
     }
 
     public AnswerResponse deleteAnswer(Long id){
 
-        Long memberId = jwtService.getMemberId();
+        jwtService.getMemberId();
 
-        Optional<Answer> answer = answerRepository.findById(id);
+        Answer answer = answerRepository.findById(id)
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
 
-        if(answer.isEmpty()){
-            throw new CommonException(NOT_FOUND_ANSWER);
-        }
+        answerRepository.delete(answer);
 
-        Answer deleteAnswer = answer.get();
-        answerRepository.delete(deleteAnswer);
-
-        return createAnswerResponse(deleteAnswer);
+        return createAnswerResponse(answer);
     }
 
 

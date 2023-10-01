@@ -34,8 +34,6 @@ public class AnswerServiceTest {
     private final MemberRepository memberRepository =  mock(MemberRepository.class);
     private final HeartRepository heartRepository = mock(HeartRepository.class);
 
-    Answer answer;
-
     @BeforeEach
     public void setUp(){
         answerService = new AnswerService(jwtService, memberRepository, answerRepository, questionRepository, heartRepository);
@@ -71,7 +69,7 @@ public class AnswerServiceTest {
         given(questionRepository.findById(1L)).willReturn(Optional.ofNullable(question));
 
 
-        answer = Answer.builder()
+        Answer answer = Answer.builder()
                 .content(answerRequest.getContent())
                 .member(member)
                 .question(question)
@@ -79,10 +77,8 @@ public class AnswerServiceTest {
 
         verify(answerRepository, times(0)).save(answer);
 
-        //when
         AnswerResponse answerResponse = answerService.createAnswer(answerRequest);
 
-        //then
         assertThat(answerResponse.getContent()).isEqualTo("hello");
 
     }
@@ -106,7 +102,7 @@ public class AnswerServiceTest {
                 .difficulty("easy")
                 .build();
 
-        answer = Answer.builder()
+        Answer answer = Answer.builder()
                 .content("hello")
                 .member(member)
                 .question(question)
@@ -139,7 +135,7 @@ public class AnswerServiceTest {
                 .difficulty("easy")
                 .build();
 
-        answer = Answer.builder()
+        Answer answer = Answer.builder()
                 .content("hello")
                 .member(member)
                 .question(question)
@@ -177,7 +173,7 @@ public class AnswerServiceTest {
                 .difficulty("easy")
                 .build();
 
-        answer = Answer.builder()
+        Answer answer = Answer.builder()
                 .content("hello")
                 .member(member)
                 .question(question)

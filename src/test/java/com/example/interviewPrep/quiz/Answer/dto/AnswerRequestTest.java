@@ -12,10 +12,11 @@ public class AnswerRequestTest {
     @DisplayName("AnswerRequest 생성")
     void create(){
         AnswerRequest answerRequest = AnswerRequest.builder()
-                .questionId(1L)
-                .content("답안입니다.")
-                .build();
+                                                   .questionId(1L)
+                                                   .content("답안입니다.")
+                                                   .build();
 
+        assertThat(answerRequest.getQuestionId()).isEqualTo(1L);
         assertThat(answerRequest.getContent()).isEqualTo("답안입니다.");
     }
 }

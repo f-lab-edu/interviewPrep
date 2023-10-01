@@ -56,7 +56,7 @@ public class Answer extends BaseTimeEntity {
         this.version = version;
     }
 
-    public void setContent(String content){
+    public void updateContent(String content){
         Objects.requireNonNull(content, "content가 null입니다.");
         this.content = content;
     }
