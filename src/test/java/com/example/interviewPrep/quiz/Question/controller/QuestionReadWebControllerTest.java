@@ -65,7 +65,6 @@ public class QuestionReadWebControllerTest {
                 .id(1L)
                 .title("problem1")
                 .type("java")
-                .status(true)
                 .build();
 
 
@@ -79,7 +78,6 @@ public class QuestionReadWebControllerTest {
                     .id(id)
                     .title(title)
                     .type("java")
-                    .status(true)
                     .build();
 
             questionResponses.add(questionResponse);

@@ -54,13 +54,11 @@ public class QuestionDeleteWebControllerTest {
     void setUp() throws Exception {
 
         questionRequest = QuestionRequest.builder()
-                .id(1L)
                 .title("problem1")
                 .type("java")
                 .build();
 
         Question question = Question.builder()
-                .id(1L)
                 .title("problem1")
                 .type("java")
                 .build();

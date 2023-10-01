@@ -70,15 +70,12 @@ public class QuestionServiceTest {
     void createQuestion() {
 
         QuestionRequest questionRequest = QuestionRequest.builder()
-                                          .id(1L)
                                           .title("problem1")
                                           .type("java")
-                                          .status(true)
                                           .build();
 
         Question createdQuestion = questionService.createQuestion(questionRequest);
 
-        assertThat(createdQuestion.getId()).isEqualTo(1L);
         assertThat(createdQuestion.getTitle()).isEqualTo("problem1");
         assertThat(createdQuestion.getType()).isEqualTo("java");
     }
@@ -88,12 +85,11 @@ public class QuestionServiceTest {
     void updateQuestionWithExistedId(){
 
        QuestionRequest questionRequest = QuestionRequest.builder()
-                                        .id(1L)
                                         .title("problem2")
                                         .type("c++")
                                         .build();
 
-       Question updatedQuestion = questionService.updateQuestion(questionRequest.getId(), questionRequest);
+       Question updatedQuestion = questionService.updateQuestion(1L, questionRequest);
 
        assertThat(updatedQuestion.getId()).isEqualTo(1L);
        assertThat(updatedQuestion.getTitle()).isEqualTo("problem2");
@@ -105,12 +101,11 @@ public class QuestionServiceTest {
     void updateQuestionWithNotExistedId(){
 
         QuestionRequest questionRequest = QuestionRequest.builder()
-                                .id(1000L)
                                 .title("problem1000")
                                 .type("java")
                                 .build();
 
-        assertThatThrownBy(() -> questionService.updateQuestion(questionRequest.getId(), questionRequest))
+        assertThatThrownBy(() -> questionService.updateQuestion(1000L, questionRequest))
                 .isInstanceOf(CommonException.class);
 
     }

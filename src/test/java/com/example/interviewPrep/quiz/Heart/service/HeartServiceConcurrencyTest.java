@@ -1,8 +1,10 @@
 package com.example.interviewPrep.quiz.Heart.service;
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
+import com.example.interviewPrep.quiz.heart.dto.request.HeartRequest;
+import com.example.interviewPrep.quiz.heart.repository.AnswerLockRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.heart.dto.HeartRequestDTO;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
@@ -22,10 +24,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HeartServiceConcurrencyTest {
     @Autowired
     AnswerRepository answerRepository;
+
+    @Autowired
+    AnswerLockRepository answerLockRepository;
     @Autowired
     HeartRepository heartRepository;
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    JwtService jwtService;
 
     HeartService heartService;
 
@@ -42,7 +50,7 @@ public class HeartServiceConcurrencyTest {
         answerRepository.save(answer);
         memberRepository.save(member);
 
-        heartService = new HeartService(heartRepository, answerRepository, memberRepository);
+        heartService = new HeartService(jwtService, heartRepository, answerLockRepository, answerRepository, memberRepository);
     }
 
     @Test
@@ -54,8 +62,8 @@ public class HeartServiceConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    heartService.createHeart(HeartRequestDTO.builder()
-                            .answerId(answer.getId()).memberId(member.getId()).build());
+                    heartService.createHeart(HeartRequest.builder()
+                            .answerId(answer.getId()).build());
                 } finally {
                     latch.countDown();
                 }
