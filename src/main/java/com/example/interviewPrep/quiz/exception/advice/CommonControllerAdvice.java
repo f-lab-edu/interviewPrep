@@ -3,6 +3,8 @@ package com.example.interviewPrep.quiz.exception.advice;
 import com.example.interviewPrep.quiz.response.ErrorResponse;
 import com.example.interviewPrep.quiz.response.ResultResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,9 +18,9 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 public class CommonControllerAdvice {
 
     @ExceptionHandler()
-    public ResultResponse<?> commonExHandler(CommonException ex) {
+    public ResponseEntity<ResultResponse<?>> commonExHandler(CommonException ex) {
         //log.error("[exceptionHandler] ex:", ex);
-        return ResultResponse.fail(ErrorResponse.of(ex.getError()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResultResponse.fail(ErrorResponse.of(ex.getError())));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
