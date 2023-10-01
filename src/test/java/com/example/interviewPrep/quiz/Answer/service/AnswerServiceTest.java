@@ -68,7 +68,7 @@ public class AnswerServiceTest {
 
         given(jwtService.getMemberId()).willReturn(1L);
         given(memberRepository.findById(1L)).willReturn(Optional.ofNullable(member));
-        given(questionRepository.findById(answerRequest.getId())).willReturn(Optional.ofNullable(question));
+        given(questionRepository.findById(1L)).willReturn(Optional.ofNullable(question));
 
 
         answer = Answer.builder()

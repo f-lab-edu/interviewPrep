@@ -8,12 +8,9 @@ import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
 import com.example.interviewPrep.quiz.exception.advice.CommonControllerAdvice;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
-import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
 import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
-import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
 import com.example.interviewPrep.quiz.answer.service.AnswerService;
 import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
@@ -58,15 +55,6 @@ public class AnswerReadWebControllerTest {
 
     @MockBean
     AnswerRepository answerRepository;
-    @MockBean
-    MemberRepository memberRepository;
-
-    @MockBean
-    QuestionRepository questionRepository;
-
-    @MockBean
-    HeartRepository heartRepository;
-
 
     @MockBean
     CustomOAuth2UserService customOAuth2UserService;
@@ -88,8 +76,6 @@ public class AnswerReadWebControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-
-        answerService = new AnswerService(jwtService, memberRepository, answerRepository, questionRepository, heartRepository);
 
         AnswerRequest validAnswerRequest = AnswerRequest.builder()
                 .content("new answer")
@@ -170,16 +156,15 @@ public class AnswerReadWebControllerTest {
                 .build();
 
         Long id = 2L;
-        given(answerRepository.findById(id)).willReturn(Optional.empty());
+        given(answerService.readAnswer(id)).willThrow(new CommonException(NOT_FOUND_ANSWER));
 
         mockMvc.perform(get("/api/v1/answers/"+id))
                 .andDo(print())
                 .andExpect(status().isNotFound()) // Expecting a 404 status code
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Verify response content type
-                .andExpect(jsonPath("$.error").value("NOT_FOUND_ANSWER")) // Verify the error message
+                .andExpect(jsonPath("$.error.errorCode").value("not_found_answer")) // Verify the error message
                 .andReturn();
 
-        verify(answerService).readAnswer(id);
     }
 
 

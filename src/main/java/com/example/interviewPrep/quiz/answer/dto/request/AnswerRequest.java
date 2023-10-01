@@ -10,8 +10,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class AnswerRequest {
 
-    private Long id;
-
     private Long questionId;
 
     private String content;
@@ -21,7 +19,6 @@ public class AnswerRequest {
         Objects.requireNonNull(questionId, "questionId가 null입니다.");
         Objects.requireNonNull(content, "content가 null입니다.");
 
-        this.id = id;
         this.questionId = questionId;
         this.content = content;
     }
