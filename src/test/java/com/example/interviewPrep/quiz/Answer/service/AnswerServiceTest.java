@@ -44,7 +44,6 @@ public class AnswerServiceTest {
     @DisplayName("답안 생성")
     public void createAnswer(){
 
-        //given
         AnswerRequest answerRequest = AnswerRequest.builder()
                         .content("hello")
                         .questionId(1L)
@@ -69,16 +68,9 @@ public class AnswerServiceTest {
         given(questionRepository.findById(1L)).willReturn(Optional.ofNullable(question));
 
 
-        Answer answer = Answer.builder()
-                .content(answerRequest.getContent())
-                .member(member)
-                .question(question)
-                .build();
-
-        verify(answerRepository, times(0)).save(answer);
-
         AnswerResponse answerResponse = answerService.createAnswer(answerRequest);
 
+        assertThat(answerResponse.getQuestionId()).isEqualTo(1L);
         assertThat(answerResponse.getContent()).isEqualTo("hello");
 
     }

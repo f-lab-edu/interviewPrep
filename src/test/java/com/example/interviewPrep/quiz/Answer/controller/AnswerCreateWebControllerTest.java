@@ -46,7 +46,8 @@ public class AnswerCreateWebControllerTest {
     @MockBean
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    private final JwtService jwtService = mock(JwtService.class);
+    @MockBean
+    JwtService jwtService;
 
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;

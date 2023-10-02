@@ -40,10 +40,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(AnswerController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-@Import(CommonControllerAdvice.class)
 @AutoConfigureMockMvc(addFilters = false)
 @WithMockCustomOAuth2Account()
 public class AnswerReadWebControllerTest {
@@ -62,8 +60,9 @@ public class AnswerReadWebControllerTest {
     @MockBean
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-    private final JwtService jwtService = mock(JwtService.class);
 
+    @MockBean
+    JwtService jwtService;
 
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -134,40 +133,16 @@ public class AnswerReadWebControllerTest {
     @DisplayName("유효하지 않은 답안 읽기")
     void readInValidAnswer() throws Exception{
 
-        Member member = Member.builder()
-                .id(1L)
-                .email("abc@gmail.com")
-                .name("abc")
-                .password("1234")
-                .build();
-
-        Question question = Question.builder()
-                .id(1L)
-                .title("Question 1")
-                .type("java")
-                .difficulty("easy")
-                .build();
-
-
-        Answer answer = Answer.builder()
-                .content("hello")
-                .member(member)
-                .question(question)
-                .build();
-
         Long id = 2L;
         given(answerService.readAnswer(id)).willThrow(new CommonException(NOT_FOUND_ANSWER));
 
         mockMvc.perform(get("/api/v1/answers/"+id))
                 .andDo(print())
-                .andExpect(status().isNotFound()) // Expecting a 404 status code
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON)) // Verify response content type
-                .andExpect(jsonPath("$.error.errorCode").value("not_found_answer")) // Verify the error message
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error.errorCode").value("not_found_answer"))
                 .andReturn();
 
     }
-
-
-
 
 }
