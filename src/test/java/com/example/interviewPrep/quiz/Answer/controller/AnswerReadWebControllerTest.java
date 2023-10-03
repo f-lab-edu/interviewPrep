@@ -5,28 +5,21 @@ import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.answer.dto.request.AnswerRequest;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
-import com.example.interviewPrep.quiz.exception.advice.CommonControllerAdvice;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
-import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.question.domain.Question;
-import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
 import com.example.interviewPrep.quiz.answer.service.AnswerService;
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 
@@ -34,7 +27,6 @@ import java.util.Optional;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_ANSWER;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AnswerController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc(addFilters = false)
-@WithMockCustomOAuth2Account()
 public class AnswerReadWebControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -55,14 +46,7 @@ public class AnswerReadWebControllerTest {
     AnswerRepository answerRepository;
 
     @MockBean
-    CustomOAuth2UserService customOAuth2UserService;
-
-    @MockBean
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-
-
-    @MockBean
-    JwtService jwtService;
 
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;

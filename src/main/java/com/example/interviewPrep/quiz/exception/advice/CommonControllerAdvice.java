@@ -19,7 +19,6 @@ public class CommonControllerAdvice {
 
     @ExceptionHandler()
     public ResponseEntity<ResultResponse<?>> commonExHandler(CommonException ex) {
-        //log.error("[exceptionHandler] ex:", ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResultResponse.fail(ErrorResponse.of(ex.getError())));
     }
 

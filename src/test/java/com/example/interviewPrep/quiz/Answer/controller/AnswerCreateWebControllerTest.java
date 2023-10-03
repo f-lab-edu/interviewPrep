@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AnswerController.class)
 @MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc(addFilters = false)
-@WithMockCustomOAuth2Account()
 public class AnswerCreateWebControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -41,13 +40,7 @@ public class AnswerCreateWebControllerTest {
     AnswerService answerService;
 
     @MockBean
-    CustomOAuth2UserService customOAuth2UserService;
-
-    @MockBean
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-
-    @MockBean
-    JwtService jwtService;
 
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
