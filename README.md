@@ -22,8 +22,10 @@
    https://bryandev.tistory.com/1393 
 
 - [https://github.com/f-lab-edu/interviewPrep/pull/22] Mysql Named Lock으로 좋아요 기능에 대한 동시성 처리하기<br>
+   https://bryandev.tistory.com/1397
 
 - [https://github.com/LeeJongbokz/interviewPrep/pull/48] 로그인 시 JWT Access Token, Refresh Token 적용하기(with Redis)<br>
+  1부: https://bryandev.tistory.com/1398
 
-
--  [https://github.com/f-lab-edu/interviewPrep/pull/21] QueryDsl 적용하기<br>
+- [https://github.com/f-lab-edu/interviewPrep/pull/10, https://github.com/f-lab-edu/interviewPrep/pull/28] TDD를 적용해 단위 테스트 작성<br> 
+  https://bryandev.tistory.com/1400  

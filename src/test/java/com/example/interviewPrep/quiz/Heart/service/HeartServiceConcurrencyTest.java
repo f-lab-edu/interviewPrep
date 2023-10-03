@@ -30,6 +30,7 @@ public class HeartServiceConcurrencyTest {
 
     @MockBean
     JwtService jwtService;
+
     @MockBean
     HeartRepository heartRepository;
 
