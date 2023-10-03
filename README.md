@@ -28,3 +28,4 @@
   1부: https://bryandev.tistory.com/1398
 
 - [https://github.com/f-lab-edu/interviewPrep/pull/10, https://github.com/f-lab-edu/interviewPrep/pull/28] TDD를 적용해 단위 테스트 작성<br> 
+  https://bryandev.tistory.com/1400  
