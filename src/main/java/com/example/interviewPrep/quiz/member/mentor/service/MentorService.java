@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
-import static com.example.interviewPrep.quiz.member.mentee.dto.response.MenteeResponse.createMenteeResponse;
 import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse.createMentorResponse;
 
 @Service

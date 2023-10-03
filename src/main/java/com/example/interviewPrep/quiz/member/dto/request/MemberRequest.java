@@ -1,7 +1,6 @@
 package com.example.interviewPrep.quiz.member.dto.request;
 
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.Builder;
 import lombok.Getter;

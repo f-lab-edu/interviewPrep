@@ -1,7 +1,5 @@
 package com.example.interviewPrep.quiz.member.mentor.dto.request;
 
-import com.example.interviewPrep.quiz.member.domain.Mentee;
-import com.example.interviewPrep.quiz.member.mentee.dto.request.MenteeRequest;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.Builder;
