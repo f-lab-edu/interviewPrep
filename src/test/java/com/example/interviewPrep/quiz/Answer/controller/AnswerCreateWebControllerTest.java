@@ -4,10 +4,7 @@ import com.example.interviewPrep.quiz.answer.controller.AnswerController;
 import com.example.interviewPrep.quiz.answer.dto.request.AnswerRequest;
 import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
-import com.example.interviewPrep.quiz.jwt.service.JwtService;
-import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
 import com.example.interviewPrep.quiz.answer.service.AnswerService;
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
