@@ -1,6 +1,6 @@
 package com.example.interviewPrep.quiz.Question.service;
 
-import com.example.interviewPrep.quiz.member.controller.MemberController;
+import com.example.interviewPrep.quiz.member.mentee.controller.MenteeController;
 import com.example.interviewPrep.quiz.member.social.service.GoogleOauth;
 import com.example.interviewPrep.quiz.member.social.service.KakaoOauth;
 import com.example.interviewPrep.quiz.member.social.service.NaverOauth;
@@ -35,7 +35,7 @@ public class QuestionServiceTest {
     private QuestionRepository questionRepository;
 
     @MockBean
-    MemberController memberController;
+    MenteeController menteeController;
 
     @MockBean
     GoogleOauth googleOauth;
@@ -70,10 +70,8 @@ public class QuestionServiceTest {
     void createQuestion() {
 
         QuestionRequest questionRequest = QuestionRequest.builder()
-                                          .id(1L)
                                           .title("problem1")
                                           .type("java")
-                                          .status(true)
                                           .build();
 
         Question createdQuestion = questionService.createQuestion(questionRequest);
@@ -88,12 +86,11 @@ public class QuestionServiceTest {
     void updateQuestionWithExistedId(){
 
        QuestionRequest questionRequest = QuestionRequest.builder()
-                                        .id(1L)
                                         .title("problem2")
                                         .type("c++")
                                         .build();
 
-       Question updatedQuestion = questionService.updateQuestion(questionRequest.getId(), questionRequest);
+       Question updatedQuestion = questionService.updateQuestion(1L, questionRequest);
 
        assertThat(updatedQuestion.getId()).isEqualTo(1L);
        assertThat(updatedQuestion.getTitle()).isEqualTo("problem2");
@@ -105,12 +102,11 @@ public class QuestionServiceTest {
     void updateQuestionWithNotExistedId(){
 
         QuestionRequest questionRequest = QuestionRequest.builder()
-                                .id(1000L)
                                 .title("problem1000")
                                 .type("java")
                                 .build();
 
-        assertThatThrownBy(() -> questionService.updateQuestion(questionRequest.getId(), questionRequest))
+        assertThatThrownBy(() -> questionService.updateQuestion(1000L, questionRequest))
                 .isInstanceOf(CommonException.class);
 
     }

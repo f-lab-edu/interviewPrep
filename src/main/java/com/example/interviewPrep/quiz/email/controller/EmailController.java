@@ -2,7 +2,6 @@ package com.example.interviewPrep.quiz.email.controller;
 
 
 import com.example.interviewPrep.quiz.email.service.EmailService;
-import com.example.interviewPrep.quiz.member.controller.MemberController;
 import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/service")
 public class EmailController {
-    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
     @Autowired
     EmailService service;
 

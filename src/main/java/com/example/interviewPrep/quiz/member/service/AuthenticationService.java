@@ -4,11 +4,12 @@ import com.example.interviewPrep.quiz.emitter.repository.EmitterService;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.exception.advice.LoginException;
-import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.dto.request.LoginRequest;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
-import com.example.interviewPrep.quiz.member.repository.MemberRepository;
+import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
+import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
+import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import com.example.interviewPrep.quiz.redis.RedisService;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
@@ -29,60 +30,111 @@ import static com.example.interviewPrep.quiz.member.dto.response.LoginResponse.c
 @Service
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
-    private final MemberRepository memberRepository;
+    private final MenteeRepository menteeRepository;
+
+    private final MentorRepository mentorRepository;
     private final EmitterService emitterService;
 
     private final RedisService redisService;
 
-    public AuthenticationService(JwtUtil jwtUtil, MemberRepository memberRepository, EmitterService emitterService, RedisService redisService) {
+    public AuthenticationService(JwtUtil jwtUtil, MenteeRepository menteeRepository, MentorRepository mentorRepository, EmitterService emitterService, RedisService redisService) {
         this.jwtUtil = jwtUtil;
-        this.memberRepository = memberRepository;
+        this.menteeRepository = menteeRepository;
+        this.mentorRepository = mentorRepository;
         this.emitterService = emitterService;
         this.redisService = redisService;
     }
 
-    public LoginResponse login(LoginRequest memberDTO, HttpServletResponse response) {
+    public LoginResponse login(LoginRequest loginRequest, HttpServletResponse response) {
 
-        String email = memberDTO.getEmail();
-        String inputPassword = memberDTO.getPassword();
+        String type = loginRequest.getType();
 
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_LOGIN));
+        if(type.equals("Mentee")){
+            return menteeLogin(loginRequest, response);
+        }
 
-        String savedPassword = member.getPassword();
+        return mentorLogin(loginRequest, response);
+    }
 
-        if (!isMatchPassword(savedPassword, inputPassword)) {
+
+    public LoginResponse menteeLogin(LoginRequest loginRequest, HttpServletResponse response){
+
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+
+        Mentee mentee = menteeRepository.findByEmail(email)
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_LOGIN));
+
+        String savedPassword = mentee.getPassword();
+
+        if (!isMatchPassword(savedPassword, password)) {
             throw new CommonException(NOT_FOUND_LOGIN);
         }
 
-        List<String> tokens = makeNewTokens(member.getId(), member.getRole());
+
+        List<String> tokens = makeNewTokens(mentee.getId(), "Mentee");
 
         String accessToken = tokens.get(0);
         String refreshToken = tokens.get(1);
 
-        setNewAuthentication(member.getId());
+        String menteeIdWithPrefix = "Mentee" + Long.toString(mentee.getId());
 
-        redisService.setRefreshTokenOnRedis(member.getId(), refreshToken);
+        setNewAuthentication(menteeIdWithPrefix);
+
+        redisService.setRefreshTokenOnRedis(menteeIdWithPrefix, refreshToken);
 
         setNewCookie(response, refreshToken);
 
         return createLoginResponse(accessToken, "httpOnly");
     }
 
-    public boolean isMatchPassword(String savedPassword, String inputPassword) {
-        String encryptedInputPassword = SHA256Util.encryptSHA256(inputPassword);
-        return savedPassword.equals(encryptedInputPassword);
+
+    public LoginResponse mentorLogin(LoginRequest loginRequest, HttpServletResponse response){
+
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+
+        Mentor mentor = mentorRepository.findByEmail(email)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_LOGIN));
+
+        String savedPassword = mentor.getPassword();
+
+        if (!isMatchPassword(savedPassword, password)) {
+            throw new CommonException(NOT_FOUND_LOGIN);
+        }
+
+        List<String> tokens = makeNewTokens(mentor.getId(), "Mentee");
+
+        String accessToken = tokens.get(0);
+        String refreshToken = tokens.get(1);
+
+        String mentorIdWithPrefix = "Mentor" + mentor.getId();
+
+        setNewAuthentication(mentorIdWithPrefix);
+
+        redisService.setRefreshTokenOnRedis(mentorIdWithPrefix, refreshToken);
+
+        setNewCookie(response, refreshToken);
+
+        return createLoginResponse(accessToken, "httpOnly");
+
+
     }
 
-    public List<String> makeNewTokens(Long memberId, Role role) {
-        String accessToken = jwtUtil.createAccessToken(memberId, role);
-        String refreshToken = jwtUtil.createRefreshToken(memberId, role);
+
+    public boolean isMatchPassword(String savedPassword, String password) {
+        String encryptedPassword = SHA256Util.encryptSHA256(password);
+        return savedPassword.equals(encryptedPassword);
+    }
+
+    public List<String> makeNewTokens(Long memberId, String type) {
+        String accessToken = jwtUtil.createAccessToken(memberId, type);
+        String refreshToken = jwtUtil.createRefreshToken(memberId, type);
         return List.of(accessToken, refreshToken);
     }
 
-    public void setNewAuthentication(Long memberId) {
-        Authentication authentication = jwtUtil.getAuthentication(String.valueOf(memberId));
-        // SecurityContext 에 Authentication 객체를 저장합니다.
+    public void setNewAuthentication(String memberIdWithPrefix) {
+        Authentication authentication = jwtUtil.getAuthentication(memberIdWithPrefix);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -98,13 +150,20 @@ public class AuthenticationService {
         if (refreshToken.equals("0")) throw new LoginException(ErrorCode.INVALID_TOKEN);
 
         String memberId = getMemberId(refreshToken);
-        Role role = getRoleType(refreshToken);
+        String type = getMemberType(refreshToken);
+        String memberIdWithPrefix;
 
-        if (redisService.isNotValidRefreshToken(refreshToken, memberId)) {
+        if(type.equals("Mentee")){
+            memberIdWithPrefix = "Mentee" + memberId;
+        }else{
+            memberIdWithPrefix = "Mentor" + memberId;
+        }
+
+        if (redisService.isNotValidRefreshToken(refreshToken, memberIdWithPrefix)) {
             throw new LoginException(ErrorCode.INVALID_TOKEN);
         }
 
-        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), role);
+        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), type);
 
         return createLoginResponse(accessToken, "httpOnly");
     }
@@ -114,16 +173,11 @@ public class AuthenticationService {
         return claims.get("id", String.class);
     }
 
-    public Role getRoleType(String token) {
+
+    public String getMemberType(String token) {
         Claims claims = jwtUtil.decode(token);
-        String roleStr = claims.get("role", String.class);
-
-        if (roleStr != null && roleStr.equals("USER")) {
-            return Role.USER;
-        }
-        return Role.MENTOR;
+        return claims.get("type", String.class);
     }
-
 
     public void logout(String token) {
         String accessToken = token.substring(7);

@@ -26,9 +26,11 @@ public class Answer extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     Member member;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Lob
     private String content;
     @ManyToOne(fetch = LAZY)

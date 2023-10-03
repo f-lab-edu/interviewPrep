@@ -2,7 +2,7 @@ package com.example.interviewPrep.quiz.Question.repository;
 
 import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
-import com.example.interviewPrep.quiz.member.controller.MemberController;
+import com.example.interviewPrep.quiz.member.mentee.controller.MenteeController;
 import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.member.social.service.GoogleOauth;
 import com.example.interviewPrep.quiz.member.social.service.KakaoOauth;
@@ -24,7 +24,7 @@ import static org.mockito.BDDMockito.given;
 class QuestionRepositoryTest {
 
     @MockBean
-    MemberController memberController;
+    MenteeController menteeController;
     @MockBean
     GoogleOauth googleOauth;
     @MockBean

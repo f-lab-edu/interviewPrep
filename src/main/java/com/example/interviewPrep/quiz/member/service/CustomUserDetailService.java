@@ -1,9 +1,11 @@
 package com.example.interviewPrep.quiz.member.service;
 
-import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.MemberContext;
-import com.example.interviewPrep.quiz.member.exception.MemberNotFoundException;
-import com.example.interviewPrep.quiz.member.repository.MemberRepository;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
+import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
+import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
+import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,23 +16,37 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
+
 
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService{
 
-    private final MemberRepository jpaMemberRepository;
+    private final MenteeRepository menteeRepository;
+    private final MentorRepository mentorRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String memberId) throws MemberNotFoundException {
+    public UserDetails loadUserByUsername(String memberIdWithPrefix) throws CommonException {
 
-        Member member = jpaMemberRepository.findById(Long.parseLong(memberId)).orElseThrow(() -> new MemberNotFoundException("해당 멤버가 존재하지 않습니다."));
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority("ROLE_USER"));
+        String prefix = memberIdWithPrefix.substring(0, 6);
+        List<GrantedAuthority> type = new ArrayList<>();
+        MemberContext memberContext;
 
-        MemberContext memberContext = new MemberContext(member, roles);
+        if(prefix.equals("Mentee")){
+            Long menteeId = Long.parseLong(memberIdWithPrefix.substring(6));
+            Mentee mentee = menteeRepository.findById(menteeId)
+                                            .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+            type.add(new SimpleGrantedAuthority("Mentee"));
+            memberContext = new MemberContext(mentee, type);
+            return memberContext;
+        }
 
+        Long mentorId = Long.parseLong(memberIdWithPrefix.substring(6));
+        Mentor mentor = mentorRepository.findById(mentorId)
+                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+        type.add(new SimpleGrantedAuthority("Mentor"));
+        memberContext = new MemberContext(mentor, type);
         return memberContext;
-
     }
 }

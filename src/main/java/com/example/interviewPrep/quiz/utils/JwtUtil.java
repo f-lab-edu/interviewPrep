@@ -1,7 +1,6 @@
 package com.example.interviewPrep.quiz.utils;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.member.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -38,7 +37,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String createAccessToken(Long memberId, Role role) {
+    public String createAccessToken(Long memberId, String type) {
         Date now = new Date();
         return Jwts.builder()
                 .setId(Long.toString(memberId))
@@ -47,12 +46,12 @@ public class JwtUtil {
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + accessTokenValidTime))
                 .claim("id", Long.toString(memberId))
-                .claim("role", role)
+                .claim("type", type)
                 .signWith(key)
                 .compact();
     }
 
-    public String createRefreshToken(Long memberId, Role role) {
+    public String createRefreshToken(Long memberId, String type) {
         Date now = new Date();
         return Jwts.builder()
                 .setId(Long.toString(memberId))
@@ -61,7 +60,7 @@ public class JwtUtil {
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
                 .claim("id", Long.toString(memberId))
-                .claim("role", role)
+                .claim("type", type)
                 .signWith(key)
                 .compact();
     }
@@ -81,8 +80,8 @@ public class JwtUtil {
     }
 
 
-    public Authentication getAuthentication(String memberId) {
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(memberId);
+    public Authentication getAuthentication(String memberIdWithPrefix) {
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(memberIdWithPrefix);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

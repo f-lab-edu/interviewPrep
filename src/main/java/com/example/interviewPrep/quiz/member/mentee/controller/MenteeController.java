@@ -1,48 +1,45 @@
-package com.example.interviewPrep.quiz.member.controller;
+package com.example.interviewPrep.quiz.member.mentee.controller;
 
 import com.example.interviewPrep.quiz.member.dto.request.LoginRequest;
-import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
-import com.example.interviewPrep.quiz.member.dto.response.MemberResponse;
+import com.example.interviewPrep.quiz.member.mentee.dto.request.MenteeRequest;
+import com.example.interviewPrep.quiz.member.mentee.dto.response.MenteeResponse;
+import com.example.interviewPrep.quiz.member.mentee.service.MenteeService;
 import com.example.interviewPrep.quiz.member.service.AuthenticationService;
-import com.example.interviewPrep.quiz.member.service.MemberService;
 import com.example.interviewPrep.quiz.member.social.service.OauthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 @RestController
-@RequestMapping("/api/v1/members")
+@RequestMapping("/api/v1/members/mentee")
 @CrossOrigin(origins = "*")
 @Slf4j
-public class MemberController {
+public class MenteeController {
     private final AuthenticationService authService;
-    private final MemberService memberService;
+    private final MenteeService menteeService;
     private final OauthService oauthService;
 
-    public MemberController(AuthenticationService authService, MemberService memberService, OauthService oauthService) {
+    public MenteeController(AuthenticationService authService, MenteeService menteeService, OauthService oauthService) {
         this.authService = authService;
-        this.memberService = memberService;
+        this.menteeService = menteeService;
         this.oauthService = oauthService;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestBody MemberRequest memberRequest) {
-        memberService.createMember(memberRequest);
+    public ResponseEntity<Void> signUp(@RequestBody MenteeRequest menteeRequest) {
+        menteeService.createMentee(menteeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<MemberResponse> getUserInfo() {
-        return ResponseEntity.ok(memberService.getUserInfo());
+    public ResponseEntity<MenteeResponse> getUserInfo() {
+        return ResponseEntity.ok(menteeService.getUserInfo());
     }
 
     @PostMapping("/login")
@@ -50,14 +47,9 @@ public class MemberController {
         return ResponseEntity.ok(authService.login(loginRequest, response));
     }
 
-    @PutMapping("/change")
-    public ResponseEntity<MemberResponse> updateNickNameAndEmail(@RequestBody @NotNull MemberRequest memberRequest, @AuthenticationPrincipal Authentication authentication) {
-        return ResponseEntity.ok(memberService.updateNickNameAndEmail(memberRequest, authentication));
-    }
-
     @PutMapping("/password/change")
-    public ResponseEntity<MemberResponse> updatePassword(@RequestBody MemberRequest memberRequest) {
-        return ResponseEntity.ok(memberService.updatePassword(memberRequest));
+    public ResponseEntity<MenteeResponse> updatePassword(@RequestBody MenteeRequest menteeRequest) {
+        return ResponseEntity.ok(menteeService.updatePassword(menteeRequest));
     }
 
     @GetMapping("/auth/{socialType}")

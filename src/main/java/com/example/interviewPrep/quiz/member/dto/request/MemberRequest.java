@@ -17,7 +17,6 @@ public class MemberRequest {
     private final String password;
     private final String passwordConfirm;
     private final String type;
-    private final String role;
     private String newPassword;
 
     @Builder
@@ -28,7 +27,6 @@ public class MemberRequest {
         Objects.requireNonNull(password, "password가 null입니다.");
         Objects.requireNonNull(passwordConfirm, "passwordConfirm이 null입니다.");
         Objects.requireNonNull(type, "type이 null입니다.");
-        Objects.requireNonNull(role, "role이 null입니다.");
 
         this.name = name;
         this.nickName = nickName;
@@ -36,24 +34,16 @@ public class MemberRequest {
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.type = type;
-        this.role = role;
     }
 
     public static Member createMember(MemberRequest memberRequest) {
         String password = SHA256Util.encryptSHA256(memberRequest.password);
-
-        Role memberRole = Role.USER;
-        if (memberRequest.role.equals("MENTOR")) {
-            memberRole = Role.MENTOR;
-        }
 
         return Member.builder()
                 .name(memberRequest.name)
                 .nickName(memberRequest.nickName)
                 .email(memberRequest.email)
                 .password(password)
-                .type(memberRequest.type)
-                .role(memberRole)
                 .isPaid(false)
                 .build();
     }

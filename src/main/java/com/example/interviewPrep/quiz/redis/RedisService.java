@@ -17,8 +17,8 @@ public class RedisService {
   }
 
 
-  public void setRefreshTokenOnRedis(Long memberId, String refreshToken){
-    redisDao.setValues(String.valueOf(memberId), refreshToken, Duration.ofDays(7));
+  public void setRefreshTokenOnRedis(String id, String refreshToken){
+    redisDao.setValues(id, refreshToken, Duration.ofDays(7));
   }
 
 
