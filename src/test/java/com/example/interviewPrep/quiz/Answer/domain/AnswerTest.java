@@ -12,7 +12,6 @@ public class AnswerTest {
     @Test
     void creationWithId(){
         Answer answer = Answer.builder()
-                        .id(1L)
                         .content("답안입니다.")
                         .build();
 

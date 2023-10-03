@@ -2,6 +2,7 @@ package com.example.interviewPrep.quiz.Heart.service;
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.heart.repository.AnswerLockRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
@@ -26,6 +27,10 @@ import static org.mockito.BDDMockito.given;
 public class HeartServiceConcurrencyTest {
     @MockBean
     AnswerRepository answerRepository;
+
+    @MockBean
+    JwtService jwtService;
+
     @MockBean
     HeartRepository heartRepository;
 
@@ -46,10 +51,9 @@ public class HeartServiceConcurrencyTest {
     @BeforeEach
     void setUp() {
 
-        heartService = new HeartService(heartRepository, answerLockRepository, answerRepository, memberRepository);
+        heartService = new HeartService(jwtService, heartRepository, answerLockRepository, answerRepository, memberRepository);
 
         answer = Answer.builder()
-                .id(1L)
                 .question(question)
                 .member(member)
                 .heartCnt(0)

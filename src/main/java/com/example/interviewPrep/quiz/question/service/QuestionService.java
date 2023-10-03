@@ -5,13 +5,13 @@ import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.questionCompany.repository.QuestionCompanyRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,12 +32,14 @@ import static com.example.interviewPrep.quiz.question.dto.QuestionResponse.creat
 @Service
 public class QuestionService {
 
+    private final JwtService jwtService;
     private final QuestionRepository questionRepository;
     private final CompanyRepository companyRepository;
     private final QuestionCompanyRepository questionCompanyRepository;
     private final AnswerRepository answerRepository;
 
-    public QuestionService(QuestionRepository questionRepository, CompanyRepository companyRepository, QuestionCompanyRepository questionCompanyRepository, AnswerRepository answerRepository) {
+    public QuestionService(JwtService jwtService, QuestionRepository questionRepository, CompanyRepository companyRepository, QuestionCompanyRepository questionCompanyRepository, AnswerRepository answerRepository) {
+        this.jwtService = jwtService;
         this.questionRepository = questionRepository;
         this.companyRepository = companyRepository;
         this.questionCompanyRepository = questionCompanyRepository;
@@ -56,7 +58,6 @@ public class QuestionService {
         return question;
     }
 
-    //@Cacheable(value = "question", key="#id")
     public QuestionResponse getQuestion(Long id) {
         Question question = findQuestion(id);
         return createQuestionResponse(question);
@@ -84,10 +85,8 @@ public class QuestionService {
     }
 
 
-    //@Cacheable(value = "questionDTO", key="#pageable.pageSize.toString().concat('-').concat(#pageable.pageNumber)")
-    // @Timer
     public Page<QuestionResponse> findByType(String type, Pageable pageable) {
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = jwtService.getMemberId();
         Page<Question> questions = findQuestionsByTypeAndPageable(type, pageable);
 
         if (questions.getContent().isEmpty()) {

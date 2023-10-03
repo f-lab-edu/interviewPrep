@@ -32,7 +32,7 @@ class QuestionTest {
                 .type("java")
                 .build();
 
-        question.change("problem2", "c++");
+        question.changeTitleOrType("problem2", "c++");
 
         assertThat(question.getTitle()).isEqualTo("problem2");
         assertThat(question.getType()).isEqualTo("c++");

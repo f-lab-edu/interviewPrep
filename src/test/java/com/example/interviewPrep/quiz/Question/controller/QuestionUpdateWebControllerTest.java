@@ -68,13 +68,11 @@ public class QuestionUpdateWebControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         validUpdateQuestionRequest = QuestionRequest.builder()
-                .id(1L)
                 .title("problem1")
                 .type("java")
                 .build();
 
         InvalidUpdateQuestionRequest = QuestionRequest.builder()
-                .id(1000L)
                 .title("problem2")
                 .type("java")
                 .build();

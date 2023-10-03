@@ -50,10 +50,8 @@ public class QuestionCreateWebControllerTest {
     void setUp() throws Exception {
 
         validQuestionRequest = QuestionRequest.builder()
-                .id(1L)
                 .title("problem1")
                 .type("java")
-                .status(true)
                 .build();
     }
 

@@ -7,9 +7,9 @@ import com.example.interviewPrep.quiz.heart.domain.Heart;
 import com.example.interviewPrep.quiz.heart.dto.request.HeartRequest;
 import com.example.interviewPrep.quiz.heart.repository.AnswerLockRepository;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +20,16 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 
 @Service
 public class HeartService {
+
+
+    private final JwtService jwtService;
     private final HeartRepository heartRepository;
     private final AnswerLockRepository answerLockRepository;
     private final AnswerRepository answerRepository;
     private final MemberRepository memberRepository;
 
-    public HeartService(HeartRepository heartRepository, AnswerLockRepository answerLockRepository, AnswerRepository answerRepository, MemberRepository memberRepository) {
+    public HeartService(JwtService jwtService, HeartRepository heartRepository, AnswerLockRepository answerLockRepository, AnswerRepository answerRepository, MemberRepository memberRepository) {
+        this.jwtService = jwtService;
         this.heartRepository = heartRepository;
         this.answerLockRepository = answerLockRepository;
         this.answerRepository = answerRepository;
@@ -33,7 +37,7 @@ public class HeartService {
     }
     public void createHeart(HeartRequest heartRequest) {
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = jwtService.getMemberId();
         Long answerId = heartRequest.getAnswerId();
 
         Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
@@ -59,7 +63,7 @@ public class HeartService {
     }
 
     public void deleteHeart(HeartRequest heartRequest) {
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = jwtService.getMemberId();
         Long answerId = heartRequest.getAnswerId();
 
         if (!checkHeartExists(answerId, memberId)) {
