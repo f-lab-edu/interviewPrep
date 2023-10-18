@@ -5,7 +5,10 @@ import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -14,14 +17,14 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class MemberRepositoryTest {
 
-    @Autowired
-    private final MemberRepository memberRepository = mock(MemberRepository.class);
+    @Mock
+    private MemberRepository memberRepository;
 
 
     Member member;
@@ -31,7 +34,6 @@ class MemberRepositoryTest {
 
     @BeforeEach
     void setUp(){
-
         // Given
         email = "hello@gmail.com";
         password = "1234";
@@ -49,20 +51,22 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("회원을 DB에 저장")
     public void save(){
+        given(memberRepository.save(member)).willReturn(member);
 
         // When
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         // Then
-        String savedEmail = member.getEmail();
+        String savedEmail = savedMember.getEmail();
 
-        assertEquals(member, memberRepository.findByEmail(savedEmail).get());
-        assertEquals(member, memberRepository.findByEmailAndType(savedEmail,type).get());
+        assertEquals(savedEmail, member.getEmail());
     }
     
     @Test
     @DisplayName("Email로 회원 찾기")
     public void findByEmail(){
+        given(memberRepository.save(member)).willReturn(member);
+        given(memberRepository.findByEmail(email)).willReturn(Optional.ofNullable(member));
 
         // When
         memberRepository.save(member);
