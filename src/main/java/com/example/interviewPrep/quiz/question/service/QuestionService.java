@@ -76,7 +76,7 @@ public class QuestionService {
     }
 
     public Question findQuestion(Long id) {
-        return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION, ErrorCode.NOT_FOUND_QUESTION.getMessage(id)));
+        return questionRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_QUESTION));
     }
 
     public int getTotalQuestionsCount() {

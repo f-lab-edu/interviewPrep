@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WithMockCustomOAuth2Account()
 @WebMvcTest(QuestionController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class QuestionReadWebControllerTest {
 
@@ -59,12 +61,14 @@ public class QuestionReadWebControllerTest {
                 .id(1L)
                 .title("problem1")
                 .type("java")
+                .difficulty("easy")
                 .build();
 
         QuestionResponse singleQuestionResponse = QuestionResponse.builder()
                 .id(1L)
                 .title("problem1")
                 .type("java")
+                .difficulty("easy")
                 .build();
 
 
