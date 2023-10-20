@@ -16,46 +16,54 @@ class MemberRequestTest {
 
     static Stream<Arguments> provideTestCases() {
         return Stream.of(
-                Arguments.of(1L, null, "password", "nickname", "newpassword", "type"),
-                Arguments.of(2L, "test@example.com", null, "nickname", "newpassword", "type"),
-                Arguments.of(3L, "test@example.com", "password", null, "newpassword", "type"),
-                Arguments.of(4L, "test@example.com", "password", "nickName", null, "type"),
-                Arguments.of(5L, "test@example.com", "password", "nickName", "newpassword", null)
+                Arguments.of(null, "test@example.com", "password", "nickname", "type", "normal"),
+                Arguments.of("tester", null, "password", "nickname", "type", "normal"),
+                Arguments.of("tester", "test@example.com", null, "nickname", "type", "normal"),
+                Arguments.of("tester", "test@example.com", "password", null, "type", "normal"),
+                Arguments.of("tester", "test@example.com", "password", "nickName", null, "normal"),
+                Arguments.of("tester", "test@example.com", "password", "nickName", "type", null)
         );
     }
 
     @Test
-    @DisplayName("MemberDTO 생성")
-    void createMemberDTO() {
+    @DisplayName("MemberRequest 생성")
+    void createMemberRequest() {
+        String name = "tester";
         String email = "hello@gmail.com";
         String password = "1234";
         String nickName = "tester";
-        String newPassword = "5678";
         String type = "user";
+        String role = "normal";
 
         MemberRequest memberRequest = MemberRequest.builder()
+                .name(name)
                 .email(email)
                 .password(password)
                 .nickName(nickName)
                 .type(type)
+                .role(role)
                 .build();
 
+        assertEquals(name, memberRequest.getName());
         assertEquals(email, memberRequest.getEmail());
         assertEquals(password, memberRequest.getPassword());
         assertEquals(nickName, memberRequest.getNickName());
         assertEquals(type, memberRequest.getType());
+        assertEquals(role, memberRequest.getRole());
     }
 
     @ParameterizedTest
     @MethodSource("provideTestCases")
-    @DisplayName("MemberDTO를 Null 값을 포함해서 생성")
-    void createMemberDTOWithNullValue(String email, String password, String nickName, String type) {
+    @DisplayName("MemberRequest를 Null 값을 포함해서 생성")
+    void createMemberRequestWithNullValue(String name, String email, String password, String nickName, String type, String role) {
         assertThrows(NullPointerException.class, () -> {
             MemberRequest.builder()
+                    .name(name)
                     .email(email)
                     .password(password)
                     .nickName(nickName)
                     .type(type)
+                    .role(role)
                     .build();
         });
     }

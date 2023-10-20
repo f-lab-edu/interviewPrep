@@ -15,11 +15,13 @@ class QuestionTest {
                            .id(1L)
                            .title("problem1")
                            .type("java")
+                           .difficulty("easy")
                            .build();
 
         assertThat(question.getId()).isEqualTo(1L);
         assertThat(question.getTitle()).isEqualTo("problem1");
         assertThat(question.getType()).isEqualTo("java");
+        assertThat(question.getDifficulty()).isEqualTo("easy");
     }
 
 
@@ -30,12 +32,14 @@ class QuestionTest {
                 .id(1L)
                 .title("problem1")
                 .type("java")
+                .difficulty("easy")
                 .build();
 
         question.changeTitleOrType("problem2", "c++");
 
         assertThat(question.getTitle()).isEqualTo("problem2");
         assertThat(question.getType()).isEqualTo("c++");
+        assertThat(question.getDifficulty()).isEqualTo("easy");
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.interviewPrep.quiz.question.controller;
 
+import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
@@ -48,9 +49,8 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid QuestionRequest questionRequest) {
-        questionService.updateQuestion(id, questionRequest);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<Question> update(@PathVariable Long id, @RequestBody @Valid QuestionRequest questionRequest) {
+        return ResponseEntity.ok(questionService.updateQuestion(id, questionRequest));
     }
 
     @DeleteMapping("/{id}")

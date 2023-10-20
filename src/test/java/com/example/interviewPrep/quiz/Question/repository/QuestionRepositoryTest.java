@@ -12,6 +12,9 @@ import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -20,25 +23,25 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class QuestionRepositoryTest {
 
-    @MockBean
+    @Mock
     MemberController memberController;
-    @MockBean
+    @Mock
     GoogleOauth googleOauth;
-    @MockBean
+    @Mock
     KakaoOauth kakaoOauth;
-    @MockBean
+    @Mock
     NaverOauth naverOauth;
-    @MockBean
+    @Mock
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    @MockBean
+    @Mock
     CustomOAuth2UserService customOAuth2UserService;
-    @MockBean
+    @Mock
     JwtAuthenticationFilter jwtAuthenticationFilter;
     Question question;
-    @MockBean
+    @Mock
     private QuestionRepository questionRepository;
 
     @BeforeEach
@@ -48,6 +51,7 @@ class QuestionRepositoryTest {
                 .id(1L)
                 .title("problem1")
                 .type("java")
+                .difficulty("easy")
                 .build();
 
         given(questionRepository.save(question)).willReturn(question);

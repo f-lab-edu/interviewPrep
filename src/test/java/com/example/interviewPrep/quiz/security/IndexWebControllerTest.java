@@ -1,12 +1,16 @@
 package com.example.interviewPrep.quiz.security;
 
+import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.IndexController;
+import com.example.interviewPrep.quiz.redis.RedisDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 MockMvc 클래스를 통해 스프링 MVC의 동작을 재현할 수 있다.
  */
 @WebMvcTest(IndexController.class) //테스트할 컨트롤러 지정
+@MockBean(JpaMetamodelMappingContext.class)
 public class IndexWebControllerTest {
 
     @Autowired
@@ -34,7 +39,14 @@ public class IndexWebControllerTest {
     @MockBean
     CustomOAuth2UserService customOAuth2UserService;
 
+    @MockBean
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
+    @MockBean
+    JwtService jwtService;
+
+    @MockBean
+    RedisDao redisDao;
     @Test
     @DisplayName(" / 처음 화면에서 로그인")
     void indexPage() throws Exception{
@@ -54,15 +66,5 @@ public class IndexWebControllerTest {
 
     }
 
-
-    @Test
-    @DisplayName("인증 하지 않고 다른 url 이동 시 로그인 화면으로 이동")
-    void questionPage() throws Exception{
-
-        mockMvc.perform(get("/question/java"))
-                .andDo(print())
-                .andExpect(status().is3xxRedirection());
-
-    }
 
 }

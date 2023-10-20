@@ -14,10 +14,12 @@ class QuestionRequestTest {
         QuestionRequest questionRequest = QuestionRequest.builder()
                 .title("problem1")
                 .type("java")
+                .difficulty("easy")
                 .build();
 
         assertThat(questionRequest.getTitle()).isEqualTo("problem1");
         assertThat(questionRequest.getType()).isEqualTo("java");
+        assertThat(questionRequest.getDifficulty()).isEqualTo("easy");
     }
 
 }
