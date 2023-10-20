@@ -1,10 +1,8 @@
 package com.example.interviewPrep.quiz.Heart.service;
 
 import com.example.interviewPrep.quiz.answer.domain.Answer;
-import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.heart.domain.Heart;
 import com.example.interviewPrep.quiz.heart.dto.request.HeartRequest;
-import com.example.interviewPrep.quiz.heart.exception.HeartNotFoundException;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.heart.repository.AnswerLockRepository;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
@@ -19,20 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class HeartServiceTest {
