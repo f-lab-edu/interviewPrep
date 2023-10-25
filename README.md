@@ -20,7 +20,7 @@
 - Ngrinder를 이용해 성능테스트
 
 - Jenkins를 이용하여 CI/CD 환경 구축하는 과정<br>
-  1부: https://bryandev.tistory.com/1427
+  1부: https://bryandev.tistory.com/1427<br> 
   2부: https://bryandev.tistory.com/1428
   
 - [https://github.com/f-lab-edu/interviewPrep/pull/8] SSE 댓글 알림 기능 개발(with Redis)<br>
