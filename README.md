@@ -1,9 +1,11 @@
+# InterviewPrep
+개발자 기술 인터뷰 준비를 돕는 사이트입니다.
+개발자 기술 면접 기출 질문들을 제공하며, 
+실무 경험이 풍부한 멘토들과의 매칭을 제공하는 것을 목표로 하고 있습니다.   
+
+
 # 🧑🏻‍💻 InterviewPrep 서버 구조도
 ![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/5d1ba534-91a3-474c-9d30-ffcdd965f9e4)
-
-
-
-
 
 
 
