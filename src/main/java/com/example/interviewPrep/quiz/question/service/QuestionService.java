@@ -63,6 +63,11 @@ public class QuestionService {
         return createQuestionResponse(question);
     }
 
+
+    public List<Question> getAllQuestions(){
+        return questionRepository.findAll();
+    }
+
     public Question updateQuestion(Long id, QuestionRequest questionRequest) {
         Question question = findQuestion(id);
         question.changeTitleOrType(questionRequest.getTitle(), questionRequest.getType());

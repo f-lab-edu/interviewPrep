@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,6 +84,24 @@ public class QuestionServiceTest {
         assertThat(createdQuestion.getType()).isEqualTo("java");
         assertThat(createdQuestion.getDifficulty()).isEqualTo("easy");
     }
+
+    @Test
+    @DisplayName("전체 Question 읽기")
+    void readAllQuestions(){
+
+        List<Question> savedQuestions = new ArrayList<>();
+        savedQuestions.add(new Question());
+        savedQuestions.add(new Question());
+        savedQuestions.add(new Question());
+
+        given(questionRepository.findAll()).willReturn(savedQuestions);
+
+        List<Question> questions = questionService.getAllQuestions();
+
+        assertThat(questions.size()).isEqualTo(3);
+    }
+
+
 
     @Test
     @DisplayName("유효한 ID로 Question 업데이트")
