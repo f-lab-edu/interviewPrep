@@ -4,7 +4,6 @@ import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
 import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
