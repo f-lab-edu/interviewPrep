@@ -65,7 +65,7 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/all")
+    @GetMapping("/total")
     public ResponseEntity<Integer> getTotalQuestionsCount() {
         return ResponseEntity.ok(questionService.getTotalQuestionsCount());
     }
