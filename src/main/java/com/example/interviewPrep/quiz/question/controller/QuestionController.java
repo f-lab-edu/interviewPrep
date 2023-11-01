@@ -37,6 +37,12 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.getQuestion(id));
     }
 
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Question>> getAllQuestions() {
+        return ResponseEntity.ok(questionService.getAllQuestions());
+    }
+
     @GetMapping("/by-type/{type}")
     public ResponseEntity<Page<QuestionResponse>> getQuestionsByType(@PathVariable(required = false) String type, @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(questionService.findByType(type, pageable));
