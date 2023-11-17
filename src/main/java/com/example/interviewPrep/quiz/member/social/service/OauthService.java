@@ -2,14 +2,11 @@ package com.example.interviewPrep.quiz.member.social.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
-import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
-import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -31,7 +28,7 @@ public class OauthService {
     private final KakaoOauth kakaoOauth;
     private final NaverOauth naverOauth;
     private final HttpServletResponse response;
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final MenteeRepository menteeRepository;
     private final RedisDao redisDao;
 
@@ -87,11 +84,11 @@ public class OauthService {
 
         Long memberId = findMentee.getId();
 
-        String accessToken = jwtUtil.createAccessToken(memberId, "mentee");
-        String refreshToken = jwtUtil.createRefreshToken(memberId, "mentee");
+        String accessToken = jwtService.createAccessToken(memberId, "mentee");
+        String refreshToken = jwtService.createRefreshToken(memberId, "mentee");
 
         // 토큰으로부터 유저 정보를 받아옵니다.
-        Authentication authentication = jwtUtil.getAuthentication(String.valueOf(memberId));
+        Authentication authentication = jwtService.getAuthentication(String.valueOf(memberId));
         // SecurityContext 에 Authentication 객체를 저장합니다.
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
