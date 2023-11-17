@@ -1,6 +1,6 @@
 package com.example.interviewPrep.quiz.jwt;
 
-import com.example.interviewPrep.quiz.utils.JwtService;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
