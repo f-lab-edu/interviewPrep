@@ -2,6 +2,7 @@ package com.example.interviewPrep.quiz.Member.service;
 
 import com.example.interviewPrep.quiz.emitter.repository.EmitterService;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.dto.request.LoginRequest;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
@@ -10,7 +11,6 @@ import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import com.example.interviewPrep.quiz.member.service.AuthenticationService;
 import com.example.interviewPrep.quiz.redis.RedisService;
-import com.example.interviewPrep.quiz.utils.JwtService;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
