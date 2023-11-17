@@ -1,6 +1,7 @@
 package com.example.interviewPrep.quiz.member.dto;
 
 import com.example.interviewPrep.quiz.member.domain.Member;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -67,11 +68,10 @@ public class OAuthAttributes {
     }
 
     public Member toEntity(){ // 유저 eneity 생성
-        return Member.builder()
+        return Mentee.builder()
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(Role.USER) // 가입 시 기본 권한은 user(일반 사용자)
                 .build();
     }
 

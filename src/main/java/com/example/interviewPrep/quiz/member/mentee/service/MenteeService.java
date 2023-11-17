@@ -1,5 +1,7 @@
 package com.example.interviewPrep.quiz.member.mentee.service;
 
+import com.example.interviewPrep.quiz.company.domain.Company;
+import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.mentee.dto.request.MenteeRequest;
@@ -10,6 +12,7 @@ import com.example.interviewPrep.quiz.utils.AES256;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,17 +20,23 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 import static com.example.interviewPrep.quiz.member.mentee.dto.response.MenteeResponse.createMenteeResponse;
 
 @Service
+@Transactional(readOnly = true)
 public class MenteeService {
+
+    private final CompanyRepository companyRepository;
     private final MenteeRepository menteeRepository;
     private final RedisDao redisDao;
 
-    public MenteeService(MenteeRepository menteeRepository, RedisDao redisDao) {
+    public MenteeService(CompanyRepository companyRepository, MenteeRepository menteeRepository, RedisDao redisDao) {
+        this.companyRepository = companyRepository;
         this.menteeRepository = menteeRepository;
         this.redisDao = redisDao;
     }
 
-
+    @Transactional
     public void createMentee(MenteeRequest menteeRequest) {
+
+        Company company = companyRepository.findById(menteeRequest.getCompany_id()).orElseThrow(null);
 
         AES256 aes256 = new AES256();
         String email = menteeRequest.getEmail();
@@ -36,7 +45,7 @@ public class MenteeService {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Mentee mentee = MenteeRequest.createMentee(menteeRequest);
+        Mentee mentee = MenteeRequest.createMentee(menteeRequest, company);
         menteeRepository.save(mentee);
     }
 
@@ -49,28 +58,6 @@ public class MenteeService {
         Optional<Mentee> mentee = menteeRepository.findByNickName(nickName);
         return mentee.isPresent();
     }
-
-    public MenteeResponse getUserInfo() {
-        Long id = JwtUtil.getMemberId();
-        Mentee mentee = menteeRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
-        mentee.setPassword(null);
-        return createMenteeResponse(mentee);
-    }
-
-    public void updateNickName(Mentee mentee, String newNickName) {
-        if (isDuplicatedNickName(newNickName)) {
-            throw new CommonException(DUPLICATE_EMAIL);
-        }
-        mentee.setNickName(newNickName);
-    }
-
-    public void updateEmail(Mentee mentee, String newEmail) {
-        if (isDuplicatedEmail(newEmail)) {
-            throw new CommonException(DUPLICATE_EMAIL);
-        }
-        mentee.setEmail(newEmail);
-    }
-
 
     public MenteeResponse updatePassword(MenteeRequest menteeRequest) {
 

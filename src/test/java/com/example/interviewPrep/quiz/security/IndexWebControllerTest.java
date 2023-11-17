@@ -1,7 +1,7 @@
 package com.example.interviewPrep.quiz.security;
 
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.IndexController;
+import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

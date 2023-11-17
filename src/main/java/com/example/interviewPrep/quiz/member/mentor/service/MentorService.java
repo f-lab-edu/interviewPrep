@@ -1,5 +1,7 @@
 package com.example.interviewPrep.quiz.member.mentor.service;
 
+import com.example.interviewPrep.quiz.company.domain.Company;
+import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.member.mentor.dto.request.MentorRequest;
@@ -10,24 +12,32 @@ import com.example.interviewPrep.quiz.utils.AES256;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse.createMentorResponse;
 
 @Service
+@Transactional(readOnly = true)
 public class MentorService {
+
+    private final CompanyRepository companyRepository;
     private final MentorRepository mentorRepository;
     private final RedisDao redisDao;
 
-    public MentorService(MentorRepository mentorRepository, RedisDao redisDao) {
+    public MentorService(MentorRepository mentorRepository, CompanyRepository companyRepository, RedisDao redisDao) {
         this.mentorRepository = mentorRepository;
+        this.companyRepository = companyRepository;
         this.redisDao = redisDao;
     }
 
-
+    @Transactional
     public void createMentor(MentorRequest mentorRequest) {
+
+        Company company = companyRepository.findById(mentorRequest.getCompany_id()).orElseThrow(null);
 
         AES256 aes256 = new AES256();
         String email = mentorRequest.getEmail();
@@ -36,7 +46,7 @@ public class MentorService {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Mentor mentor = MentorRequest.createMentor(mentorRequest);
+        Mentor mentor = MentorRequest.createMentor(mentorRequest, company);
         mentorRepository.save(mentor);
     }
 

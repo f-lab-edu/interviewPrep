@@ -1,6 +1,6 @@
 package com.example.interviewPrep.quiz.Member.dto;
 
-import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
+import com.example.interviewPrep.quiz.member.mentee.dto.request.MenteeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MemberRequestTest {
+class MenteeRequestTest {
 
     static Stream<Arguments> provideTestCases() {
         return Stream.of(
@@ -25,37 +25,34 @@ class MemberRequestTest {
     }
 
     @Test
-    @DisplayName("MemberDTO 생성")
-    void createMemberDTO() {
+    @DisplayName("MenteeRequest 생성")
+    void createMenteeRequest() {
         String email = "hello@gmail.com";
         String password = "1234";
         String nickName = "tester";
         String newPassword = "5678";
         String type = "user";
 
-        MemberRequest memberRequest = MemberRequest.builder()
+        MenteeRequest menteeRequest = MenteeRequest.builder()
                 .email(email)
                 .password(password)
                 .nickName(nickName)
-                .type(type)
                 .build();
 
-        assertEquals(email, memberRequest.getEmail());
-        assertEquals(password, memberRequest.getPassword());
-        assertEquals(nickName, memberRequest.getNickName());
-        assertEquals(type, memberRequest.getType());
+        assertEquals(email, menteeRequest.getEmail());
+        assertEquals(password, menteeRequest.getPassword());
+        assertEquals(nickName, menteeRequest.getNickName());
     }
 
     @ParameterizedTest
     @MethodSource("provideTestCases")
-    @DisplayName("MemberDTO를 Null 값을 포함해서 생성")
-    void createMemberDTOWithNullValue(String email, String password, String nickName, String type) {
+    @DisplayName("MenteeRequest를 Null 값을 포함해서 생성")
+    void createMenteeRequestWithNullValue(String email, String password, String nickName, String type) {
         assertThrows(NullPointerException.class, () -> {
-            MemberRequest.builder()
+            MenteeRequest.builder()
                     .email(email)
                     .password(password)
                     .nickName(nickName)
-                    .type(type)
                     .build();
         });
     }

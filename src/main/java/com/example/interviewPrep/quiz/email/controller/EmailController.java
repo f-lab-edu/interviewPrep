@@ -2,7 +2,7 @@ package com.example.interviewPrep.quiz.email.controller;
 
 
 import com.example.interviewPrep.quiz.email.service.EmailService;
-import com.example.interviewPrep.quiz.member.dto.request.MemberRequest;
+import com.example.interviewPrep.quiz.member.mentee.dto.request.MenteeRequest;
 import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +19,20 @@ public class EmailController {
 
     @PostMapping("/mail/change")
     @ResponseBody
-    public void emailChangeConfirm(@RequestBody MemberRequest memberRequest) throws Exception {
+    public void emailChangeConfirm(@RequestBody MenteeRequest menteeRequest) throws Exception {
         logger.info("post emailConfirm");
         Long memberId = JwtUtil.getMemberId();
-        String email = memberRequest.getEmail();
+        String email = menteeRequest.getEmail();
         service.sendSimpleMessage(email, "change");
     }
 
 
     @PostMapping("/mail/join")
     @ResponseBody
-    public void emailJoinConfirm(@RequestBody MemberRequest memberRequest) throws Exception {
+    public void emailJoinConfirm(@RequestBody MenteeRequest menteeRequest) throws Exception {
         logger.info("post emailConfirm");
         Long memberId = JwtUtil.getMemberId();
-        String email = memberRequest.getEmail();
+        String email = menteeRequest.getEmail();
         service.sendSimpleMessage(email, "join");
     }
 

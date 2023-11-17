@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ import static com.example.interviewPrep.quiz.member.dto.response.LoginResponse.c
 
 @Slf4j
 @Service
+@Transactional(readOnly=true)
 public class AuthenticationService {
     private final JwtUtil jwtUtil;
     private final MenteeRepository menteeRepository;
@@ -71,7 +73,6 @@ public class AuthenticationService {
             throw new CommonException(NOT_FOUND_LOGIN);
         }
 
-
         List<String> tokens = makeNewTokens(mentee.getId(), "Mentee");
 
         String accessToken = tokens.get(0);
@@ -103,7 +104,7 @@ public class AuthenticationService {
             throw new CommonException(NOT_FOUND_LOGIN);
         }
 
-        List<String> tokens = makeNewTokens(mentor.getId(), "Mentee");
+        List<String> tokens = makeNewTokens(mentor.getId(), "Mentor");
 
         String accessToken = tokens.get(0);
         String refreshToken = tokens.get(1);

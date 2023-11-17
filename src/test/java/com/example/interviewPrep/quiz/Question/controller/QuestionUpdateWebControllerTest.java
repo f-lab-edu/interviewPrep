@@ -2,12 +2,12 @@ package com.example.interviewPrep.quiz.Question.controller;
 
 import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
+import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.question.controller.QuestionController;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.exception.QuestionNotFoundException;
 import com.example.interviewPrep.quiz.security.WithMockCustomOAuth2Account;
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
 import com.example.interviewPrep.quiz.question.service.QuestionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,13 +68,11 @@ public class QuestionUpdateWebControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         validUpdateQuestionRequest = QuestionRequest.builder()
-                .id(1L)
                 .title("problem1")
                 .type("java")
                 .build();
 
         InvalidUpdateQuestionRequest = QuestionRequest.builder()
-                .id(1000L)
                 .title("problem2")
                 .type("java")
                 .build();

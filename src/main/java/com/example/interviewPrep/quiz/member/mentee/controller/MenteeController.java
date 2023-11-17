@@ -37,11 +37,6 @@ public class MenteeController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/userInfo")
-    public ResponseEntity<MenteeResponse> getUserInfo() {
-        return ResponseEntity.ok(menteeService.getUserInfo());
-    }
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         return ResponseEntity.ok(authService.login(loginRequest, response));
@@ -50,16 +45,6 @@ public class MenteeController {
     @PutMapping("/password/change")
     public ResponseEntity<MenteeResponse> updatePassword(@RequestBody MenteeRequest menteeRequest) {
         return ResponseEntity.ok(menteeService.updatePassword(menteeRequest));
-    }
-
-    @GetMapping("/auth/{socialType}")
-    public void socialLoginType(@PathVariable String socialType) {
-        oauthService.request(socialType);
-    }
-
-    @GetMapping("/auth/{socialType}/callback")
-    public ResponseEntity<LoginResponse> callback(@PathVariable String socialType, @RequestParam(name = "code") String code) {
-        return ResponseEntity.ok(oauthService.socialLogin(socialType, code));
     }
 
     @GetMapping("/logout")

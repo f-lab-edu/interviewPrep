@@ -1,9 +1,23 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/interviewPrep;MODE=LEGACY
+    url: jdbc:h2:tcp://localhost/~/interviewPrep;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
-    driver-class-name: org.h2.Driver
+
+    master:
+      hikari:
+        username: root
+        password: masterpw
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://mysql-master:3306/interviewprep?useSSL=false&allowPublicKeyRetrieval=true
+
+
+    slave:
+      hikari:
+        username: root
+        password: slavepw
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://mysql-slave:3306/interviewprep?useSSL=false&allowPublicKeyRetrieval=true
 
   jpa:
     hibernate:
@@ -13,8 +27,12 @@ spring:
     include: oauth
 
   redis:
-    host: localhost
+    host: myredis
     port: 6379
+
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
 
 logging:
   level:
@@ -32,3 +50,9 @@ spring:
     username: root
     password: root1234
     driver-class-name: org.mariadb.jdbc.Driver
+
+  redis:
+    host: redis-server
+    port: 6379
+
+

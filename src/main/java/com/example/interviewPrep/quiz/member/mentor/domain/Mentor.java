@@ -14,12 +14,12 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(indexes = @Index(name = "i_mentee", columnList = "email"))
+@Table(indexes = @Index(name = "i_mentor", columnList = "email"))
 public class Mentor extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MENTEE_ID")
+    @Column(name = "MENTOR_ID")
     private Long id;
 
     private String email;
@@ -42,10 +42,11 @@ public class Mentor extends BaseTimeEntity {
 
 
     @Builder
-    public Mentor(String email, String password, String expertise, String careerLevel, String nickName, String name, String picture, boolean isPaid) {
+    public Mentor(String email, String password, String expertise, Company company, String careerLevel, String nickName, String name, String picture, boolean isPaid) {
         this.email = email;
         this.password = password;
         this.expertise = expertise;
+        this.company = company;
         this.careerLevel = careerLevel;
         this.nickName = nickName;
         this.name = name;

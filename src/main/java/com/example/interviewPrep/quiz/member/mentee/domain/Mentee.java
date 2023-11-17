@@ -43,15 +43,19 @@ public class Mentee extends BaseTimeEntity {
 
     private boolean isPaid;
 
+    private String type;
+
     @Builder
-    public Mentee(String email, String password, Mentor mentor, String nickName, String name, String picture, boolean isPaid) {
+    public Mentee(String email, String password, Mentor mentor, String nickName, String name, String picture, String type, boolean isPaid, Company company) {
         this.email = email;
         this.password = password;
         this.mentor = mentor;
         this.nickName = nickName;
         this.name = name;
         this.picture = picture;
+        this.type = type;
         this.isPaid = isPaid;
+        this.company = company;
     }
 
 

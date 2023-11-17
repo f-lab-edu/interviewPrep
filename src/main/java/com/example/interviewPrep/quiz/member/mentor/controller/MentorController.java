@@ -37,29 +37,9 @@ public class MentorController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/userInfo")
-    public ResponseEntity<MentorResponse> getUserInfo() {
-        return ResponseEntity.ok(mentorService.getUserInfo());
-    }
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         return ResponseEntity.ok(authService.login(loginRequest, response));
-    }
-
-    @PutMapping("/password/change")
-    public ResponseEntity<MentorResponse> updatePassword(@RequestBody MentorRequest mentorRequest) {
-        return ResponseEntity.ok(mentorService.updatePassword(mentorRequest));
-    }
-
-    @GetMapping("/auth/{socialType}")
-    public void socialLoginType(@PathVariable String socialType) {
-        oauthService.request(socialType);
-    }
-
-    @GetMapping("/auth/{socialType}/callback")
-    public ResponseEntity<LoginResponse> callback(@PathVariable String socialType, @RequestParam(name = "code") String code) {
-        return ResponseEntity.ok(oauthService.socialLogin(socialType, code));
     }
 
     @GetMapping("/logout")
