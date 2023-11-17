@@ -1,6 +1,7 @@
 package com.example.interviewPrep.quiz.utils;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.member.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -21,7 +22,7 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 
 @Component
 @Slf4j
-public class JwtUtil {
+public class JwtService {
 
     // access 토큰 유효 시간 3m
     private final long accessTokenValidTime = Duration.ofMinutes(30).toMillis();
@@ -33,7 +34,7 @@ public class JwtUtil {
 
     private final Key key;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
+    public JwtService(@Value("${jwt.secret}") String secret) {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
@@ -80,8 +81,8 @@ public class JwtUtil {
     }
 
 
-    public Authentication getAuthentication(String memberIdWithPrefix) {
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(memberIdWithPrefix);
+    public Authentication getAuthentication(String memberId) {
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(memberId);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -106,13 +107,8 @@ public class JwtUtil {
     public static Long getMemberId() {
 
         try {
-            // Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String memberId = authentication.getName();
-            // System.out.println("principal은?" + principal);
-            // UserDetails userDetails = (UserDetails) principal;
-            // String userName = userDetails.getUsername();
-            // System.out.println("getUsername의 결과는?" + userDetails.getUsername());
             return Long.parseLong(memberId);
         } catch (Exception e) {
             throw new CommonException(NOT_FOUND_ID);

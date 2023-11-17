@@ -10,7 +10,7 @@ import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import com.example.interviewPrep.quiz.member.service.AuthenticationService;
 import com.example.interviewPrep.quiz.redis.RedisService;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
+import com.example.interviewPrep.quiz.utils.JwtService;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 class AuthenticationServiceTest {
 
     private AuthenticationService authService;
-    private JwtUtil jwtUtil;
+    private JwtService jwtService;
     private MenteeRepository menteeRepository;
 
     private MentorRepository mentorRepository;
@@ -38,14 +38,14 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
 
-        jwtUtil = mock(JwtUtil.class);
+        jwtService = mock(JwtService.class);
         menteeRepository = mock(MenteeRepository.class);
         mentorRepository = mock(MentorRepository.class);
         emitterService = mock(EmitterService.class);
         redisService = mock(RedisService.class);
         response = mock(HttpServletResponse.class);
 
-        authService = new AuthenticationService(jwtUtil, menteeRepository, mentorRepository, emitterService, redisService);
+        authService = new AuthenticationService(jwtService, menteeRepository, mentorRepository, emitterService, redisService);
     }
 
 
@@ -64,8 +64,8 @@ class AuthenticationServiceTest {
                 .build();
 
         given(menteeRepository.findByEmail(email)).willReturn(Optional.of(mentee));
-        given(jwtUtil.createAccessToken(1L, "Mentee")).willReturn("accessToken");
-        given(jwtUtil.createRefreshToken(1L, "Mentee")).willReturn("refreshToken");
+        given(jwtService.createAccessToken(1L, "Mentee")).willReturn("accessToken");
+        given(jwtService.createRefreshToken(1L, "Mentee")).willReturn("refreshToken");
 
         LoginRequest loginRequest = new LoginRequest(email, password, "Mentee");
         LoginResponse loginResponse = authService.login(loginRequest, response);
@@ -90,8 +90,8 @@ class AuthenticationServiceTest {
                 .build();
 
         given(menteeRepository.findByEmail(rightEmail)).willReturn(Optional.of(mentee));
-        given(jwtUtil.createAccessToken(1L, "Mentee")).willReturn("accessToken");
-        given(jwtUtil.createRefreshToken(1L, "Mentee")).willReturn("refreshToken");
+        given(jwtService.createAccessToken(1L, "Mentee")).willReturn("accessToken");
+        given(jwtService.createRefreshToken(1L, "Mentee")).willReturn("refreshToken");
 
         LoginRequest loginRequest = new LoginRequest(wrongEmail, password, "Mentee");
 
@@ -139,8 +139,8 @@ class AuthenticationServiceTest {
                 .build();
 
         given(mentorRepository.findByEmail(email)).willReturn(Optional.of(mentor));
-        given(jwtUtil.createAccessToken(1L, "Mentor")).willReturn("accessToken");
-        given(jwtUtil.createRefreshToken(1L, "Mentor")).willReturn("refreshToken");
+        given(jwtService.createAccessToken(1L, "Mentor")).willReturn("accessToken");
+        given(jwtService.createRefreshToken(1L, "Mentor")).willReturn("refreshToken");
 
         LoginRequest loginRequest = new LoginRequest(email, password, "Mentor");
         LoginResponse loginResponse = authService.login(loginRequest, response);

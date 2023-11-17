@@ -11,7 +11,7 @@ import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import com.example.interviewPrep.quiz.redis.RedisService;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
+import com.example.interviewPrep.quiz.utils.JwtService;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ import static com.example.interviewPrep.quiz.member.dto.response.LoginResponse.c
 @Service
 @Transactional(readOnly=true)
 public class AuthenticationService {
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final MenteeRepository menteeRepository;
 
     private final MentorRepository mentorRepository;
@@ -39,8 +39,8 @@ public class AuthenticationService {
 
     private final RedisService redisService;
 
-    public AuthenticationService(JwtUtil jwtUtil, MenteeRepository menteeRepository, MentorRepository mentorRepository, EmitterService emitterService, RedisService redisService) {
-        this.jwtUtil = jwtUtil;
+    public AuthenticationService(JwtService jwtService, MenteeRepository menteeRepository, MentorRepository mentorRepository, EmitterService emitterService, RedisService redisService) {
+        this.jwtService = jwtService;
         this.menteeRepository = menteeRepository;
         this.mentorRepository = mentorRepository;
         this.emitterService = emitterService;
@@ -65,7 +65,7 @@ public class AuthenticationService {
         String password = loginRequest.getPassword();
 
         Mentee mentee = menteeRepository.findByEmail(email)
-                                        .orElseThrow(() -> new CommonException(NOT_FOUND_LOGIN));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_LOGIN));
 
         String savedPassword = mentee.getPassword();
 
@@ -129,13 +129,13 @@ public class AuthenticationService {
     }
 
     public List<String> makeNewTokens(Long memberId, String type) {
-        String accessToken = jwtUtil.createAccessToken(memberId, type);
-        String refreshToken = jwtUtil.createRefreshToken(memberId, type);
+        String accessToken = jwtService.createAccessToken(memberId, type);
+        String refreshToken = jwtService.createRefreshToken(memberId, type);
         return List.of(accessToken, refreshToken);
     }
 
     public void setNewAuthentication(String memberIdWithPrefix) {
-        Authentication authentication = jwtUtil.getAuthentication(memberIdWithPrefix);
+        Authentication authentication = jwtService.getAuthentication(memberIdWithPrefix);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -164,26 +164,26 @@ public class AuthenticationService {
             throw new LoginException(ErrorCode.INVALID_TOKEN);
         }
 
-        String accessToken = jwtUtil.createAccessToken(Long.valueOf(memberId), type);
+        String accessToken = jwtService.createAccessToken(Long.valueOf(memberId), type);
 
         return createLoginResponse(accessToken, "httpOnly");
     }
 
     public String getMemberId(String token) {
-        Claims claims = jwtUtil.decode(token);
+        Claims claims = jwtService.decode(token);
         return claims.get("id", String.class);
     }
 
 
     public String getMemberType(String token) {
-        Claims claims = jwtUtil.decode(token);
+        Claims claims = jwtService.decode(token);
         return claims.get("type", String.class);
     }
 
     public void logout(String token) {
         String accessToken = token.substring(7);
-        Long expiration = jwtUtil.getExpirations(accessToken);
-        String memberId = JwtUtil.getMemberId().toString();
+        Long expiration = jwtService.getExpirations(accessToken);
+        String memberId = JwtService.getMemberId().toString();
 
         redisService.deleteMemberOnRedis(memberId);
 
