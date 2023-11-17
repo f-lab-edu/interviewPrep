@@ -2,8 +2,7 @@ package com.example.interviewPrep.quiz.Question.repository;
 
 import com.example.interviewPrep.quiz.config.CustomAuthenticationEntryPoint;
 import com.example.interviewPrep.quiz.filter.JwtAuthenticationFilter;
-import com.example.interviewPrep.quiz.member.controller.MemberController;
-import com.example.interviewPrep.quiz.member.service.CustomOAuth2UserService;
+import com.example.interviewPrep.quiz.member.mentee.controller.MenteeController;
 import com.example.interviewPrep.quiz.member.social.service.GoogleOauth;
 import com.example.interviewPrep.quiz.member.social.service.KakaoOauth;
 import com.example.interviewPrep.quiz.member.social.service.NaverOauth;
@@ -12,9 +11,6 @@ import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -23,25 +19,25 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class QuestionRepositoryTest {
 
-    @Mock
-    MemberController memberController;
-    @Mock
+    @MockBean
+    MenteeController menteeController;
+    @MockBean
     GoogleOauth googleOauth;
-    @Mock
+    @MockBean
     KakaoOauth kakaoOauth;
-    @Mock
+    @MockBean
     NaverOauth naverOauth;
-    @Mock
+    @MockBean
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    @Mock
+    @MockBean
     CustomOAuth2UserService customOAuth2UserService;
-    @Mock
+    @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
     Question question;
-    @Mock
+    @MockBean
     private QuestionRepository questionRepository;
 
     @BeforeEach
@@ -51,7 +47,6 @@ class QuestionRepositoryTest {
                 .id(1L)
                 .title("problem1")
                 .type("java")
-                .difficulty("easy")
                 .build();
 
         given(questionRepository.save(question)).willReturn(question);

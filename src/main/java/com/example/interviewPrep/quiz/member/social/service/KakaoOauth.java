@@ -1,8 +1,7 @@
 package com.example.interviewPrep.quiz.member.social.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.social.dto.KakaoRes;
 import com.example.interviewPrep.quiz.member.social.dto.SocialToken;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +55,7 @@ public class KakaoOauth implements SocialOauth {
     }
 
 
-    public Member getSocialMember(String code) {
+    public Mentee getSocialMember(String code) {
         String token = requestAccessToken(code);
         return getSocialData(token);
     }
@@ -84,7 +83,7 @@ public class KakaoOauth implements SocialOauth {
 
 
 
-    public Member getSocialData(String accessToken) {
+    public Mentee getSocialData(String accessToken) {
         KakaoRes kakaoRes = webClient.get()
                 .uri("https://kapi.kakao.com/v2/user/me")
                 .headers(h -> h.setBearerAuth(accessToken))
@@ -94,12 +93,11 @@ public class KakaoOauth implements SocialOauth {
                 .bodyToMono(KakaoRes.class)
                 .block();
 
-        return  Member.builder()
+        return  Mentee.builder()
                 .name(kakaoRes.getProperties().getNickname())
                 .nickName(kakaoRes.getProperties().getNickname())
                 .email(kakaoRes.getKakaoAccount().getEmail())
                 .picture(kakaoRes.getProperties().getProfileImage())
-                .role(Role.USER) // 가입 시 기본 권한은 user(일반 사용자)
                 .type("kakao")
                 .build();
 

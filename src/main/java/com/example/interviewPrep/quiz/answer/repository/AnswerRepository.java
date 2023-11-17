@@ -19,9 +19,12 @@ import java.util.Optional;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     Optional<Answer> findById(Long id);
 
+    Answer save(Answer answer);
+
     Answer saveAndFlush(Answer answer);
 
     void delete(Answer answer);
+
 
     @Query("SELECT a FROM Answer a, Member m " +
             "where a.question.id = ?1 and m.id not in(?2) and a.member.id = m.id ORDER BY a.heartCnt desc")

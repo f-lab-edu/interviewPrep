@@ -1,7 +1,6 @@
 package com.example.interviewPrep.quiz.jwt;
 
 import com.example.interviewPrep.quiz.jwt.service.JwtService;
-import com.example.interviewPrep.quiz.member.dto.Role;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,9 +28,8 @@ public class JwtServiceTest {
     public void createAccessToken(){
 
         Long memberId = 1L;
-        Role role = Role.USER;
 
-        String accessToken = jwtService.createAccessToken(memberId, role);
+        String accessToken = jwtService.createAccessToken(memberId, "mentee");
         assertThat(accessToken.length()).isEqualTo(191);
     }
 
@@ -40,9 +38,8 @@ public class JwtServiceTest {
     public void createRefreshToken(){
 
         Long memberId = 1L;
-        Role role = Role.USER;
 
-        String refreshToken = jwtService.createRefreshToken(memberId, role);
+        String refreshToken = jwtService.createRefreshToken(memberId, "mentee");
         assertThat(refreshToken.length()).isEqualTo(191);
     }
 
@@ -52,9 +49,8 @@ public class JwtServiceTest {
     public void decodeAccessToken(){
 
         Long memberId = 1L;
-        Role role = Role.USER;
 
-        String accessToken = jwtService.createAccessToken(memberId, role);
+        String accessToken = jwtService.createAccessToken(memberId, "mentee");
 
         Claims claims = jwtService.decode(accessToken);
         assertThat(claims.get("id")).isEqualTo(Long.toString(memberId));
@@ -65,9 +61,8 @@ public class JwtServiceTest {
     public void decodeInvalidAccessToken(){
 
         Long memberId = 1L;
-        Role role = Role.USER;
 
-        String accessToken = jwtService.createAccessToken(memberId, role);
+        String accessToken = jwtService.createAccessToken(memberId, "mentee");
 
         assertThatThrownBy(() -> jwtService.decode(accessToken+"d")).isInstanceOf(io.jsonwebtoken.security.SignatureException.class);
     }
@@ -83,9 +78,7 @@ public class JwtServiceTest {
     @DisplayName("RefreshToken 복호화")
     public void decodeRefreshToken(){
         Long memberId = 1L;
-        Role role = Role.USER;
-
-        String refreshToken = jwtService.createRefreshToken(memberId, role);
+        String refreshToken = jwtService.createRefreshToken(memberId, "mentee");
 
         Claims claims = jwtService.decode(refreshToken);
         assertThat(claims.get("id")).isEqualTo(Long.toString(memberId));

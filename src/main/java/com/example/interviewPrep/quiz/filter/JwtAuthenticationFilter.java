@@ -1,7 +1,7 @@
 package com.example.interviewPrep.quiz.filter;
 
-import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.redis.RedisDao;
+import com.example.interviewPrep.quiz.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -28,7 +28,7 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     private final RedisDao redisDao;
 
     @Override
@@ -40,14 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 String accessToken = header.substring(7);
 
-                Claims claims = jwtService.decode(accessToken);
+                Claims claims = jwtUtil.decode(accessToken);
 
                 boolean valid = !claims.getExpiration().before(new Date());
                 if (valid) {
                     if (redisDao.getValues(accessToken) == null) {
                         // 토큰으로부터 유저 정보를 받아옵니다.
                         String memberId = claims.get("id", String.class);
-                        Authentication authentication = jwtService.getAuthentication(memberId);
+                        Authentication authentication = jwtUtil.getAuthentication(memberId);
                         // SecurityContext 에 Authentication 객체를 저장합니다.
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     } else request.setAttribute("exception", WRONG_ID_TOKEN);

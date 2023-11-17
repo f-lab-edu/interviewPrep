@@ -34,10 +34,6 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.readAnswer(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AnswerResponse> updateAnswer(@PathVariable Long id, @RequestBody AnswerRequest answerRequest){
-        return ResponseEntity.ok(answerService.updateAnswer(id, answerRequest));
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAnswer(@PathVariable Long id){

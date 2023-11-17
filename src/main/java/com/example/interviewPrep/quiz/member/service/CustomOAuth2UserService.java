@@ -41,7 +41,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         //로그인 한 유저를 리턴함
         return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())), attributes.getAttributes(), attributes.getNameAttributeKey());
-                                    //단 한개의 객체만 저장 가능한 컬렉션을 만들기 위해 singleton 사용, Granted Authority 를 implement 한 클래스
+        //단 한개의 객체만 저장 가능한 컬렉션을 만들기 위해 singleton 사용, Granted Authority 를 implement 한 클래스
     }
 
     private Member saveOrUpdate(OAuthAttributes attributes, String registrationId){ //이메일로 사용자 찾아 정보를 업뎃, 없으면 유저 등록

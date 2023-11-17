@@ -1,10 +1,19 @@
-spring:
   security:
     oauth2:
       client:
         registration:
+          google:
+            url: https://accounts.google.com/o/oauth2/v2/auth
+            client:
+              id: 80280358649-hm15q6p5a80eucd3ofo9qrq52tjha4pu.apps.googleusercontent.com
+              secret: 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
+            callback:
+              url: http://localhost:3000/members/auth/google/callback
+            token:
+              url: https://oauth2.googleapis.com/token
           kakao:
             client-id: 7631d083ab97ccae8103b0aed5d67b05
+            client-secret: wJ3JGVAoFwONsA0MFbgzMNi6p8GjS1aE
             redirect-uri: "http://52.3.173.210:8080/oauth2/code/kakao"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
@@ -13,7 +22,7 @@ spring:
           naver:
             client-id: cCN1QPc9tzYuWAS8yUxo
             client-secret: qlZqcYcgAU
-            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}" # (== http://localhost:8080/login/oauth2/code/naver)
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"# (== http://localhost:8080/login/oauth2/code/naver)
             authorization-grant-type: authorization_code
             scope: name, email, profile_image
             client-name: Naver

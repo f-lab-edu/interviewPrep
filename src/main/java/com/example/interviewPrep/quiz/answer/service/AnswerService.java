@@ -7,11 +7,11 @@ import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
-import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
+import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.Type;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.interviewPrep.quiz.answer.domain.Answer.createAnswerEntity;
@@ -30,14 +31,12 @@ import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTim
 @Service
 public class AnswerService {
 
-    private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final HeartRepository heartRepository;
 
-    public AnswerService(JwtService jwtService, MemberRepository memberRepository, AnswerRepository answerRepository, QuestionRepository questionRepository, HeartRepository heartRepository){
-        this.jwtService = jwtService;
+    public AnswerService(MemberRepository memberRepository, AnswerRepository answerRepository, QuestionRepository questionRepository, HeartRepository heartRepository){
         this.memberRepository = memberRepository;
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
@@ -46,15 +45,15 @@ public class AnswerService {
 
     public AnswerResponse createAnswer(AnswerRequest answerRequest){
 
-        Long memberId = jwtService.getMemberId();
+        Long memberId = JwtUtil.getMemberId();
 
-        Member member = memberRepository.findById(memberId)
-                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+        Optional<Member> member = memberRepository.findById(memberId);
+        Optional<Question> question = questionRepository.findById(answerRequest.getQuestionId());
 
-        Question question = questionRepository.findById(answerRequest.getQuestionId())
-                                              .orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
+        Member answerMember = member.get();
+        Question answerQuestion = question.get();
 
-        Answer answer = createAnswerEntity(member, question, answerRequest.getContent());
+        Answer answer =  createAnswerEntity(answerMember, answerQuestion, answerRequest.getContent());
 
         answerRepository.save(answer);
 
@@ -63,40 +62,36 @@ public class AnswerService {
 
     public AnswerResponse readAnswer(Long id){
 
-        Answer answer = answerRepository.findById(id)
-                                        .orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
+        Optional<Answer> answer = answerRepository.findById(id);
 
-        return createAnswerResponse(answer);
+        if(answer.isEmpty()){
+            throw new CommonException(NOT_FOUND_ANSWER);
+        }
+
+        Answer answerResponse = answer.get();
+
+        return createAnswerResponse(answerResponse);
     }
 
-    public AnswerResponse updateAnswer(Long id, AnswerRequest answerRequest){
 
-        jwtService.getMemberId();
+    public Answer deleteAnswer(Long id){
 
-        Answer answer = answerRepository.findById(id)
-                                        .orElseThrow(()->new CommonException(NOT_FOUND_ANSWER));
+        Optional<Answer> answer = answerRepository.findById(id);
 
-        answer.updateContent(answerRequest.getContent());
+        if(answer.isEmpty()){
+            throw new CommonException(NOT_FOUND_ANSWER);
+        }
 
-        return createAnswerResponse(answer);
-    }
+        Answer deleteAnswer = answer.get();
+        answerRepository.delete(deleteAnswer);
 
-    public AnswerResponse deleteAnswer(Long id){
-
-        jwtService.getMemberId();
-
-        Answer answer = answerRepository.findById(id)
-                                        .orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
-
-        answerRepository.delete(answer);
-
-        return createAnswerResponse(answer);
+        return deleteAnswer;
     }
 
 
     public Page<SolutionResponse> getSolution(Long id, String type, Pageable pageable){
 
-        Long memberId = jwtService.getMemberId();
+        Long memberId = JwtUtil.getMemberId();
         Page<Answer> answers;
 
         Type inputType = Type.valueOf(type.toUpperCase());
@@ -144,7 +139,7 @@ public class AnswerService {
 
 
     public void checkMySolution(Long id){
-        Long memberId = jwtService.getMemberId();
+        Long memberId = JwtUtil.getMemberId();
 
         List<Answer> answers = answerRepository.findAllByQuestionIdAndMemberId(id, memberId);
 

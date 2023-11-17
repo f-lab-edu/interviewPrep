@@ -14,7 +14,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Company extends BaseTimeEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "COMPANY_ID")
@@ -23,7 +22,6 @@ public class Company extends BaseTimeEntity {
 
     @Builder
     public Company(String name) {
-
         Objects.requireNonNull(name, "name이 null입니다.");
 
         this.name = name;

@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WithMockCustomOAuth2Account()
 @WebMvcTest(QuestionController.class)
-@MockBean(JpaMetamodelMappingContext.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class QuestionDeleteWebControllerTest {
 
@@ -56,16 +54,15 @@ public class QuestionDeleteWebControllerTest {
     void setUp() throws Exception {
 
         questionRequest = QuestionRequest.builder()
+                .id(1L)
                 .title("problem1")
                 .type("java")
-                .difficulty("easy")
                 .build();
 
         Question question = Question.builder()
                 .id(1L)
                 .title("problem1")
                 .type("java")
-                .difficulty("easy")
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
+import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTime;
+
 @Getter
 @NoArgsConstructor
 public class AnswerResponse {
@@ -18,20 +20,24 @@ public class AnswerResponse {
     private String name;
 
     @Builder
-    public AnswerResponse(Long questionId, String content, String name){
+    public AnswerResponse(Long id, Long questionId, String content, String createdDate, String name){
+        Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(questionId, "questionId가 null입니다.");
         Objects.requireNonNull(content, "content가 null입니다.");
+        Objects.requireNonNull(createdDate, "createdDate가 null입니다.");
         Objects.requireNonNull(name, "name이 null입니다.");
 
+        this.id = id;
         this.questionId = questionId;
         this.content = content;
+        this.createdDate = createdDate;
         this.name = name;
     }
 
     public static AnswerResponse createAnswerResponse(Answer answer){
         return AnswerResponse.builder()
-                .questionId(answer.getQuestion().getId())
-                .content(answer.getContent())
+                .id(answer.getId())
+                .createdDate(customLocalDateTime(answer.getCreatedDate()))
                 .name(answer.getMember().getName())
                 .build();
     }

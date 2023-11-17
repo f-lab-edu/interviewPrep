@@ -8,8 +8,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.member.repository.MemberRepository;
-import com.example.interviewPrep.quiz.member.service.MemberService;
+import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
+import com.example.interviewPrep.quiz.member.mentee.service.MenteeService;
 import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.AES256;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +28,10 @@ public class EmailServiceImpl implements EmailService {
     JavaMailSender emailSender;
 
     @Autowired
-    MemberRepository memberRepository;
+    MenteeRepository menteeRepository;
 
     @Autowired
-    MemberService memberService;
+    MenteeService menteeService;
 
     @Autowired
     private final RedisDao redisDao;
@@ -43,7 +43,7 @@ public class EmailServiceImpl implements EmailService {
         System.out.println("보내는 대상 : "+ to);
         System.out.println("인증 번호 : "+ePw);
 
-        boolean duplicatedEmail = memberService.isDuplicatedEmail(to);
+        boolean duplicatedEmail = menteeService.isDuplicatedEmail(to);
 
         if(duplicatedEmail){
             throw new CommonException(DUPLICATE_EMAIL);

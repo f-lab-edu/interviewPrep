@@ -1,8 +1,7 @@
 package com.example.interviewPrep.quiz.member.social.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.social.dto.GoogleRes;
 import com.example.interviewPrep.quiz.member.social.dto.SocialToken;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +55,7 @@ public class GoogleOauth implements SocialOauth {
     }
 
 
-    public Member getSocialMember(String code) {
+    public Mentee getSocialMember(String code) {
         String token = requestAccessToken(code);
         return getSocialData(token);
     }
@@ -84,7 +83,7 @@ public class GoogleOauth implements SocialOauth {
     }
 
 
-    public Member getSocialData(String accessToken) {
+    public Mentee getSocialData(String accessToken) {
         GoogleRes googleRes = webClient.get()
                 .uri("https://www.googleapis.com/userinfo/v2/me?access_token=" + accessToken)
                 .headers(h -> h.setBearerAuth(accessToken))
@@ -94,12 +93,11 @@ public class GoogleOauth implements SocialOauth {
                 .bodyToMono(GoogleRes.class)
                 .block();
 
-        return Member.builder()
+        return Mentee.builder()
                 .name(googleRes.getName())
                 .nickName(googleRes.getName())
                 .email(googleRes.getEmail())
                 .picture(googleRes.getEmail())
-                .role(Role.USER) // 가입 시 기본 권한은 user(일반 사용자)
                 .type("google")
                 .build();
     }

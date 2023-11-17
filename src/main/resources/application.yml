@@ -21,13 +21,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
   profiles:
     include: oauth
 
   redis:
-    host: localhost
+    host: myredis
     port: 6379
 
   flyway:

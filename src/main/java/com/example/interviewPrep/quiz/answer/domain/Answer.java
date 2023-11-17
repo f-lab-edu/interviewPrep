@@ -26,9 +26,11 @@ public class Answer extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MEMBER_ID")
     Member member;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Lob
     private String content;
     @ManyToOne(fetch = LAZY)
@@ -43,10 +45,12 @@ public class Answer extends BaseTimeEntity {
     private Long version;
 
     @Builder
-    public Answer(String content, Question question, Member member, Interview interview, int commentCnt, int heartCnt, Long version) {
+    public Answer(Long id, String content, Question question, Member member, Interview interview, int commentCnt, int heartCnt, Long version) {
+        Objects.requireNonNull(id, "id가 null입니다.");
         Objects.requireNonNull(question, "question이 null입니다.");
         Objects.requireNonNull(member, "member이 null입니다.");
 
+        this.id = id;
         this.content = content;
         this.question = question;
         this.member = member;
@@ -56,16 +60,11 @@ public class Answer extends BaseTimeEntity {
         this.version = version;
     }
 
-    public void updateContent(String content){
-        Objects.requireNonNull(content, "content가 null입니다.");
-        this.content = content;
-    }
 
     public static Answer createAnswerEntity(Member member, Question question, String content) {
         return Answer.builder()
                 .member(member)
                 .question(question)
-                .content(content)
                 .build();
     }
 

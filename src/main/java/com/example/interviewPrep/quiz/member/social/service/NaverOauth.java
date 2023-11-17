@@ -1,8 +1,7 @@
 package com.example.interviewPrep.quiz.member.social.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
-import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.dto.Role;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.social.dto.NaverRes;
 import com.example.interviewPrep.quiz.member.social.dto.SocialToken;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +57,7 @@ public class NaverOauth implements SocialOauth {
     }
 
 
-    public Member getSocialMember(String code) {
+    public Mentee getSocialMember(String code) {
         String token = requestAccessToken(code);
         return getSocialData(token);
     }
@@ -84,7 +83,7 @@ public class NaverOauth implements SocialOauth {
     }
 
 
-    public Member getSocialData(String accessToken){
+    public Mentee getSocialData(String accessToken){
          NaverRes naverRes =  webClient.get()
                 .uri("https://openapi.naver.com/v1/nid/me")
                 .headers(h -> h.setBearerAuth(accessToken))
@@ -94,12 +93,11 @@ public class NaverOauth implements SocialOauth {
                 .bodyToMono(NaverRes.class)
                 .block();
 
-        return  Member.builder()
+        return  Mentee.builder()
                 .name(naverRes.getResponse().getName())
                 .nickName(naverRes.getResponse().getName())
                 .email(naverRes.getResponse().getEmail())
                 .picture(naverRes.getResponse().getProfileImage())
-                .role(Role.USER) // 가입 시 기본 권한은 user(일반 사용자)
                 .type("naver")
                 .build();
     }

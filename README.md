@@ -1,11 +1,8 @@
-# InterviewPrep
-개발자 기술 인터뷰 준비를 돕는 사이트입니다.<br>
-개발자 기술 면접 기출 질문들을 제공하며,<br>
-실무 경험이 풍부한 멘토들과의 매칭을 제공하는 것을 목표로 하고 있습니다.<br>    
-
-
 # 🧑🏻‍💻 InterviewPrep 서버 구조도
-![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/5d1ba534-91a3-474c-9d30-ffcdd965f9e4)
+![image](https://github.com/f-lab-edu/interviewPrep/assets/134198681/0bdde62d-cbc2-4f26-8939-fdc091ea86a9)
+
+
+
 
 
 
@@ -18,13 +15,6 @@
 
 
 ### 기술적 Issue 해결 과정
-
-- Ngrinder를 이용해 성능테스트
-
-- Jenkins를 이용하여 CI/CD 환경 구축하는 과정<br>
-  1부: https://bryandev.tistory.com/1427<br> 
-  2부: https://bryandev.tistory.com/1428
-  
 - [https://github.com/f-lab-edu/interviewPrep/pull/8] SSE 댓글 알림 기능 개발(with Redis)<br>
    https://bryandev.tistory.com/1396
   
@@ -37,5 +27,4 @@
 - [https://github.com/LeeJongbokz/interviewPrep/pull/48] 로그인 시 JWT Access Token, Refresh Token 적용하기(with Redis)<br>
   1부: https://bryandev.tistory.com/1398
 
-- [https://github.com/f-lab-edu/interviewPrep/pull/10, https://github.com/f-lab-edu/interviewPrep/pull/28] 단위 테스트 및 인수 테스트 작성<br> 
-  https://bryandev.tistory.com/1400  
+- [https://github.com/f-lab-edu/interviewPrep/pull/10] TDD를 적용해 단위 테스트 작성<br> 

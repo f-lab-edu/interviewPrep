@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.question.controller;
 
-import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
@@ -37,12 +36,6 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.getQuestion(id));
     }
 
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Question>> getAllQuestions() {
-        return ResponseEntity.ok(questionService.getAllQuestions());
-    }
-
     @GetMapping("/by-type/{type}")
     public ResponseEntity<Page<QuestionResponse>> getQuestionsByType(@PathVariable(required = false) String type, @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(questionService.findByType(type, pageable));
@@ -55,8 +48,9 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Question> update(@PathVariable Long id, @RequestBody @Valid QuestionRequest questionRequest) {
-        return ResponseEntity.ok(questionService.updateQuestion(id, questionRequest));
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody @Valid QuestionRequest questionRequest) {
+        questionService.updateQuestion(id, questionRequest);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/{id}")
@@ -65,7 +59,7 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/total")
+    @GetMapping("/all")
     public ResponseEntity<Integer> getTotalQuestionsCount() {
         return ResponseEntity.ok(questionService.getTotalQuestionsCount());
     }

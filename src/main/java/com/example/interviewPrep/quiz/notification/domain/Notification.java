@@ -9,8 +9,6 @@ import com.example.interviewPrep.quiz.member.domain.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
-import java.util.Objects;
-
 
 @Entity
 @Getter
@@ -40,12 +38,7 @@ public class Notification extends BaseTimeEntity {
 
     public Notification(){
     }
-    @Builder
     public Notification(Member receiver, AnswerComment comment, String content, boolean isRead) {
-        Objects.requireNonNull(receiver, "Receiver가 null입니다.");
-        Objects.requireNonNull(comment, "Comment가 null입니다.");
-        Objects.requireNonNull(content, "content가 null입니다.");
-
         this.receiver = receiver;
         this.comment = comment;
         this.content = content;

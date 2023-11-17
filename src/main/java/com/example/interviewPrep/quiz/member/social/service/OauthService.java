@@ -2,12 +2,14 @@ package com.example.interviewPrep.quiz.member.social.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
-import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.dto.Role;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
+import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
+import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
+import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -29,8 +31,8 @@ public class OauthService {
     private final KakaoOauth kakaoOauth;
     private final NaverOauth naverOauth;
     private final HttpServletResponse response;
-    private final JwtService jwtService;
-    private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
+    private final MenteeRepository menteeRepository;
     private final RedisDao redisDao;
 
     public void request(String socialLoginType) {
@@ -78,20 +80,18 @@ public class OauthService {
     }
 
 
-    public LoginResponse socialLogin(Member s_member) {
-        Member member = memberRepository.findByEmailAndType(s_member.getEmail(), s_member.getType())
-                .map(entity -> entity.update(s_member.getName(), s_member.getPicture()))
-                .orElse(createPwd(s_member));
-        memberRepository.save(member);
+    public LoginResponse socialLogin(Mentee mentee) {
+        Mentee findMentee = menteeRepository.findByEmailAndType(mentee.getEmail(), mentee.getType())
+                .map(entity -> entity.update(mentee.getName(), mentee.getPicture()))
+                .orElse(createPwd(mentee));
 
-        Long memberId = member.getId();
-        Role role = member.getRole();
+        Long memberId = findMentee.getId();
 
-        String accessToken = jwtService.createAccessToken(memberId, role);
-        String refreshToken = jwtService.createRefreshToken(memberId, role);
+        String accessToken = jwtUtil.createAccessToken(memberId, "mentee");
+        String refreshToken = jwtUtil.createRefreshToken(memberId, "mentee");
 
         // 토큰으로부터 유저 정보를 받아옵니다.
-        Authentication authentication = jwtService.getAuthentication(String.valueOf(memberId));
+        Authentication authentication = jwtUtil.getAuthentication(String.valueOf(memberId));
         // SecurityContext 에 Authentication 객체를 저장합니다.
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -110,10 +110,10 @@ public class OauthService {
     }
 
 
-    public Member createPwd(Member member) {
+    public Mentee createPwd(Mentee mentee) {
         String password = new BigInteger(10, new SecureRandom()).toString();
-        member.createPwd(SHA256Util.encryptSHA256(password));
-        return member;
+        mentee.createPwd(SHA256Util.encryptSHA256(password));
+        return mentee;
     }
 
 }

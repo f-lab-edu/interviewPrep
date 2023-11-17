@@ -3,7 +3,6 @@ package com.example.interviewPrep.quiz.question.service;
 import com.example.interviewPrep.quiz.dto.CreateDto;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
-import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
@@ -11,6 +10,7 @@ import com.example.interviewPrep.quiz.question.domain.QuestionReference;
 import com.example.interviewPrep.quiz.question.dto.ReferenceDTO;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.question.repository.ReferenceRepository;
+import com.example.interviewPrep.quiz.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,6 @@ import static com.example.interviewPrep.quiz.utils.DateFormat.customLocalDateTim
 @RequiredArgsConstructor
 public class ReferenceService {
 
-    private final JwtService jwtService;
     private final ReferenceRepository referenceRepository;
     private final QuestionRepository questionRepository;
     private final MemberRepository memberRepository;
@@ -33,7 +32,7 @@ public class ReferenceService {
 
     public Page<ReferenceDTO> findAnswerReference(Long id, Pageable pageable) {
 
-        Long memberId = jwtService.getMemberId();
+        Long memberId = JwtUtil.getMemberId();
 
         Page<QuestionReference> references = referenceRepository.findByRef(id, pageable);
         if (references.getContent().isEmpty()) throw new CommonException(NOT_FOUND_REF);
@@ -54,7 +53,7 @@ public class ReferenceService {
 
     public CreateDto createReference(ReferenceDTO referenceDTO) {
 
-        Member member = findMember(jwtService.getMemberId());
+        Member member = findMember(JwtUtil.getMemberId());
         Question question = findQuestion(referenceDTO.getQuestionId());
 
         QuestionReference reference = QuestionReference.builder()
