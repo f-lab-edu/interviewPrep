@@ -3,13 +3,13 @@ package com.example.interviewPrep.quiz.member.mentee.service;
 import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.mentee.dto.request.MenteeRequest;
 import com.example.interviewPrep.quiz.member.mentee.dto.response.MenteeResponse;
 import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
-import com.example.interviewPrep.quiz.utils.AES256;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
+import com.example.interviewPrep.quiz.utils.AES256;;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,11 +23,13 @@ import static com.example.interviewPrep.quiz.member.mentee.dto.response.MenteeRe
 @Transactional(readOnly = true)
 public class MenteeService {
 
+    private final JwtService jwtService;
     private final CompanyRepository companyRepository;
     private final MenteeRepository menteeRepository;
     private final RedisDao redisDao;
 
-    public MenteeService(CompanyRepository companyRepository, MenteeRepository menteeRepository, RedisDao redisDao) {
+    public MenteeService(JwtService jwtService, CompanyRepository companyRepository, MenteeRepository menteeRepository, RedisDao redisDao) {
+        this.jwtService = jwtService;
         this.companyRepository = companyRepository;
         this.menteeRepository = menteeRepository;
         this.redisDao = redisDao;
@@ -61,7 +63,7 @@ public class MenteeService {
 
     public MenteeResponse updatePassword(MenteeRequest menteeRequest) {
 
-        Long menteeId = JwtUtil.getMemberId();
+        Long menteeId = JwtService.getMemberId();
 
         Mentee mentee = menteeRepository.findById(menteeId).orElseThrow(() -> new CommonException(NOT_FOUND_MENTEE));
         String password = mentee.getPassword();

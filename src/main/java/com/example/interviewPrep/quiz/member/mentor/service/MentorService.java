@@ -3,18 +3,17 @@ package com.example.interviewPrep.quiz.member.mentor.service;
 import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.member.mentor.dto.request.MentorRequest;
 import com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse;
 import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.utils.AES256;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
@@ -24,11 +23,13 @@ import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorRe
 @Transactional(readOnly = true)
 public class MentorService {
 
+    private final JwtService jwtService;
     private final CompanyRepository companyRepository;
     private final MentorRepository mentorRepository;
     private final RedisDao redisDao;
 
-    public MentorService(MentorRepository mentorRepository, CompanyRepository companyRepository, RedisDao redisDao) {
+    public MentorService(JwtService jwtService, MentorRepository mentorRepository, CompanyRepository companyRepository, RedisDao redisDao) {
+        this.jwtService = jwtService;
         this.mentorRepository = mentorRepository;
         this.companyRepository = companyRepository;
         this.redisDao = redisDao;
@@ -61,7 +62,7 @@ public class MentorService {
     }
 
     public MentorResponse getUserInfo() {
-        Long id = JwtUtil.getMemberId();
+        Long id = JwtService.getMemberId();
         Mentor mentor = mentorRepository.findById(id).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
         mentor.setPassword(null);
         return createMentorResponse(mentor);
@@ -84,7 +85,7 @@ public class MentorService {
 
     public MentorResponse updatePassword(MentorRequest mentorRequest) {
 
-        Long menteeId = JwtUtil.getMemberId();
+        Long menteeId = JwtService.getMemberId();
 
         Mentor mentor = mentorRepository.findById(menteeId).orElseThrow(() -> new CommonException(NOT_FOUND_MENTEE));
         String password = mentor.getPassword();
