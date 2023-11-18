@@ -1,7 +1,6 @@
 package com.example.interviewPrep.quiz.member.dto;
 
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import lombok.Builder;
 import lombok.Getter;
 
