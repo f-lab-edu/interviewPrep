@@ -7,9 +7,9 @@ import com.example.interviewPrep.quiz.interview.domain.Interview;
 import com.example.interviewPrep.quiz.interview.dto.request.InterviewRequest;
 import com.example.interviewPrep.quiz.interview.dto.response.InterviewResponse;
 import com.example.interviewPrep.quiz.interview.repository.InterviewRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class InterviewService {
 
     public InterviewResponse createInterview(InterviewRequest interviewRequest) {
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
 
         Member member = memberRepository.findById(memberId).orElse(null);
 

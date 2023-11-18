@@ -7,9 +7,9 @@ import com.example.interviewPrep.quiz.heart.domain.Heart;
 import com.example.interviewPrep.quiz.heart.dto.request.HeartRequest;
 import com.example.interviewPrep.quiz.heart.repository.AnswerLockRepository;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class HeartService {
     }
     public void createHeart(HeartRequest heartRequest) {
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Long answerId = heartRequest.getAnswerId();
 
         Answer answer = answerRepository.findById(answerId).orElseThrow(() -> new CommonException(NOT_FOUND_ANSWER));
@@ -59,7 +59,7 @@ public class HeartService {
     }
 
     public void deleteHeart(HeartRequest heartRequest) {
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Long answerId = heartRequest.getAnswerId();
 
         if (!checkHeartExists(answerId, memberId)) {

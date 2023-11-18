@@ -5,13 +5,13 @@ import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.exception.advice.ErrorCode;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.dto.FilterDTO;
 import com.example.interviewPrep.quiz.question.dto.QuestionRequest;
 import com.example.interviewPrep.quiz.question.dto.QuestionResponse;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
 import com.example.interviewPrep.quiz.questionCompany.repository.QuestionCompanyRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -87,7 +87,7 @@ public class QuestionService {
     //@Cacheable(value = "questionDTO", key="#pageable.pageSize.toString().concat('-').concat(#pageable.pageNumber)")
     // @Timer
     public Page<QuestionResponse> findByType(String type, Pageable pageable) {
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Page<Question> questions = findQuestionsByTypeAndPageable(type, pageable);
 
         if (questions.getContent().isEmpty()) {
