@@ -2,24 +2,17 @@ package com.example.interviewPrep.quiz.notification.service;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.persistence.EntityNotFoundException;
 
 
 import com.example.interviewPrep.quiz.answer.domain.AnswerComment;
-import com.example.interviewPrep.quiz.dto.NotificationResponse;
-import com.example.interviewPrep.quiz.dto.NotificationsResponse;
 import com.example.interviewPrep.quiz.emitter.repository.EmitterRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
-import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.notification.domain.Notification;
 import com.example.interviewPrep.quiz.notification.repository.NotificationRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -31,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
     private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
@@ -44,7 +38,7 @@ public class NotificationService {
 
     public SseEmitter subscribe() {
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         String id = Long.toString(memberId);
         SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
 

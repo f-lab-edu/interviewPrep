@@ -1,13 +1,13 @@
 package com.example.interviewPrep.quiz.subscription.service;
 
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.subscription.dto.request.SubscriptionRequest;
 import com.example.interviewPrep.quiz.subscription.dto.response.SubscriptionResponse;
 import com.example.interviewPrep.quiz.subscription.entity.Subscription;
 import com.example.interviewPrep.quiz.subscription.repository.SubscriptionRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import com.example.interviewPrep.quiz.utils.MonthDuration;
 import com.example.interviewPrep.quiz.utils.MonthlyFee;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class SubscriptionService {
 
     public SubscriptionResponse createSubscription(SubscriptionRequest subscriptionRequest) {
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
         int monthDuration = subscriptionRequest.getMonthDuration();
@@ -73,7 +73,7 @@ public class SubscriptionService {
 
     public void stopSubscription() {
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
         Subscription subscription = subscriptionRepository.findByMemberId(memberId, true).orElseThrow(() -> new CommonException(NOT_FOUND_SUBSCRIPTION));

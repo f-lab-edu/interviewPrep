@@ -7,10 +7,10 @@ import com.example.interviewPrep.quiz.answer.dto.response.CommentResponse;
 import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.answer.repository.CommentRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.notification.service.NotificationService;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class CommentService {
 
     public Page<CommentResponse> findAnswerComment(Long id, Pageable pageable){
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Page<AnswerComment> comments = commentRepository.findAnswerComment(id, pageable);
 
         if(comments.getContent().isEmpty()) {
@@ -62,7 +62,7 @@ public class CommentService {
 
     public CommentResponse createComment(CommentRequest commentReq){
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
 
         Member member = findMember(memberId);
         Answer answer = findAnswer(commentReq.getAnswerId());

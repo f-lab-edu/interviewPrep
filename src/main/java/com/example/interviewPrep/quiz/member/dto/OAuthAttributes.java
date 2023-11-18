@@ -68,7 +68,7 @@ public class OAuthAttributes {
     }
 
     public Member toEntity(){ // 유저 eneity 생성
-        return Mentee.builder()
+        return Member.builder()
                 .name(name)
                 .email(email)
                 .picture(picture)

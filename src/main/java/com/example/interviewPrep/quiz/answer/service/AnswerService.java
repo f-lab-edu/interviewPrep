@@ -7,11 +7,12 @@ import com.example.interviewPrep.quiz.answer.repository.AnswerRepository;
 import com.example.interviewPrep.quiz.answer.domain.Answer;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.heart.repository.HeartRepository;
+import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.domain.Member;
 import com.example.interviewPrep.quiz.member.repository.MemberRepository;
 import com.example.interviewPrep.quiz.question.domain.Question;
 import com.example.interviewPrep.quiz.question.repository.QuestionRepository;
-import com.example.interviewPrep.quiz.utils.JwtUtil;
+
 import com.example.interviewPrep.quiz.utils.Type;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +46,7 @@ public class AnswerService {
 
     public AnswerResponse createAnswer(AnswerRequest answerRequest){
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
 
         Optional<Member> member = memberRepository.findById(memberId);
         Optional<Question> question = questionRepository.findById(answerRequest.getQuestionId());
@@ -91,7 +92,7 @@ public class AnswerService {
 
     public Page<SolutionResponse> getSolution(Long id, String type, Pageable pageable){
 
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
         Page<Answer> answers;
 
         Type inputType = Type.valueOf(type.toUpperCase());
@@ -139,7 +140,7 @@ public class AnswerService {
 
 
     public void checkMySolution(Long id){
-        Long memberId = JwtUtil.getMemberId();
+        Long memberId = JwtService.getMemberId();
 
         List<Answer> answers = answerRepository.findAllByQuestionIdAndMemberId(id, memberId);
 
