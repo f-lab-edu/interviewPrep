@@ -26,7 +26,7 @@
    https://bryandev.tistory.com/1397
 
 - [https://github.com/f-lab-edu/interviewPrep/pull/22] Jenkins로 CI/CD 구축하기<br>
-  1부: https://bryandev.tistory.com/1427
+  1부: https://bryandev.tistory.com/1427<br> 
   2부: https://bryandev.tistory.com/1428
 
 - [https://github.com/LeeJongbokz/interviewPrep/pull/48] 로그인 시 JWT Access Token, Refresh Token 적용하기(with Redis)<br>
