@@ -23,6 +23,10 @@ public class Mentee extends BaseTimeEntity {
     @Column(name = "MENTEE_ID")
     private Long id;
 
+    private String name;
+
+    private String nickName;
+
     private String email;
 
     private String password;
@@ -35,10 +39,6 @@ public class Mentee extends BaseTimeEntity {
     @JoinColumn(name = "MENTOR_ID")
     private Mentor mentor;
 
-    private String nickName;
-
-    private String name;
-
     private String picture;
 
     private boolean isPaid;
@@ -46,15 +46,22 @@ public class Mentee extends BaseTimeEntity {
     private String type;
 
     @Builder
-    public Mentee(String email, String password, Mentor mentor, String nickName, String name, String picture, String type, boolean isPaid, Company company) {
+    public Mentee(String name, String nickName, String email, String password, Mentor mentor, String picture, boolean isPaid, String type, Company company) {
+        Objects.requireNonNull(name, "name이 null입니다.");
+        Objects.requireNonNull(nickName, "nickName이 null입니다.");
+        Objects.requireNonNull(email, "email이 null입니다.");
+        Objects.requireNonNull(password, "password가 null입니다.");
+        Objects.requireNonNull(type, "type이 null입니다.");
+        Objects.requireNonNull(company, "company가 null입니다.");
+
+        this.name = name;
+        this.nickName = nickName;
         this.email = email;
         this.password = password;
         this.mentor = mentor;
-        this.nickName = nickName;
-        this.name = name;
         this.picture = picture;
-        this.type = type;
         this.isPaid = isPaid;
+        this.type = type;
         this.company = company;
     }
 
