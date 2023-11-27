@@ -2,11 +2,13 @@ package com.example.interviewPrep.quiz.member.mentor.domain;
 
 import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
+import com.example.interviewPrep.quiz.schedule.domain.WeeklySchedule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
@@ -40,9 +42,12 @@ public class Mentor extends BaseTimeEntity {
 
     private String picture;
 
+    @OneToOne
+    @JoinColumn(name = "WEEKLYSCHEDULE_ID")
+    private WeeklySchedule weeklySchedule;
 
     @Builder
-    public Mentor(String email, String password, String expertise, Company company, String careerLevel, String nickName, String name, String picture, boolean isPaid) {
+    public Mentor(String email, String password, String expertise, Company company, String careerLevel, String nickName, String name, String picture, WeeklySchedule weeklySchedule) {
         this.email = email;
         this.password = password;
         this.expertise = expertise;
@@ -51,6 +56,7 @@ public class Mentor extends BaseTimeEntity {
         this.nickName = nickName;
         this.name = name;
         this.picture = picture;
+        this.weeklySchedule = weeklySchedule;
     }
 
 
