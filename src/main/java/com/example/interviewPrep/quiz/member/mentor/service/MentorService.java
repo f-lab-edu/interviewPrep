@@ -9,12 +9,14 @@ import com.example.interviewPrep.quiz.member.mentor.dto.request.MentorRequest;
 import com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse;
 import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
+import com.example.interviewPrep.quiz.schedule.domain.WeeklySchedule;
+import com.example.interviewPrep.quiz.schedule.repository.WeeklyScheduleRepository;
 import com.example.interviewPrep.quiz.utils.AES256;
-import com.example.interviewPrep.quiz.utils.SHA256Util;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse.createMentorResponse;
@@ -24,21 +26,72 @@ import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorRe
 public class MentorService {
 
     private final JwtService jwtService;
+
+    private final WeeklyScheduleRepository weeklyScheduleRepository;
     private final CompanyRepository companyRepository;
     private final MentorRepository mentorRepository;
     private final RedisDao redisDao;
 
-    public MentorService(JwtService jwtService, MentorRepository mentorRepository, CompanyRepository companyRepository, RedisDao redisDao) {
+    public MentorService(JwtService jwtService, MentorRepository mentorRepository, WeeklyScheduleRepository weeklyScheduleRepository, CompanyRepository companyRepository, RedisDao redisDao) {
         this.jwtService = jwtService;
         this.mentorRepository = mentorRepository;
+        this.weeklyScheduleRepository = weeklyScheduleRepository;
         this.companyRepository = companyRepository;
         this.redisDao = redisDao;
+    }
+
+
+    public WeeklySchedule getScheduleByDayOfTheWeek(List<String> schedule){
+
+        HashSet<Integer>[] info = new HashSet[7];
+
+        for(int i=0; i<7; i++){
+            info[i] = new HashSet<>();
+        }
+
+        for(String dateTime: schedule){
+            int year = Integer.parseInt(dateTime.substring(0, 4));
+            int month = Integer.parseInt(dateTime.substring(5, 7));
+            int day = Integer.parseInt(dateTime.substring(8, 10));
+            int hour = Integer.parseInt(dateTime.substring(11, 13))+9;
+
+            LocalDate date = LocalDate.of(year, month, day);
+            int dayOfWeek = date.getDayOfWeek().getValue();
+
+            info[dayOfWeek-1].add(hour);
+        }
+
+        List<String> weeklyTimes = new ArrayList<>();
+
+        for(int i=0; i<7; i++){
+            HashSet<Integer> tmpSet = info[i];
+            ArrayList<Integer> tmpList = new ArrayList<>(tmpSet);
+            Collections.sort(tmpList);
+            StringBuilder time = new StringBuilder();
+            for(int j=0; j<tmpList.size(); j++){
+                time.append(Integer.toString(tmpList.get(j))).append(" ");
+            }
+            weeklyTimes.add(time.toString());
+        }
+
+        String Monday = weeklyTimes.get(0);
+        String Tuesday = weeklyTimes.get(1);
+        String Wednesday = weeklyTimes.get(2);
+        String Thursday = weeklyTimes.get(3);
+        String Friday = weeklyTimes.get(4);
+        String Saturday = weeklyTimes.get(5);
+        String Sunday = weeklyTimes.get(6);
+
+        WeeklySchedule weeklySchedule = new WeeklySchedule(Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday);
+        return weeklyScheduleRepository.save(weeklySchedule);
     }
 
     @Transactional
     public void createMentor(MentorRequest mentorRequest) {
 
-        Company company = companyRepository.findById(mentorRequest.getCompany_id()).orElseThrow(null);
+        Company company = companyRepository.findByName(mentorRequest.getCompanyName()).orElseThrow(null);
+
+        WeeklySchedule weeklySchedule = getScheduleByDayOfTheWeek(mentorRequest.getSchedule());
 
         AES256 aes256 = new AES256();
         String email = mentorRequest.getEmail();
@@ -47,7 +100,7 @@ public class MentorService {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Mentor mentor = MentorRequest.createMentor(mentorRequest, company);
+        Mentor mentor = MentorRequest.createMentor(mentorRequest, company, weeklySchedule);
         mentorRepository.save(mentor);
     }
 
@@ -83,6 +136,7 @@ public class MentorService {
     }
 
 
+    /*
     public MentorResponse updatePassword(MentorRequest mentorRequest) {
 
         Long menteeId = JwtService.getMemberId();
@@ -111,6 +165,6 @@ public class MentorService {
 
         return false;
     }
-
+    */
 }
 
