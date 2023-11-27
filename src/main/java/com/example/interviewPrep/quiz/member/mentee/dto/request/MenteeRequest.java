@@ -11,31 +11,30 @@ import java.util.Objects;
 @Getter
 public class MenteeRequest {
 
-    private final String email;
-    private final String password;
     private final String name;
     private final String nickName;
-    private final Long company_id;
+    private final String email;
+    private final String companyName;
+    private final String password;
     private String newPassword;
     private final String picture;
     private final boolean isPaid;
     private final String type;
 
     @Builder
-    public MenteeRequest(String name, String nickName, String email, String password, Long company_id, String picture, boolean isPaid, String type) {
+    public MenteeRequest(String name, String nickName, String email, String companyName, String password, Long company_id, String picture, boolean isPaid, String type) {
         Objects.requireNonNull(name, "name이 null입니다.");
         Objects.requireNonNull(nickName, "nickName이 null입니다.");
         Objects.requireNonNull(email, "email이 null입니다.");
+        Objects.requireNonNull(companyName, "companyName이 null입니다.");
         Objects.requireNonNull(password, "password가 null입니다.");
-        Objects.requireNonNull(company_id, "company_id가 null입니다.");
-        Objects.requireNonNull(picture, "picture가 null입니다.");
         Objects.requireNonNull(type, "type이 null입니다.");
 
         this.name = name;
         this.nickName = nickName;
         this.email = email;
+        this.companyName = companyName;
         this.password = password;
-        this.company_id = company_id;
         this.picture = picture;
         this.isPaid = isPaid;
         this.type = type;
