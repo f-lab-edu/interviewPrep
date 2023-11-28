@@ -10,14 +10,18 @@ public class LoginResponse {
 
     private final String refreshToken;
 
+    private final boolean success;
+
     @Builder
-    public LoginResponse(String accessToken, String refreshToken) {
+    public LoginResponse(boolean success, String accessToken, String refreshToken) {
+        this.success = success;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
 
-    public static LoginResponse createLoginResponse(String accessToken, String refreshToken) {
+    public static LoginResponse createLoginResponse(boolean success, String accessToken, String refreshToken) {
         return LoginResponse.builder()
+                .success(success)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

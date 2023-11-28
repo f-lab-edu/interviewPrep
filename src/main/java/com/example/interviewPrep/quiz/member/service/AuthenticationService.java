@@ -49,13 +49,21 @@ public class AuthenticationService {
 
     public LoginResponse login(LoginRequest loginRequest, HttpServletResponse response) {
 
-        String type = loginRequest.getType();
+        String email = loginRequest.getEmail();
 
-        if(type.equals("Mentee")){
-            return menteeLogin(loginRequest, response);
+        boolean isMentee = menteeRepository.findByEmail(email).isPresent();
+        boolean isMentor = mentorRepository.findByEmail(email).isPresent();
+        LoginResponse loginResponse = null;
+
+        if(isMentee){
+           return menteeLogin(loginRequest, response);
         }
 
-        return mentorLogin(loginRequest, response);
+        if(isMentor){
+           return mentorLogin(loginRequest, response);
+        }
+
+        return loginResponse;
     }
 
 
@@ -86,7 +94,7 @@ public class AuthenticationService {
 
         setNewCookie(response, refreshToken);
 
-        return createLoginResponse(accessToken, "httpOnly");
+        return createLoginResponse(true, accessToken, "httpOnly");
     }
 
 
@@ -117,7 +125,7 @@ public class AuthenticationService {
 
         setNewCookie(response, refreshToken);
 
-        return createLoginResponse(accessToken, "httpOnly");
+        return createLoginResponse(true, accessToken, "httpOnly");
 
 
     }
@@ -166,7 +174,7 @@ public class AuthenticationService {
 
         String accessToken = jwtService.createAccessToken(Long.valueOf(memberId), type);
 
-        return createLoginResponse(accessToken, "httpOnly");
+        return createLoginResponse(true, accessToken, "httpOnly");
     }
 
     public String getMemberId(String token) {
