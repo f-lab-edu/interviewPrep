@@ -2,8 +2,8 @@ package com.example.interviewPrep.quiz.member.mentor.controller;
 
 import com.example.interviewPrep.quiz.member.dto.request.LoginRequest;
 import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
+import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import com.example.interviewPrep.quiz.member.mentor.dto.request.MentorRequest;
-import com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse;
 import com.example.interviewPrep.quiz.member.mentor.service.MentorService;
 import com.example.interviewPrep.quiz.member.service.AuthenticationService;
 import com.example.interviewPrep.quiz.member.social.service.OauthService;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/members/mentor")
@@ -35,6 +36,11 @@ public class MentorController {
     public ResponseEntity<Void> signUp(@RequestBody MentorRequest mentorRequest) {
         mentorService.createMentor(mentorRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Mentor>> getMentors() {
+        return ResponseEntity.ok(mentorService.getMentors());
     }
 
     @PostMapping("/login")

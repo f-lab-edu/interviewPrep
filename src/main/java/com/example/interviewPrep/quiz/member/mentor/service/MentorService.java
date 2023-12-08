@@ -18,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.DUPLICATE_EMAIL;
+import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUND_MEMBER;
 import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse.createMentorResponse;
 
 @Service
@@ -41,34 +42,34 @@ public class MentorService {
     }
 
 
-    public WeeklySchedule getScheduleByDayOfTheWeek(List<String> schedule){
+    public WeeklySchedule getScheduleByDayOfTheWeek(List<String> schedule) {
 
         HashSet<Integer>[] info = new HashSet[7];
 
-        for(int i=0; i<7; i++){
+        for (int i = 0; i < 7; i++) {
             info[i] = new HashSet<>();
         }
 
-        for(String dateTime: schedule){
+        for (String dateTime : schedule) {
             int year = Integer.parseInt(dateTime.substring(0, 4));
             int month = Integer.parseInt(dateTime.substring(5, 7));
             int day = Integer.parseInt(dateTime.substring(8, 10));
-            int hour = Integer.parseInt(dateTime.substring(11, 13))+9;
+            int hour = Integer.parseInt(dateTime.substring(11, 13)) + 9;
 
             LocalDate date = LocalDate.of(year, month, day);
             int dayOfWeek = date.getDayOfWeek().getValue();
 
-            info[dayOfWeek-1].add(hour);
+            info[dayOfWeek - 1].add(hour);
         }
 
         List<String> weeklyTimes = new ArrayList<>();
 
-        for(int i=0; i<7; i++){
+        for (int i = 0; i < 7; i++) {
             HashSet<Integer> tmpSet = info[i];
             ArrayList<Integer> tmpList = new ArrayList<>(tmpSet);
             Collections.sort(tmpList);
             StringBuilder time = new StringBuilder();
-            for(int j=0; j<tmpList.size(); j++){
+            for (int j = 0; j < tmpList.size(); j++) {
                 time.append(Integer.toString(tmpList.get(j))).append(" ");
             }
             weeklyTimes.add(time.toString());
@@ -103,6 +104,17 @@ public class MentorService {
         Mentor mentor = MentorRequest.createMentor(mentorRequest, company, weeklySchedule);
         mentorRepository.save(mentor);
     }
+
+
+    public List<Mentor> getMentors() {
+        List<Mentor> mentors = mentorRepository.findAll();
+
+        if(mentors.isEmpty()){
+            throw new RuntimeException("Mentors list is empty");
+        }
+        return mentors;
+    }
+
 
     public boolean isDuplicatedEmail(String email) {
         Optional<Mentor> mentor = mentorRepository.findByEmail(email);
