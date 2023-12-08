@@ -3,6 +3,7 @@ package com.example.interviewPrep.quiz.member.mentor.domain;
 import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.schedule.domain.WeeklySchedule;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class Mentor extends BaseTimeEntity {
 
     private String password;
 
+    @JsonIgnore
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "COMPANY_ID")
     private Company company;
