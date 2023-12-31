@@ -5,6 +5,7 @@ import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.jwt.service.JwtService;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
+import com.example.interviewPrep.quiz.member.mentor.dto.request.DayAndTime;
 import com.example.interviewPrep.quiz.member.mentor.dto.request.MentorRequest;
 import com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse;
 import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
@@ -12,10 +13,13 @@ import com.example.interviewPrep.quiz.redis.RedisDao;
 import com.example.interviewPrep.quiz.schedule.domain.WeeklySchedule;
 import com.example.interviewPrep.quiz.schedule.repository.WeeklyScheduleRepository;
 import com.example.interviewPrep.quiz.utils.AES256;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.DUPLICATE_EMAIL;
@@ -23,9 +27,11 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUN
 import static com.example.interviewPrep.quiz.member.mentor.dto.response.MentorResponse.createMentorResponse;
 
 @Service
+@Slf4j
 @Transactional(readOnly = true)
 public class MentorService {
 
+    Logger logger = LoggerFactory.getLogger(MentorService.class);
     private final JwtService jwtService;
 
     private final WeeklyScheduleRepository weeklyScheduleRepository;
@@ -42,35 +48,39 @@ public class MentorService {
     }
 
 
-    public WeeklySchedule getScheduleByDayOfTheWeek(List<String> schedule) {
+    public WeeklySchedule getScheduleByDayOfTheWeek(String schedule) {
 
-        HashSet<Integer>[] info = new HashSet[7];
+        ArrayList<Integer>[] dayOfTheWeek = new ArrayList[7];
 
-        for (int i = 0; i < 7; i++) {
-            info[i] = new HashSet<>();
+        for(int i=0; i<7; i++){
+            dayOfTheWeek[i] = new ArrayList<>();
         }
 
-        for (String dateTime : schedule) {
-            int year = Integer.parseInt(dateTime.substring(0, 4));
-            int month = Integer.parseInt(dateTime.substring(5, 7));
-            int day = Integer.parseInt(dateTime.substring(8, 10));
-            int hour = Integer.parseInt(dateTime.substring(11, 13)) + 9;
+        ObjectMapper objectMapper = new ObjectMapper();
 
-            LocalDate date = LocalDate.of(year, month, day);
-            int dayOfWeek = date.getDayOfWeek().getValue();
+        try {
+            DayAndTime[] scheduleArray = objectMapper.readValue(schedule, DayAndTime[].class);
 
-            info[dayOfWeek - 1].add(hour);
+            for (DayAndTime obj : scheduleArray) {
+                dayOfTheWeek[obj.getDay()].add(obj.getTime()+9);
+            }
+
+        } catch (Exception e) {
+            logger.error("에러입니다.", e);
         }
+
 
         List<String> weeklyTimes = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
-            HashSet<Integer> tmpSet = info[i];
-            ArrayList<Integer> tmpList = new ArrayList<>(tmpSet);
+            ArrayList<Integer> tmpList = dayOfTheWeek[i];
             Collections.sort(tmpList);
             StringBuilder time = new StringBuilder();
             for (int j = 0; j < tmpList.size(); j++) {
-                time.append(Integer.toString(tmpList.get(j))).append(" ");
+                if(j != tmpList.size()-1){
+                    time.append(Integer.toString(tmpList.get(j))).append(" ");
+                }
+                time.append(Integer.toString(tmpList.get(j)));
             }
             weeklyTimes.add(time.toString());
         }
