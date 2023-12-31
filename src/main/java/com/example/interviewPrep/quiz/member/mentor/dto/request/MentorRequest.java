@@ -7,7 +7,6 @@ import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
 import java.util.Objects;
 
 @Getter
