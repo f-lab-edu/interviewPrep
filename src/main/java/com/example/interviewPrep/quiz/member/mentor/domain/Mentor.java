@@ -47,8 +47,11 @@ public class Mentor extends BaseTimeEntity {
     @JoinColumn(name = "WEEKLYSCHEDULE_ID")
     private WeeklySchedule weeklySchedule;
 
+    private String interviewLevels;
+    private String interviewTypes;
+
     @Builder
-    public Mentor(String email, String password, String expertise, Company company, String careerLevel, String nickName, String name, String picture, WeeklySchedule weeklySchedule) {
+    public Mentor(String email, String password, String expertise, Company company, String careerLevel, String nickName, String name, String picture, WeeklySchedule weeklySchedule, String interviewLevels, String interviewTypes) {
         this.email = email;
         this.password = password;
         this.expertise = expertise;
@@ -58,6 +61,8 @@ public class Mentor extends BaseTimeEntity {
         this.name = name;
         this.picture = picture;
         this.weeklySchedule = weeklySchedule;
+        this.interviewLevels = interviewLevels;
+        this.interviewTypes = interviewTypes;
     }
 
 

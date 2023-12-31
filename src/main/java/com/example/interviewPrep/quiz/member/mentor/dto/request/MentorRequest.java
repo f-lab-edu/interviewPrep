@@ -7,7 +7,6 @@ import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -21,12 +20,12 @@ public class MentorRequest {
     private final String careerLevel;
     private final String password;
     private final String picture;
-    private final List<String> interviewTypes;
-    private final List<String> interviewLevels;
-    private final List<String> schedule;
+    private final String interviewTypes;
+    private final String interviewLevels;
+    private final String schedule;
 
     @Builder
-    public MentorRequest(String name, String nickName, String email, String companyName, String expertise, String careerLevel, String password, List<String> interviewLevels, List<String> interviewTypes, List<String> schedule, String picture) {
+    public MentorRequest(String name, String nickName, String email, String companyName, String expertise, String careerLevel, String password, String interviewLevels, String interviewTypes, String schedule, String picture) {
         Objects.requireNonNull(name, "name이 null입니다.");
         Objects.requireNonNull(nickName, "nickName이 null입니다.");
         Objects.requireNonNull(email, "email이 null입니다.");
@@ -64,6 +63,8 @@ public class MentorRequest {
                 .nickName(mentorRequest.getNickName())
                 .picture(mentorRequest.getPicture())
                 .weeklySchedule(weeklySchedule)
+                .interviewLevels(mentorRequest.getInterviewLevels())
+                .interviewTypes(mentorRequest.getInterviewTypes())
                 .build();
     }
 }
