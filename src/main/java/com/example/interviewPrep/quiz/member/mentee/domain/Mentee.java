@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.member.mentee.domain;
 
-import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import lombok.Builder;

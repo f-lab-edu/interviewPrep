@@ -4,8 +4,6 @@ import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.MemberContext;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
-import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
-import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

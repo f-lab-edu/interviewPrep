@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.member.mentee.service;
 
-import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.company.repository.CompanyRepository;
 import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.jwt.service.JwtService;

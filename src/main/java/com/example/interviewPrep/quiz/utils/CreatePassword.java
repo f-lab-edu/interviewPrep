@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.utils;
 
-import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;

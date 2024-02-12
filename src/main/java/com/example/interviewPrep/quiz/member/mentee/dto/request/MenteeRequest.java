@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.member.mentee.dto.request;
 
-import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.Builder;
