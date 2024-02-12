@@ -42,6 +42,12 @@ public class MenteeController {
         return ResponseEntity.ok(authService.login(loginRequest, response));
     }
 
+    @GetMapping("/auth/{socialType}/callback")
+    public ResponseEntity<LoginResponse> callback(@PathVariable String socialType, @RequestParam(name = "code") String code) {
+        return ResponseEntity.ok(oauthService.socialLogin(socialType, code));
+    }
+
+
     @PutMapping("/password/change")
     public ResponseEntity<MenteeResponse> updatePassword(@RequestBody MenteeRequest menteeRequest) {
         return ResponseEntity.ok(menteeService.updatePassword(menteeRequest));

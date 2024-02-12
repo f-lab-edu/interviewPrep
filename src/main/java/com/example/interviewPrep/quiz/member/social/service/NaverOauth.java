@@ -4,6 +4,7 @@ import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.social.dto.NaverRes;
 import com.example.interviewPrep.quiz.member.social.dto.SocialToken;
+import com.example.interviewPrep.quiz.utils.CreatePassword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,8 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @Component
 @RequiredArgsConstructor
 public class NaverOauth implements SocialOauth {
+
+    private final CreatePassword createPassword;
 
     @Value("${security.oauth2.client.provider.naver.authorization_uri}")
     private String NAVER_URL;
@@ -93,11 +96,14 @@ public class NaverOauth implements SocialOauth {
                 .bodyToMono(NaverRes.class)
                 .block();
 
+        String password = createPassword.createPwd();
+
         return  Mentee.builder()
                 .name(naverRes.getResponse().getName())
                 .nickName(naverRes.getResponse().getName())
                 .email(naverRes.getResponse().getEmail())
-                .picture(naverRes.getResponse().getProfileImage())
+                .password(password)
+                .isPaid(false)
                 .type("naver")
                 .build();
     }

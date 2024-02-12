@@ -4,6 +4,7 @@ import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.social.dto.GoogleRes;
 import com.example.interviewPrep.quiz.member.social.dto.SocialToken;
+import com.example.interviewPrep.quiz.utils.CreatePassword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,8 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @Component
 @RequiredArgsConstructor
 public class GoogleOauth implements SocialOauth {
+
+    private final CreatePassword createPassword;
 
     @Value("${security.oauth2.client.registration.google.url}")
     private String GOOGLE_URL;
@@ -93,14 +96,15 @@ public class GoogleOauth implements SocialOauth {
                 .bodyToMono(GoogleRes.class)
                 .block();
 
+        String password = createPassword.createPwd();
+
         return Mentee.builder()
                 .name(googleRes.getName())
                 .nickName(googleRes.getName())
                 .email(googleRes.getEmail())
-                .picture(googleRes.getEmail())
+                .password(password)
+                .isPaid(false)
                 .type("google")
                 .build();
     }
 }
-
-    //accounts.google.com/Logout?continue

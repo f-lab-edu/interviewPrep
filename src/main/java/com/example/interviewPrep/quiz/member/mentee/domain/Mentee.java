@@ -1,6 +1,5 @@
 package com.example.interviewPrep.quiz.member.mentee.domain;
 
-import com.example.interviewPrep.quiz.company.domain.Company;
 import com.example.interviewPrep.quiz.domain.BaseTimeEntity;
 import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
 import lombok.Builder;
@@ -32,10 +31,6 @@ public class Mentee extends BaseTimeEntity {
     private String password;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "COMPANY_ID")
-    private Company company;
-
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MENTOR_ID")
     private Mentor mentor;
 
@@ -46,13 +41,12 @@ public class Mentee extends BaseTimeEntity {
     private String type;
 
     @Builder
-    public Mentee(String name, String nickName, String email, String password, Mentor mentor, String picture, boolean isPaid, String type, Company company) {
+    public Mentee(String name, String nickName, String email, String password, Mentor mentor, String picture, boolean isPaid, String type) {
         Objects.requireNonNull(name, "name이 null입니다.");
         Objects.requireNonNull(nickName, "nickName이 null입니다.");
         Objects.requireNonNull(email, "email이 null입니다.");
         Objects.requireNonNull(password, "password가 null입니다.");
         Objects.requireNonNull(type, "type이 null입니다.");
-        Objects.requireNonNull(company, "company가 null입니다.");
 
         this.name = name;
         this.nickName = nickName;
@@ -62,7 +56,6 @@ public class Mentee extends BaseTimeEntity {
         this.picture = picture;
         this.isPaid = isPaid;
         this.type = type;
-        this.company = company;
     }
 
 

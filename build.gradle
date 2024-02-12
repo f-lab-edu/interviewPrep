@@ -40,8 +40,9 @@ dependencies {
 
 	// AssertJ
 	testImplementation 'org.assertj:assertj-core:3.18.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
-	// JUnit Jupiter Engine for testing.
+    // JUnit Jupiter Engine for testing.
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
 	// Thymeleaf

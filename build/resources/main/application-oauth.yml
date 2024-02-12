@@ -5,8 +5,8 @@
           google:
             url: https://accounts.google.com/o/oauth2/v2/auth
             client:
-              id: 80280358649-hm15q6p5a80eucd3ofo9qrq52tjha4pu.apps.googleusercontent.com
-              secret: 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
+              id: 538955470505-0vr2hv948a3vtf7qdvoo2k656qfanuqu.apps.googleusercontent.com
+              secret: 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
             callback:
               url: http://localhost:3000/members/auth/google/callback
             token:
@@ -14,14 +14,14 @@
           kakao:
             client-id: 7631d083ab97ccae8103b0aed5d67b05
             client-secret: wJ3JGVAoFwONsA0MFbgzMNi6p8GjS1aE
-            redirect-uri: "http://52.3.173.210:8080/oauth2/code/kakao"
+            redirect-uri: "http://localhost:3000/members/auth/kakao/callback"
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image, account_email
             client-name: Kakao
           naver:
-            client-id: cCN1QPc9tzYuWAS8yUxo
-            client-secret: qlZqcYcgAU
+            client-id: 9u0x7MvBifXHqMsj96FG
+            client-secret: pc0yH5lffc
             redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"# (== http://localhost:8080/login/oauth2/code/naver)
             authorization-grant-type: authorization_code
             scope: name, email, profile_image

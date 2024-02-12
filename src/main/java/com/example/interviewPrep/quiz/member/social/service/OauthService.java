@@ -7,17 +7,15 @@ import com.example.interviewPrep.quiz.member.dto.response.LoginResponse;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
 import com.example.interviewPrep.quiz.redis.RedisDao;
-import com.example.interviewPrep.quiz.utils.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.time.Duration;
 
 
@@ -58,7 +56,6 @@ public class OauthService {
         }
     }
 
-
     public LoginResponse socialLogin(String socialLoginType, String code) {
         switch (socialLoginType) {
             case "google": {
@@ -76,23 +73,26 @@ public class OauthService {
         }
     }
 
-
+    @Transactional
     public LoginResponse socialLogin(Mentee mentee) {
-        Mentee findMentee = menteeRepository.findByEmailAndType(mentee.getEmail(), mentee.getType())
-                .map(entity -> entity.update(mentee.getName(), mentee.getPicture()))
-                .orElse(createPwd(mentee));
 
-        Long memberId = findMentee.getId();
+        Mentee findMentee = menteeRepository.findByEmailAndType(mentee.getEmail(), mentee.getType()).orElse(null);
 
-        String accessToken = jwtService.createAccessToken(memberId, "mentee");
-        String refreshToken = jwtService.createRefreshToken(memberId, "mentee");
+        if(findMentee == null){
+            findMentee = menteeRepository.save(mentee);
+        }
+
+        Long menteeId = findMentee.getId();
+
+        String accessToken = jwtService.createAccessToken(menteeId, "mentee");
+        String refreshToken = jwtService.createRefreshToken(menteeId, "mentee");
 
         // 토큰으로부터 유저 정보를 받아옵니다.
-        Authentication authentication = jwtService.getAuthentication(String.valueOf(memberId));
+        Authentication authentication = jwtService.getAuthentication(String.valueOf(menteeId));
         // SecurityContext 에 Authentication 객체를 저장합니다.
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        redisDao.setValues(String.valueOf(memberId), refreshToken, Duration.ofMinutes(3));
+        redisDao.setValues(String.valueOf(menteeId), refreshToken, Duration.ofMinutes(3));
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
@@ -103,14 +103,8 @@ public class OauthService {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken("httpOnly")
+                .success(true)
                 .build();
-    }
-
-
-    public Mentee createPwd(Mentee mentee) {
-        String password = new BigInteger(10, new SecureRandom()).toString();
-        mentee.createPwd(SHA256Util.encryptSHA256(password));
-        return mentee;
     }
 
 }

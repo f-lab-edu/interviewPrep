@@ -4,6 +4,7 @@ import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.social.dto.KakaoRes;
 import com.example.interviewPrep.quiz.member.social.dto.SocialToken;
+import com.example.interviewPrep.quiz.utils.CreatePassword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,8 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.*;
 @Component
 @RequiredArgsConstructor
 public class KakaoOauth implements SocialOauth {
+
+    private final CreatePassword createPassword;
 
     @Value("${security.oauth2.client.provider.kakao.authorization_uri}")
     private String KAKAO_URL;
@@ -93,10 +96,13 @@ public class KakaoOauth implements SocialOauth {
                 .bodyToMono(KakaoRes.class)
                 .block();
 
+        String password = createPassword.createPwd();
+
         return  Mentee.builder()
                 .name(kakaoRes.getProperties().getNickname())
                 .nickName(kakaoRes.getProperties().getNickname())
                 .email(kakaoRes.getKakaoAccount().getEmail())
+                .password(password)
                 .picture(kakaoRes.getProperties().getProfileImage())
                 .type("kakao")
                 .build();

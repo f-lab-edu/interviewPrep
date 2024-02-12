@@ -4,8 +4,6 @@ import com.example.interviewPrep.quiz.exception.advice.CommonException;
 import com.example.interviewPrep.quiz.member.domain.MemberContext;
 import com.example.interviewPrep.quiz.member.mentee.domain.Mentee;
 import com.example.interviewPrep.quiz.member.mentee.repository.MenteeRepository;
-import com.example.interviewPrep.quiz.member.mentor.domain.Mentor;
-import com.example.interviewPrep.quiz.member.mentor.repository.MentorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,29 +22,17 @@ import static com.example.interviewPrep.quiz.exception.advice.ErrorCode.NOT_FOUN
 public class CustomUserDetailService implements UserDetailsService{
 
     private final MenteeRepository menteeRepository;
-    private final MentorRepository mentorRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String memberIdWithPrefix) throws CommonException {
+    public UserDetails loadUserByUsername(String menteeId) throws CommonException {
 
-        String prefix = memberIdWithPrefix.substring(0, 6);
         List<GrantedAuthority> type = new ArrayList<>();
         MemberContext memberContext;
 
-        if(prefix.equals("Mentee")){
-            Long menteeId = Long.parseLong(memberIdWithPrefix.substring(6));
-            Mentee mentee = menteeRepository.findById(menteeId)
+        Mentee mentee = menteeRepository.findById(Long.parseLong(menteeId))
                                             .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
-            type.add(new SimpleGrantedAuthority("Mentee"));
-            memberContext = new MemberContext(mentee, type);
-            return memberContext;
-        }
-
-        Long mentorId = Long.parseLong(memberIdWithPrefix.substring(6));
-        Mentor mentor = mentorRepository.findById(mentorId)
-                                        .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
-        type.add(new SimpleGrantedAuthority("Mentor"));
-        memberContext = new MemberContext(mentor, type);
+        type.add(new SimpleGrantedAuthority("Mentee"));
+        memberContext = new MemberContext(mentee, type);
         return memberContext;
     }
 }
