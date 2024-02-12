@@ -40,7 +40,7 @@ public class MenteeRequest {
         this.type = type;
     }
 
-    public static Mentee createMentee(MenteeRequest menteeRequest, Company company) {
+    public static Mentee createMentee(MenteeRequest menteeRequest) {
         String password = SHA256Util.encryptSHA256(menteeRequest.getPassword());
 
         return Mentee.builder()
@@ -51,7 +51,6 @@ public class MenteeRequest {
                 .password(password)
                 .type(menteeRequest.getType())
                 .isPaid(false)
-                .company(company)
                 .build();
     }
 }

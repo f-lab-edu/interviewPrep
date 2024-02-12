@@ -38,8 +38,6 @@ public class MenteeService {
     @Transactional
     public void createMentee(MenteeRequest menteeRequest) {
 
-        Company company = companyRepository.findByName(menteeRequest.getCompanyName()).orElseThrow(null);
-
         AES256 aes256 = new AES256();
         String email = menteeRequest.getEmail();
 
@@ -47,7 +45,7 @@ public class MenteeService {
             throw new CommonException(DUPLICATE_EMAIL);
         }
 
-        Mentee mentee = MenteeRequest.createMentee(menteeRequest, company);
+        Mentee mentee = MenteeRequest.createMentee(menteeRequest);
         menteeRepository.save(mentee);
     }
 
